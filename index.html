@@ -51,6 +51,11 @@
     border-top:2.5px solid #1e4d3a; font-size:19px; font-weight:800;
   }
   .tally-grand .amt{font-variant-numeric:tabular-nums; margin-left:auto; color:#b3872f;}
+  .tally-units{
+    display:flex; align-items:baseline; gap:8px; margin-top:9px; padding-top:9px;
+    border-top:1.5px solid #ccc; font-size:14px; font-weight:700; color:#333;
+  }
+  .tally-units .num{font-variant-numeric:tabular-nums; margin-left:auto; font-weight:800; color:#1e4d3a;}
   .tally-actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;}
   .tally-reset, .tally-export{
     font-size:13px; padding:8px 14px; cursor:pointer; font-family:inherit; font-weight:700;
@@ -130,6 +135,7 @@
     <div class="th">Running tally — tap checkboxes below</div>
     <div class="tally-rows" id="tallyRows"></div>
     <div class="tally-grand">Grand total<span class="amt" id="tallyGrand">$0</span></div>
+    <div class="tally-units">Plants still needed, overall<span class="num" id="tallyUnits">—</span></div>
     <div class="tally-actions">
       <button class="tally-export" onclick="exportSummary()">Export decisions (.txt)</button>
       <button class="tally-reset" onclick="resetAll()">Clear all checkmarks</button>
@@ -574,6 +580,13 @@ function recalc(){
     rowsEl.innerHTML = `<div class="tally-row" style="color:#999;font-style:italic">Nothing checked yet</div>`;
   }
   document.getElementById("tallyGrand").textContent = money(grand);
+
+  let totalNeed = 0, totalRemaining = 0;
+  speciesInfo.forEach(s => {
+    if(s.need != null){ totalNeed += s.need; totalRemaining += s.remaining; }
+  });
+  document.getElementById("tallyUnits").textContent =
+    Math.ceil(totalRemaining).toLocaleString() + " of " + totalNeed.toLocaleString() + " total";
 
   speciesInfo.forEach(s => {
     let badge = s.el.querySelector(".species-progress");
