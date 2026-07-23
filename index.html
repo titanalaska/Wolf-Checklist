@@ -21,6 +21,12 @@
   .legend .job-chip{cursor:default;}
   .legend-label{font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#4a4a4a; align-self:center; margin-right:2px;}
 
+  .job-status{margin-top:14px; padding-top:12px; border-top:1.5px solid #ccc;}
+  .job-status-row{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
+  .job-status-row:last-child{margin-bottom:0;}
+  .job-status-row .status-text{font-size:14px; color:#333;}
+  .job-status-row .status-text b{color:#8a5a00;}
+
   .job-chip{
     display:inline-block; font-size:13px; font-weight:800; color:#fff;
     padding:3px 10px; border-radius:20px; white-space:nowrap; letter-spacing:.01em;
@@ -111,6 +117,12 @@
       <span class="job-chip job-wsrcc">WSRCC · 5800 Boundary Ave</span>
       <span class="job-chip job-h2s">Home2 Suites · Wasilla</span>
       <span class="job-chip job-waca">Wasilla Charter Academy</span>
+    </div>
+    <div class="job-status">
+      <div class="job-status-row"><span class="job-chip job-waca">Charter Academy</span><span class="status-text"><b>Started July 20 — already past due, most urgent job on this sheet.</b> GC: Jeremy Mohs, Roger Hickel Contracting, 907-360-4120</span></div>
+      <div class="job-status-row"><span class="job-chip job-baxter">Baxter</span><span class="status-text">Target was mid-June, also past — still "waiting to confirm." GC: Jeff Lamm, H5 Construction, 907-223-0792</span></div>
+      <div class="job-status-row"><span class="job-chip job-h2s">Home2Suites</span><span class="status-text">No start date set yet — "waiting to confirm." Contact: Cole Danielson, H5 Construction</span></div>
+      <div class="job-status-row"><span class="job-chip job-wsrcc">WSRCC</span><span class="status-text">Scheduled for August 2026 — the one job with real breathing room. GC: Saigen Harris, F&amp;W, 907-884-3217</span></div>
     </div>
   </div>
 
