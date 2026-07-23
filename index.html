@@ -30,10 +30,12 @@
     border-top:1.5px solid #111; font-size:16px; font-weight:800;
   }
   .tally-grand .amt{font-variant-numeric:tabular-nums; margin-left:auto;}
-  .tally-reset{
-    margin-top:10px; background:none; border:1px solid #999; color:#444;
+  .tally-actions{display:flex; gap:8px; margin-top:10px;}
+  .tally-reset, .tally-export{
+    background:none; border:1px solid #999; color:#444;
     font-size:11px; padding:5px 10px; cursor:pointer; font-family:inherit;
   }
+  .tally-export{border-color:#111; color:#111; font-weight:700;}
 
   .cat{
     font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
@@ -68,7 +70,7 @@
     .sheet{max-width:100%; padding:0.25in 0.3in;}
     .cat{break-after:avoid;}
     .species{break-inside:avoid;}
-    .tally-reset{display:none;}
+    .tally-actions{display:none;}
   }
 </style>
 
@@ -85,7 +87,10 @@
     <div class="th">Running tally — tap checkboxes below</div>
     <div class="tally-rows" id="tallyRows"></div>
     <div class="tally-grand">Grand total<span class="amt" id="tallyGrand">$0</span></div>
-    <button class="tally-reset" onclick="resetAll()">Clear all checkmarks</button>
+    <div class="tally-actions">
+      <button class="tally-export" onclick="exportSummary()">Export decisions (.txt)</button>
+      <button class="tally-reset" onclick="resetAll()">Clear all checkmarks</button>
+    </div>
   </div>
 
   <div class="cat">Shrubs &amp; Perennials</div>
@@ -378,6 +383,71 @@ function recalc(){
 function resetAll(){
   document.querySelectorAll(".opt input[type=checkbox]:checked").forEach(cb => cb.checked = false);
   recalc();
+}
+
+function exportSummary(){
+  const checked = document.querySelectorAll(".opt[data-src] input[type=checkbox]:checked");
+  const lines = [];
+  const bySource = {};
+  let grand = 0;
+
+  lines.push("TITAN ALASKA — SPECIES SUBSTITUTION DECISIONS");
+  lines.push("Exported " + new Date().toLocaleString());
+  lines.push("=".repeat(60));
+
+  let lastSpecies = null;
+  checked.forEach(cb => {
+    const opt = cb.closest(".opt");
+    const speciesEl = opt.closest(".species");
+    const species = speciesEl ? speciesEl.querySelector(".species-name").textContent.trim() : "";
+    const need = speciesEl ? speciesEl.querySelector(".species-need").textContent.trim() : "";
+    const src = opt.dataset.src;
+    const qty = opt.dataset.qty ? parseFloat(opt.dataset.qty) : null;
+    const price = opt.dataset.price !== undefined ? parseFloat(opt.dataset.price) : null;
+    const desc = opt.querySelector(".txt").textContent.replace(/\s+/g, " ").trim();
+
+    if(species !== lastSpecies){
+      lines.push("");
+      lines.push(species + (need ? " (" + need + ")" : ""));
+      lastSpecies = species;
+    }
+
+    let amt = null;
+    if(qty != null && price != null){
+      amt = qty * price;
+      grand += amt;
+      if(!bySource[src]) bySource[src] = 0;
+      bySource[src] += amt;
+      lines.push("  [x] " + desc + "  ->  " + money(amt));
+    } else {
+      lines.push("  [x] " + desc + "  ->  (qty/price pending)");
+    }
+  });
+
+  lines.push("");
+  lines.push("=".repeat(60));
+  lines.push("TOTALS BY SOURCE");
+  Object.keys(bySource).forEach(src => {
+    lines.push("  " + src.padEnd(20) + money(bySource[src]));
+  });
+  lines.push("");
+  lines.push("GRAND TOTAL: " + money(grand));
+
+  if(checked.length === 0){
+    lines.push("");
+    lines.push("(Nothing was checked at export time.)");
+  }
+
+  const blob = new Blob([lines.join("\n")], {type:"text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = "Titan-Wolf-Decisions-" + stamp + ".txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 document.querySelectorAll(".opt[data-src] input[type=checkbox]").forEach(cb => {
