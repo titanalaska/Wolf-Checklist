@@ -46,6 +46,9 @@
   .species-head{display:flex; align-items:baseline; gap:10px; border-bottom:1px solid #999; padding-bottom:3px;}
   .species-name{font-size:15.5px; font-weight:800;}
   .species-need{font-size:11.5px; font-weight:700; color:#444; margin-left:auto; white-space:nowrap;}
+  .species-progress{font-size:11px; font-weight:700; white-space:nowrap;}
+  .species-progress.short{text-decoration:underline;}
+  .species-progress.met{color:#666; font-weight:600;}
 
   .opt{display:flex; align-items:flex-start; gap:9px; padding:6px 0 6px 2px; border-bottom:1px dotted #ccc;}
   .opt:last-child{border-bottom:none;}
@@ -95,7 +98,7 @@
 
   <div class="cat">Shrubs &amp; Perennials</div>
 
-  <div class="species">
+  <div class="species" data-need="261">
     <div class="species-head"><span class="species-name">Potentilla</span><span class="species-need">need 261, any variety</span></div>
     <div class="opt" data-src="Nursery" data-qty="31" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Abbotswood Potentilla <span class="px">· 31 on hand</span></div></div>
     <div class="opt" data-src="Nursery" data-qty="1" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Goldfinger Potentilla <span class="px">· 1 on hand</span></div></div>
@@ -116,7 +119,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — carries other cultivars (Dakota Sunspot, Marmalade), not Goldfinger or Abbotswood by name</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="162">
     <div class="species-head"><span class="species-name">Spirea</span><span class="species-need">need 162, Birchleaf or Goldflame</span></div>
     <div class="opt" data-src="Nursery" data-qty="5" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Tor Birchleaf Spirea <span class="px">· 5 on hand</span></div></div>
     <div class="opt" data-src="Nursery" data-qty="11" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Gold Mound Spirea (surplus) <span class="px">· 11 available</span> — <span class="warn">different look: gold foliage, pink flowers</span>, own demand already covered</div></div>
@@ -136,7 +139,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — not carried &nbsp;·&nbsp; Lowe's — not found in Tudor stock</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="65">
     <div class="species-head"><span class="species-name">Ivory Halo Dogwood</span><span class="species-need">need 65</span></div>
     <div class="opt" data-src="Nursery" data-qty="90" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — surplus plain Red-Twig Dogwood <span class="px">· ~90 available as sub</span> — no variegation, different look</div></div>
     <div class="opt" data-src="Martin" data-price="58"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Ivory Halo Dogwood <span class="px">· #5, $58/ea</span> — spring list price, <span class="warn">confirm current stock with a call</span></div></div>
@@ -145,7 +148,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — #3 only (need #5), 0 available now, 427 in August, $23.75/ea &nbsp;·&nbsp; Lowe's — not found &nbsp;·&nbsp; Home Depot — not researched</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="13">
     <div class="species-head"><span class="species-name">Miss Kim Lilac</span><span class="species-need">need 13</span></div>
     <div class="opt" data-src="Nursery" data-qty="12" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — surplus Common Purple Lilac <span class="px">· ~12 available as sub</span> — different lilac, still a lilac</div></div>
     <div class="opt" data-src="Nursery" data-qty="17" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Donald Wyman Lilac <span class="px">· 17 on hand</span> — unclaimed, different lilac</div></div>
@@ -161,7 +164,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Home Depot — <span class="warn">had lilacs on the shelf, never priced them — worth checking next visit</span> &nbsp;·&nbsp; Lowe's — not found</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="33">
     <div class="species-head"><span class="species-name">Juniper</span><span class="species-need">need 33, Savin or Creeping</span></div>
     <div class="opt" data-src="Nursery" data-qty="13" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Andorra Compact Juniper <span class="px">· 13 on hand</span></div></div>
     <div class="opt" data-src="Nursery" data-qty="50" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Blue Rug Juniper <span class="px">· 50 on hand</span> — true creeping form</div></div>
@@ -178,7 +181,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — not confirmed for juniper</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="7">
     <div class="species-head"><span class="species-name">Dwarf American / Highbush Cranberry</span><span class="species-need">need 7</span></div>
     <div class="opt" data-src="Nursery" data-qty="4" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — American Cranberrybush <span class="px">· 4 on hand</span></div></div>
     <div class="opt" data-src="Nursery" data-qty="3" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Bailey Compact American Cranberrybush <span class="px">· 3 on hand</span></div></div>
@@ -188,14 +191,14 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey — not confirmed for this one &nbsp;·&nbsp; Lowe's — not found &nbsp;·&nbsp; Home Depot — not researched</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="349">
     <div class="species-head"><span class="species-name">Alaska Flag / Wild Iris</span><span class="species-need">need 349</span></div>
     <div class="opt" data-src="Nursery" data-qty="25" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Arctic Iris <span class="px">· 25 on hand</span></div></div>
     <div class="opt" data-src="Martin" data-price="8"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Alaskan Iris <span class="px">· $8/ea</span> — only confirmed source</div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bailey — not carried &nbsp;·&nbsp; Bron &amp; Sons — not on the confirmed order &nbsp;·&nbsp; Lowe's / Home Depot — very unlikely, native/specialty variety</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="293">
     <div class="species-head"><span class="species-name">Karl Foerster Feather Reed Grass</span><span class="species-need">need 293</span></div>
     <div class="opt" data-src="Nursery" data-qty="70" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — <span class="px">70 on hand</span> — from today's audit count, flag if Wolf wants a fresher recount before relying on it</div></div>
     <div class="opt" data-src="Martin" data-qty="272" data-price="16"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — <span class="px">272 available, $16/ea</span> — his cheapest item, doesn't fully cover the 293</div></div>
@@ -205,14 +208,14 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Danny — hasn't priced grasses yet, said "perennial prices to follow" &nbsp;·&nbsp; Lowe's / Home Depot — not researched</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="59">
     <div class="species-head"><span class="species-name">Overdam (Variegated) Reed Grass</span><span class="species-need">need 59</span></div>
     <div class="opt" data-src="Nursery" data-qty="15" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — <span class="px">15 on hand</span> — from today's audit count, flag if Wolf wants a fresher recount before relying on it</div></div>
     <div class="opt" data-src="McKay" data-qty="83" data-price="22.25"><input type="checkbox"><div class="txt"><span class="src">McKay</span> — <span class="px">#3, 83 available, $22.25/ea</span> — true variety, exact quantity match — <span class="warn">plant cost only, freight from Wisconsin never quoted</span></div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin — says "no Overdam grass" &nbsp;·&nbsp; Danny — hasn't priced grasses yet &nbsp;·&nbsp; Bailey — not confirmed &nbsp;·&nbsp; Lowe's / Home Depot — not researched</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="174">
     <div class="species-head"><span class="species-name">False Spirea (Sem / Ash-leaf)</span><span class="species-need">need ~174</span></div>
     <div class="opt" data-src="Nursery" data-qty="48" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — <span class="px">48 on hand</span> — matches both the audit summary and the pallet-by-pallet log (Pallets 7, 9, 39, 40, 44)</div></div>
     <div class="opt" data-src="Bron" data-qty="226" data-price="27.72"><input type="checkbox"><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">226 confirmed on order #137198, ~$27.72/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div></div>
@@ -220,13 +223,13 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; not researched anywhere else yet</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="305">
     <div class="species-head"><span class="species-name">Bishop's Weed</span><span class="species-need">need ~305</span></div>
     <div class="opt" data-src="Bron" data-qty="305" data-price="14.90"><input type="checkbox"><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">305 confirmed on order #137198, exact quantity match, ~$14.90/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bailey — not confirmed either way &nbsp;·&nbsp; North Creek (PA) — <span class="warn">ruled out: plug/liner propagation supplier only, no landscape-size stock</span></div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="132">
     <div class="species-head"><span class="species-name">Gold Crinkled Hair Grass</span><span class="species-need">need ~132</span></div>
     <div class="opt" data-src="Nursery" data-qty="35" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Tufted Hair Grass <span class="px">· 35 on hand</span> — same genus, unclaimed elsewhere</div></div>
     <div class="opt" data-src="Nursery" data-qty="33" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Bronze Tufted Hair Grass <span class="px">· 33 on hand</span> — same genus, unclaimed elsewhere</div></div>
@@ -234,7 +237,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey — not confirmed either way for this one &nbsp;·&nbsp; North Creek (PA) — <span class="warn">ruled out: plug/liner propagation supplier only, no landscape-size stock</span> &nbsp;·&nbsp; Little Prince OR — only carries Deschampsia 'Northern Lights' (wrong cultivar, variegated not gold), currently showing out of stock — <span class="warn">not a fit this round, worth revisiting as a plug order for next season</span></div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="83">
     <div class="species-head"><span class="species-name">Hosta Patriot</span><span class="species-need">need ~83</span></div>
     <div class="opt" data-src="McKay" data-qty="427" data-price="8.25"><input type="checkbox"><div class="txt"><span class="src">McKay</span> — Hosta Patriot <span class="px">· #1, 427 available, $8.25/ea</span> — true variety, exact match, plenty of stock — <span class="warn">plant cost only, freight from Wisconsin never quoted</span></div></div>
     <div class="opt" data-src="Martin" data-price="16"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Hosta "Stained Glass" <span class="px">· #1, $16/ea</span> — different cultivar than Patriot, spring list price</div></div>
@@ -243,13 +246,13 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; Bailey — not confirmed &nbsp;·&nbsp; Lowe's / Home Depot — not researched</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="67">
     <div class="species-head"><span class="species-name">Sweet Woodruff</span><span class="species-need">need ~67</span></div>
     <div class="opt" data-src="Bron" data-qty="67" data-price="15.48"><input type="checkbox"><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">67 confirmed on order #137198, exact quantity match, ~$15.48/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; North Creek (PA) — <span class="warn">ruled out: plug/liner propagation supplier only, no landscape-size stock</span></div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="10">
     <div class="species-head"><span class="species-name">Goatsbeard</span><span class="species-need">need ~10</span></div>
     <div class="opt" data-src="Bron" data-qty="10" data-price="14.90"><input type="checkbox"><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">10 confirmed on order #137198, exact quantity match, ~$14.90/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey — not confirmed either way for this one &nbsp;·&nbsp; Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; North Creek (PA) — <span class="warn">ruled out: plug/liner propagation supplier only, no landscape-size stock</span></div></div>
@@ -257,7 +260,7 @@
 
   <div class="cat">Trees</div>
 
-  <div class="species">
+  <div class="species" data-need="36">
     <div class="species-head"><span class="species-name">Swedish Columnar Aspen</span><span class="species-need">need 36</span></div>
     <div class="opt" data-src="Nursery" data-qty="12" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — on hand, all calipers <span class="px">· 12 on hand</span></div></div>
     <div class="opt" data-src="Martin" data-qty="48" data-price="606"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Swedish Aspen 2–2.25" cal <span class="px">· 48 available, $606/ea</span> — no 1.5" available</div></div>
@@ -267,7 +270,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bron — only has 1.25–1.5" liner stock, under spec &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at landscape caliper, not checked in person</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="21">
     <div class="species-head"><span class="species-name">Helena Maple</span><span class="species-need">need 21</span></div>
     <div class="opt" data-src="Nursery" data-qty="1" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Helena Maple <span class="px">· 1 on hand</span></div></div>
     <div class="opt" data-src="Martin" data-qty="41" data-price="635"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Helena Maple 2–2.25" cal <span class="px">· 41 available, $635/ea</span> — starts at 1.75"</div></div>
@@ -276,14 +279,14 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bailey — not in catalog &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at landscape caliper, not checked in person</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="13">
     <div class="species-head"><span class="species-name">Paper Birch</span><span class="species-need">need 13</span></div>
     <div class="opt" data-src="Nursery" data-qty="2" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Paper Birch <span class="px">· 2 on hand</span></div></div>
     <div class="opt" data-src="Bailey" data-qty="578"><input type="checkbox"><div class="txt"><span class="src">Bailey</span> — <span class="px">#10, 578 available</span> — <span class="warn">clump form, not single-stem like spec calls for — plant cost only, freight never quoted</span></div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Martin — says "no Birch" right now, worth rechecking later in season &nbsp;·&nbsp; Danny — not listed for this species &nbsp;·&nbsp; Lowe's / Home Depot — unlikely, not checked</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="43">
     <div class="species-head"><span class="species-name">Quaking Aspen</span><span class="species-need">need 43</span></div>
     <div class="opt" data-src="Danny" data-price="220"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — Quaking Aspen 2" cal <span class="px">· $220/ea</span> — Martin grows it but never quoted a price</div></div>
     <div class="opt" data-src="Danny" data-price="175"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — Quaking Aspen 1.5" cal <span class="px">· $175/ea</span></div></div>
@@ -291,14 +294,14 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — form/size mismatch, not usable &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's / Home Depot — unlikely, not checked</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="19">
     <div class="species-head"><span class="species-name">Scotch Pine</span><span class="species-need">need 19</span></div>
     <div class="opt" data-src="Danny" data-price="460"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — Scotch Pine 7' <span class="px">· $460/ea</span> — true variety, Martin can't source it at all</div></div>
     <div class="opt" data-src="Martin" data-qty="19" data-price="802"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Rostrata Pine 7'–8' <span class="px">· 19 available, $802/ea</span> — not true Scotch Pine, says "no Scotch"</div></div>
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay / Bailey — not carried &nbsp;·&nbsp; Bron — only 2 of 19 on order, at 90cm (~3'), way undersized &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at 7' landscape size, not checked</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="8">
     <div class="species-head"><span class="species-name">Prairiefire Crabapple</span><span class="species-need">need 8</span></div>
     <div class="opt" data-src="Danny" data-price="460"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — Prairiefire Crabapple 2" <span class="px">· $460/ea</span> — true variety, Martin can't source it at all</div></div>
     <div class="opt" data-src="Martin" data-price="625"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Perfect Purple Crabapple 2" B&amp;B <span class="px">· $625/ea</span> — not true variety, says "don't do Prairiefire"</div></div>
@@ -307,7 +310,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bron — ships Radiant Crabapple as sub, undersized &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at landscape caliper, not checked</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="2">
     <div class="species-head"><span class="species-name">Parkland Pillar Birch</span><span class="species-need">need 2</span></div>
     <div class="opt" data-src="Danny" data-price="440"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — Pillar Birch 1.5" cal <span class="px">· $440/ea</span> — matches spec size</div></div>
     <div class="opt" data-src="Martin" data-qty="2" data-price="495"><input type="checkbox"><div class="txt"><span class="src">Martin</span> — Pillar Birch 3" cal <span class="px">· 2 available, $495/ea</span> — oversize for spec</div></div>
@@ -315,7 +318,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bron — only .75–1" on order, well under spec</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="24">
     <div class="species-head"><span class="species-name">Colorado Blue/Green Spruce</span><span class="species-need">need 24</span></div>
     <div class="opt" data-src="Nursery"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — Colorado Blue Spruce <span class="px">· 2 sellable (6'), 3 rough (6'), 2 more (5')</span></div></div>
     <div class="opt" data-src="Danny" data-qty="20" data-price="425"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — Colorado Spruce, Blue, 6' <span class="px">· ~20 available (his estimate), $425/ea</span> — ready now, not mid-August</div></div>
@@ -323,7 +326,7 @@
     <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — #5 pot, 1000+ avail, but only "Fat Albert" cultivar — <span class="warn">wrong cultivar, flag if considered</span> &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at 6' landscape size, not checked</div></div>
   </div>
 
-  <div class="species">
+  <div class="species" data-need="5">
     <div class="species-head"><span class="species-name">White Spruce</span><span class="species-need">need 5</span></div>
     <div class="opt" data-src="Nursery" data-qty="1" data-price="0"><input type="checkbox"><div class="txt"><span class="src">Nursery</span> — White Spruce <span class="px">· 1 on hand</span></div></div>
     <div class="opt" data-src="Danny" data-price="110"><input type="checkbox"><div class="txt"><span class="src">Danny</span> — White Spruce 6' <span class="px">· $110/ea</span></div></div>
@@ -332,7 +335,7 @@
   </div>
 
   <div class="note">
-    <b>Greyed-out lines</b> are dead ends — nothing available there, nothing to check. Everything else, including our own nursery stock, is an open checkbox — nothing is pre-approved. <b>Underlined notes</b> need a phone call or a look at the tag before relying on them. Nursery lines always tally at $0 — it's stock we already own, not a new cost. The tally uses each line's stated quantity as a rough ceiling; lines with a price but no stated quantity count toward the item total but not the dollar total until a quantity's confirmed — those show as "+N pending" per source.
+    <b>Greyed-out lines</b> are dead ends — nothing available there, nothing to check. Everything else, including our own nursery stock, is an open checkbox — nothing is pre-approved. <b>Underlined notes</b> need a phone call or a look at the tag before relying on them. Nursery lines always tally at $0 — it's stock we already own, not a new cost. Checking boxes for a species fills the "need" number in the order you check them — the first box absorbs cost up to its own quantity toward that species's need, and each source after that only costs for whatever's still left, not its full lot. A small note appears under each species name once you've checked anything for it: <b>"still short N"</b> means keep checking more sources for that one; <b>"covered"</b> means you're done there — checking further boxes for it will show $0 since nothing more is needed. Uncheck and recheck in a different order if you want to change which source gets used first. Lines with a price but no stated quantity (assumed to cover whatever's left) and lines with no price yet both show as "+N pending" per source in the tally.
   </div>
 
 </div>
@@ -342,30 +345,76 @@ const SOURCES = ["Nursery","Lowe's","Home Depot","Martin","Danny","Bron & Sons",
 
 function money(n){ return "$" + Math.round(n).toLocaleString(); }
 
-function recalc(){
-  const totals = {};
-  SOURCES.forEach(s => totals[s] = {amt:0, priced:0, pending:0});
+let checkSeq = 0;
 
-  document.querySelectorAll(".opt[data-src] input[type=checkbox]:checked").forEach(cb => {
-    const opt = cb.closest(".opt");
-    const src = opt.dataset.src;
-    const qty = opt.dataset.qty ? parseFloat(opt.dataset.qty) : null;
-    const price = opt.dataset.price !== undefined ? parseFloat(opt.dataset.price) : null;
-    if(!totals[src]) totals[src] = {amt:0, priced:0, pending:0};
-    if(qty != null && price != null){
-      totals[src].amt += qty * price;
-      totals[src].priced++;
-    } else {
-      totals[src].pending++;
-    }
+// Walks every species, and within it every checked box in the order it was
+// checked (not DOM order) — the first checked box eats into that species's
+// need first, and each one after only gets charged for whatever's still left.
+// This is what lets "check nursery, then Martin" cost Martin for the remainder
+// only, instead of his whole quoted lot.
+function computeAllocation(){
+  const bySource = {};
+  SOURCES.forEach(s => bySource[s] = {amt:0, priced:0, pending:0});
+  const contribMap = new Map();
+  const speciesInfo = [];
+
+  document.querySelectorAll(".species").forEach(sp => {
+    const need = sp.dataset.need ? parseFloat(sp.dataset.need) : null;
+    let remaining = need;
+    const checkedCbs = Array.from(sp.querySelectorAll(".opt[data-src] input[type=checkbox]:checked"))
+      .sort((a, b) => (parseInt(a.dataset.order) || 0) - (parseInt(b.dataset.order) || 0));
+
+    checkedCbs.forEach(cb => {
+      const opt = cb.closest(".opt");
+      const src = opt.dataset.src;
+      const qty = opt.dataset.qty !== undefined ? parseFloat(opt.dataset.qty) : null;
+      const price = opt.dataset.price !== undefined ? parseFloat(opt.dataset.price) : null;
+      if(!bySource[src]) bySource[src] = {amt:0, priced:0, pending:0};
+
+      let contrib;
+      if(need == null){
+        contrib = qty;
+      } else if(remaining <= 0){
+        contrib = 0;
+      } else if(qty != null){
+        contrib = Math.min(remaining, qty);
+      } else {
+        contrib = remaining;
+      }
+      if(need != null && contrib != null) remaining -= contrib;
+
+      let amt = null;
+      if(price != null && contrib != null){
+        amt = contrib * price;
+        bySource[src].amt += amt;
+        bySource[src].priced++;
+      } else {
+        bySource[src].pending++;
+      }
+      contribMap.set(opt, {contrib, amt});
+    });
+
+    speciesInfo.push({
+      name: sp.querySelector(".species-name").textContent.trim(),
+      need,
+      remaining: need != null ? Math.max(0, remaining) : null,
+      checkedCount: checkedCbs.length,
+      el: sp
+    });
   });
+
+  return {bySource, contribMap, speciesInfo};
+}
+
+function recalc(){
+  const {bySource, speciesInfo} = computeAllocation();
 
   const rowsEl = document.getElementById("tallyRows");
   rowsEl.innerHTML = "";
   let grand = 0;
   let anyChecked = false;
   SOURCES.forEach(src => {
-    const t = totals[src];
+    const t = bySource[src];
     if(t.priced === 0 && t.pending === 0) return;
     anyChecked = true;
     grand += t.amt;
@@ -378,18 +427,40 @@ function recalc(){
     rowsEl.innerHTML = `<div class="tally-row" style="color:#999;font-style:italic">Nothing checked yet</div>`;
   }
   document.getElementById("tallyGrand").textContent = money(grand);
+
+  speciesInfo.forEach(s => {
+    let badge = s.el.querySelector(".species-progress");
+    if(!badge){
+      badge = document.createElement("span");
+      badge.className = "species-progress";
+      s.el.querySelector(".species-head").appendChild(badge);
+    }
+    badge.classList.remove("short", "met");
+    if(s.checkedCount === 0 || s.need == null){
+      badge.textContent = "";
+    } else if(s.remaining > 0){
+      badge.textContent = `still short ${Math.ceil(s.remaining)}`;
+      badge.classList.add("short");
+    } else {
+      badge.textContent = "covered";
+      badge.classList.add("met");
+    }
+  });
 }
 
 function resetAll(){
-  document.querySelectorAll(".opt input[type=checkbox]:checked").forEach(cb => cb.checked = false);
+  document.querySelectorAll(".opt input[type=checkbox]:checked").forEach(cb => {
+    cb.checked = false;
+    delete cb.dataset.order;
+  });
+  checkSeq = 0;
   recalc();
 }
 
 function exportSummary(){
+  const {bySource, contribMap, speciesInfo} = computeAllocation();
   const checked = document.querySelectorAll(".opt[data-src] input[type=checkbox]:checked");
   const detailLines = [];
-  const bySource = {};
-  let grand = 0;
   let pendingCount = 0;
 
   let lastSpecies = null;
@@ -398,10 +469,8 @@ function exportSummary(){
     const speciesEl = opt.closest(".species");
     const species = speciesEl ? speciesEl.querySelector(".species-name").textContent.trim() : "";
     const need = speciesEl ? speciesEl.querySelector(".species-need").textContent.trim() : "";
-    const src = opt.dataset.src;
-    const qty = opt.dataset.qty ? parseFloat(opt.dataset.qty) : null;
-    const price = opt.dataset.price !== undefined ? parseFloat(opt.dataset.price) : null;
     const desc = opt.querySelector(".txt").textContent.replace(/\s+/g, " ").trim();
+    const info = contribMap.get(opt) || {contrib: null, amt: null};
 
     if(species !== lastSpecies){
       detailLines.push("");
@@ -409,18 +478,20 @@ function exportSummary(){
       lastSpecies = species;
     }
 
-    let amt = null;
-    if(qty != null && price != null){
-      amt = qty * price;
-      grand += amt;
-      if(!bySource[src]) bySource[src] = 0;
-      bySource[src] += amt;
-      detailLines.push("  [x] " + desc + "  ->  " + money(amt));
+    if(info.amt != null){
+      const used = info.contrib != null ? " (" + Math.ceil(info.contrib) + " used)" : "";
+      detailLines.push("  [x] " + desc + "  ->  " + money(info.amt) + used);
+    } else if(info.contrib != null && info.contrib > 0){
+      pendingCount++;
+      detailLines.push("  [x] " + desc + "  ->  (price pending, ~" + Math.ceil(info.contrib) + " needed)");
     } else {
       pendingCount++;
       detailLines.push("  [x] " + desc + "  ->  (qty/price pending)");
     }
   });
+
+  let grand = 0;
+  Object.values(bySource).forEach(t => grand += t.amt);
 
   const lines = [];
   lines.push("TITAN ALASKA — SPECIES SUBSTITUTION DECISIONS");
@@ -428,19 +499,27 @@ function exportSummary(){
   lines.push("=".repeat(60));
   lines.push("");
   lines.push("TOTALS BY SOURCE");
-  const sources = Object.keys(bySource);
-  if(sources.length === 0){
+  const sourcesUsed = SOURCES.filter(s => bySource[s].priced > 0 || bySource[s].pending > 0);
+  if(sourcesUsed.length === 0){
     lines.push("  (nothing priced yet)");
   } else {
-    sources.forEach(src => {
-      lines.push("  " + src.padEnd(20) + money(bySource[src]));
+    sourcesUsed.forEach(src => {
+      lines.push("  " + src.padEnd(20) + money(bySource[src].amt));
     });
   }
   lines.push("");
   lines.push("GRAND TOTAL: " + money(grand));
   if(pendingCount){
-    lines.push("(+ " + pendingCount + " checked item" + (pendingCount === 1 ? "" : "s") + " pending qty/price, not in total above)");
+    lines.push("(+ " + pendingCount + " checked item" + (pendingCount === 1 ? "" : "s") + " pending price, not in total above)");
   }
+
+  const short = speciesInfo.filter(s => s.checkedCount > 0 && s.need != null && s.remaining > 0);
+  if(short.length){
+    lines.push("");
+    lines.push("STILL SHORT (checked something, but not enough yet):");
+    short.forEach(s => lines.push("  " + s.name + " — " + Math.ceil(s.remaining) + " more needed"));
+  }
+
   lines.push("");
   lines.push("=".repeat(60));
   lines.push("ITEM-BY-ITEM DETAIL");
@@ -464,7 +543,11 @@ function exportSummary(){
 }
 
 document.querySelectorAll(".opt[data-src] input[type=checkbox]").forEach(cb => {
-  cb.addEventListener("change", recalc);
+  cb.addEventListener("change", () => {
+    if(cb.checked) cb.dataset.order = ++checkSeq;
+    else delete cb.dataset.order;
+    recalc();
+  });
 });
 recalc();
 </script>
