@@ -475,7 +475,7 @@
     <b>What changed:</b> every "need" number on this sheet is now the real sum of what's specified across the four currently active jobs (color-coded above) — not a single flat list. Several numbers went up a lot (Ivory Halo Dogwood, Juniper, Potentilla, Miss Kim Lilac especially), a few new species appeared that weren't tracked before, and one (Colorado Spruce) actually came down. "Any variety" is gone — every line is the exact cultivar a real job calls for.
   </div>
   <div class="note">
-    <b>Greyed-out lines</b> are dead ends or informational notes, not checkable options. Everything else, including our own nursery stock, is an open checkbox — nothing is pre-approved. <b>Underlined text</b> needs a phone call or a second look before relying on it. Nursery lines always tally at $0. Checking boxes for a species fills the need in the order you check them — the first box absorbs cost up to its own quantity, and each source after that only costs for whatever's still left. A note appears under each species name once you've checked anything for it: <b>"still short N"</b> means keep sourcing; <b>"covered"</b> means stop, nothing more is needed there.
+    <b>Greyed-out lines</b> are dead ends or informational notes, not checkable options. Everything else, including our own nursery stock, is an open checkbox — nothing is pre-approved. <b>Underlined text</b> needs a phone call or a second look before relying on it. Nursery lines always tally at $0. When you check more than one source for the same species, the sheet automatically fills the need cheapest-first — free stock, then the lowest price, working up — no matter what order you tap the boxes in. Each source only gets charged for whatever's still left after the cheaper ones are used, so checking an extra, pricier box after the need's already covered always shows $0 for it. A note appears under each species name once you've checked anything for it: <b>"still short N"</b> means keep sourcing; <b>"covered"</b> means stop, nothing more is needed there.
   </div>
 
 </div>
@@ -484,8 +484,6 @@
 const SOURCES = ["Nursery","Lowe's","Home Depot","Martin","Danny","Bron & Sons","McKay","Bailey","Little Prince OR"];
 
 function money(n){ return "$" + Math.round(n).toLocaleString(); }
-
-let checkSeq = 0;
 
 function computeAllocation(){
   const bySource = {};
@@ -496,8 +494,16 @@ function computeAllocation(){
   document.querySelectorAll(".species").forEach(sp => {
     const need = sp.dataset.need ? parseFloat(sp.dataset.need) : null;
     let remaining = need;
+    // Cheapest-first, always — regardless of click order. Free ($0) stock
+    // sorts first automatically, then ascending price, then anything with
+    // no confirmed price last (so unknowns only get "used" for whatever's
+    // left over after every priced option is exhausted).
     const checkedCbs = Array.from(sp.querySelectorAll(".opt[data-src] input[type=checkbox]:checked"))
-      .sort((a, b) => (parseInt(a.dataset.order) || 0) - (parseInt(b.dataset.order) || 0));
+      .sort((a, b) => {
+        const pa = a.closest(".opt").dataset.price !== undefined ? parseFloat(a.closest(".opt").dataset.price) : Infinity;
+        const pb = b.closest(".opt").dataset.price !== undefined ? parseFloat(b.closest(".opt").dataset.price) : Infinity;
+        return pa - pb;
+      });
 
     checkedCbs.forEach(cb => {
       const opt = cb.closest(".opt");
@@ -586,9 +592,7 @@ function recalc(){
 function resetAll(){
   document.querySelectorAll(".opt input[type=checkbox]:checked").forEach(cb => {
     cb.checked = false;
-    delete cb.dataset.order;
   });
-  checkSeq = 0;
   recalc();
 }
 
@@ -679,8 +683,6 @@ function exportSummary(){
 
 document.querySelectorAll(".opt[data-src] input[type=checkbox]").forEach(cb => {
   cb.addEventListener("change", () => {
-    if(cb.checked) cb.dataset.order = ++checkSeq;
-    else delete cb.dataset.order;
     recalc();
   });
 });
