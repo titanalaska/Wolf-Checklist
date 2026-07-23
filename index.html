@@ -387,13 +387,10 @@ function resetAll(){
 
 function exportSummary(){
   const checked = document.querySelectorAll(".opt[data-src] input[type=checkbox]:checked");
-  const lines = [];
+  const detailLines = [];
   const bySource = {};
   let grand = 0;
-
-  lines.push("TITAN ALASKA — SPECIES SUBSTITUTION DECISIONS");
-  lines.push("Exported " + new Date().toLocaleString());
-  lines.push("=".repeat(60));
+  let pendingCount = 0;
 
   let lastSpecies = null;
   checked.forEach(cb => {
@@ -407,8 +404,8 @@ function exportSummary(){
     const desc = opt.querySelector(".txt").textContent.replace(/\s+/g, " ").trim();
 
     if(species !== lastSpecies){
-      lines.push("");
-      lines.push(species + (need ? " (" + need + ")" : ""));
+      detailLines.push("");
+      detailLines.push(species + (need ? " (" + need + ")" : ""));
       lastSpecies = species;
     }
 
@@ -418,20 +415,36 @@ function exportSummary(){
       grand += amt;
       if(!bySource[src]) bySource[src] = 0;
       bySource[src] += amt;
-      lines.push("  [x] " + desc + "  ->  " + money(amt));
+      detailLines.push("  [x] " + desc + "  ->  " + money(amt));
     } else {
-      lines.push("  [x] " + desc + "  ->  (qty/price pending)");
+      pendingCount++;
+      detailLines.push("  [x] " + desc + "  ->  (qty/price pending)");
     }
   });
 
-  lines.push("");
+  const lines = [];
+  lines.push("TITAN ALASKA — SPECIES SUBSTITUTION DECISIONS");
+  lines.push("Exported " + new Date().toLocaleString());
   lines.push("=".repeat(60));
+  lines.push("");
   lines.push("TOTALS BY SOURCE");
-  Object.keys(bySource).forEach(src => {
-    lines.push("  " + src.padEnd(20) + money(bySource[src]));
-  });
+  const sources = Object.keys(bySource);
+  if(sources.length === 0){
+    lines.push("  (nothing priced yet)");
+  } else {
+    sources.forEach(src => {
+      lines.push("  " + src.padEnd(20) + money(bySource[src]));
+    });
+  }
   lines.push("");
   lines.push("GRAND TOTAL: " + money(grand));
+  if(pendingCount){
+    lines.push("(+ " + pendingCount + " checked item" + (pendingCount === 1 ? "" : "s") + " pending qty/price, not in total above)");
+  }
+  lines.push("");
+  lines.push("=".repeat(60));
+  lines.push("ITEM-BY-ITEM DETAIL");
+  lines.push(...detailLines);
 
   if(checked.length === 0){
     lines.push("");
