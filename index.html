@@ -63,6 +63,10 @@
   }
   .tally-reset{background:none; border:1.5px solid #999; color:#4a4a4a;}
   .tally-export{background:#1e4d3a; border:1.5px solid #1e4d3a; color:#fff;}
+  .tally-undo{background:#b3872f; border:1.5px solid #8a5a00; color:#fff; font-weight:800;
+    padding:10px 16px; border-radius:5px; font-size:15px; cursor:pointer;}
+  .save-status{margin-top:12px; font-size:14px; color:#3d6b4f; font-weight:600;}
+  .save-status.warn{color:#8a1c10; font-weight:800;}
 
   .jobroll{border:2.5px solid #b3872f; margin:14px 0 8px; padding:16px 18px; border-radius:6px;}
   .jobroll .th{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#8a5a00; margin-bottom:10px;}
@@ -159,6 +163,7 @@
     .cat{break-after:avoid;}
     .species{break-inside:avoid;}
     .tally-actions{display:none;}
+    .save-status{display:none;}
     .freight-add, .rm-btn{display:none;}
   }
 </style>
@@ -192,9 +197,14 @@
     <div class="tally-rows" id="tallyRows"></div>
     <div class="tally-grand">Plant cost total<span class="amt" id="tallyGrand">$0</span></div>
     <div class="tally-units">Plants still needed, overall<span class="num" id="tallyUnits">—</span></div>
+    <div class="save-status" id="saveStatus">Your entries save automatically on this device.</div>
     <div class="tally-actions">
       <button class="tally-export" onclick="exportSummary()">Export decisions (.txt)</button>
+      <button class="tally-export" onclick="backupJSON()">Save backup file</button>
+      <button class="tally-export" onclick="document.getElementById('restoreFile').click()">Restore backup</button>
+      <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreJSON(this)">
       <button class="tally-reset" onclick="resetAll()">Clear all quantities</button>
+      <button class="tally-undo" id="undoBtn" onclick="undoReset()" style="display:none">Undo clear</button>
     </div>
   </div>
 
@@ -731,8 +741,30 @@ function recalc(){
   saveState();
 }
 
+let undoSnapshot = null;
+
 function resetAll(){
-  document.querySelectorAll(".opt[data-idx] .qty-in").forEach(i => { i.value = ""; });
+  let entered = 0;
+  document.querySelectorAll(".opt[data-idx] .qty-in").forEach(i => { if(num(i.value)) entered++; });
+  if(entered === 0){ return; }
+  if(!confirm("Clear all " + entered + " quantities you've entered?\n\nFreight lines and the procurement log stay. You can undo this right after.")) return;
+  undoSnapshot = {};
+  document.querySelectorAll(".opt[data-idx] .qty-in").forEach(i => {
+    undoSnapshot[i.closest(".opt").dataset.idx] = i.value;
+    i.value = "";
+  });
+  document.getElementById("undoBtn").style.display = "";
+  recalc();
+}
+
+function undoReset(){
+  if(!undoSnapshot) return;
+  document.querySelectorAll(".opt[data-idx]").forEach(opt => {
+    const v = undoSnapshot[opt.dataset.idx];
+    if(v != null) opt.querySelector(".qty-in").value = v;
+  });
+  undoSnapshot = null;
+  document.getElementById("undoBtn").style.display = "none";
   recalc();
 }
 
@@ -766,18 +798,18 @@ function renderFreight(){
     const opts = JOB_DEFS.map(j => "<option value=\"" + j.key + "\"" + (r.job===j.key?" selected":"") + ">" + j.label + "</option>").join("")
       + "<option value=\"all\"" + (r.job==="all"?" selected":"") + ">All jobs (split evenly)</option>";
     row.innerHTML =
-      "<input type=\"text\" placeholder=\"e.g. Bron & Sons container freight\" value=\"" + escapeHtml(r.desc) + "\" onchange=\"updateFreightField(" + r.id + ",'desc',this.value)\">" +
+      "<input type=\"text\" placeholder=\"e.g. Bron & Sons container freight\" value=\"" + escapeHtml(r.desc) + "\" oninput=\"updateFreightField(" + r.id + ",'desc',this.value)\">" +
       "<select onchange=\"updateFreightField(" + r.id + ",'job',this.value)\">" + opts + "</select>" +
-      "<span>$</span><input type=\"number\" class=\"freight-amt\" step=\"0.01\" value=\"" + r.amt + "\" onchange=\"updateFreightField(" + r.id + ",'amt',this.value)\">" +
+      "<span>$</span><input type=\"number\" class=\"freight-amt\" step=\"0.01\" value=\"" + escapeHtml(r.amt) + "\" oninput=\"updateFreightField(" + r.id + ",'amt',this.value)\">" +
       "<button class=\"rm-btn\" onclick=\"removeFreightRow(" + r.id + ")\">Remove</button>";
     el.appendChild(row);
   });
 }
 
-function updateLogField(idx, field, value){
+function updateLogField(idx, field, value, rerender){
   if(!logExtra[idx]) logExtra[idx] = {arrival:"", status:"Ordered", notes:""};
   logExtra[idx][field] = value;
-  renderProcLog();
+  if(rerender) renderProcLog();
   saveState();
 }
 
@@ -830,14 +862,14 @@ function renderProcLog(){
       "<td>" + escapeHtml(r.species) + "</td>" +
       "<td>" + escapeHtml(r.src) + "</td>" +
       "<td>" + r.qty + "</td>" +
-      "<td><input type=\"date\" value=\"" + r.arrival + "\" onchange=\"updateLogField(" + r.idx + ",'arrival',this.value)\"> " + flag + "</td>" +
-      "<td><select onchange=\"updateLogField(" + r.idx + ",'status',this.value)\">" + statusOpts + "</select></td>" +
-      "<td><input type=\"text\" value=\"" + escapeHtml(r.notes) + "\" placeholder=\"notes\" onchange=\"updateLogField(" + r.idx + ",'notes',this.value)\"></td>";
+      "<td><input type=\"date\" value=\"" + r.arrival + "\" onchange=\"updateLogField(" + r.idx + ",'arrival',this.value,true)\"> " + flag + "</td>" +
+      "<td><select onchange=\"updateLogField(" + r.idx + ",'status',this.value,true)\">" + statusOpts + "</select></td>" +
+      "<td><input type=\"text\" value=\"" + escapeHtml(r.notes) + "\" placeholder=\"notes\" oninput=\"updateLogField(" + r.idx + ",'notes',this.value,false)\"></td>";
     body.appendChild(tr);
   });
 }
 
-function saveState(){
+function collectState(){
   const opts = {};
   document.querySelectorAll(".opt[data-idx]").forEach(opt => {
     const idx = opt.dataset.idx;
@@ -846,27 +878,92 @@ function saveState(){
       price: opt.querySelector(".price-in").value
     };
   });
+  return {opts, freight: freightRows, freightSeq, log: logExtra, savedAt: new Date().toISOString()};
+}
+
+let storageWarning = null;
+
+function setSaveStatus(msg, warn){
+  const el = document.getElementById("saveStatus");
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.toggle("warn", !!warn);
+}
+
+function saveState(){
   try{
-    localStorage.setItem(STORE_KEY, JSON.stringify({opts, freight: freightRows, freightSeq, log: logExtra}));
-  }catch(e){}
+    localStorage.setItem(STORE_KEY, JSON.stringify(collectState()));
+    const t = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+    if(storageWarning) setSaveStatus(storageWarning + " (last saved " + t + ")", true);
+    else setSaveStatus("Saved " + t + " — safe to close or back out of this page.", false);
+  }catch(e){
+    storageWarning = "NOT SAVING on this device — private/incognito mode or storage is full. Use “Save backup file” before you leave this page.";
+    setSaveStatus(storageWarning, true);
+  }
 }
 
 function loadState(){
-  let state = {};
-  try{ state = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ state = {}; }
-  if(state.opts){
-    document.querySelectorAll(".opt[data-idx]").forEach(opt => {
-      const idx = opt.dataset.idx;
-      const saved = state.opts[idx];
-      if(saved){
-        if(saved.qty) opt.querySelector(".qty-in").value = saved.qty;
-        if(saved.price !== "" && saved.price != null) opt.querySelector(".price-in").value = saved.price;
-      }
-    });
+  let state = null;
+  let blocked = false;
+  try{
+    const probe = "__wolfprobe";
+    localStorage.setItem(probe, "1");
+    localStorage.removeItem(probe);
+    state = JSON.parse(localStorage.getItem(STORE_KEY));
+  }catch(e){
+    blocked = true;
   }
-  if(Array.isArray(state.freight)) freightRows = state.freight;
-  if(typeof state.freightSeq === "number") freightSeq = state.freightSeq;
-  if(state.log) logExtra = state.log;
+
+  if(blocked){
+    storageWarning = "NOT SAVING on this device — private/incognito mode or storage is blocked. Use “Save backup file” before you leave this page.";
+  } else if(location.protocol === "file:"){
+    storageWarning = "Opened as a downloaded file, so entries are tied to this one copy and won't follow you to the web link.";
+  }
+
+  if(!state || !state.opts) return null;
+  applyState(state);
+  return state.savedAt || null;
+}
+
+function backupJSON(){
+  const blob = new Blob([JSON.stringify(collectState(), null, 1)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "Titan-Wolf-Checklist-backup-" + new Date().toISOString().slice(0,10) + ".json";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function restoreJSON(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    let state;
+    try{ state = JSON.parse(ev.target.result); }
+    catch(e){ alert("That file isn't a valid checklist backup."); input.value = ""; return; }
+    if(!state || !state.opts){ alert("That file isn't a valid checklist backup."); input.value = ""; return; }
+    const when = state.savedAt ? new Date(state.savedAt).toLocaleString() : "an earlier session";
+    if(!confirm("Restore the backup from " + when + "?\n\nThis replaces everything currently entered on this page.")){ input.value = ""; return; }
+    applyState(state);
+    renderFreight();
+    recalc();
+    input.value = "";
+  };
+  reader.readAsText(file);
+}
+
+function applyState(state){
+  document.querySelectorAll(".opt[data-idx]").forEach(opt => {
+    const saved = state.opts[opt.dataset.idx];
+    if(!saved) return;
+    if(saved.qty != null) opt.querySelector(".qty-in").value = saved.qty;
+    if(saved.price !== "" && saved.price != null) opt.querySelector(".price-in").value = saved.price;
+  });
+  freightRows = Array.isArray(state.freight) ? state.freight : [];
+  freightSeq = typeof state.freightSeq === "number" ? state.freightSeq : 0;
+  logExtra = state.log || {};
 }
 
 function exportSummary(){
@@ -1000,7 +1097,17 @@ function exportSummary(){
   URL.revokeObjectURL(url);
 }
 
-loadState();
+const restoredAt = loadState();
 renderFreight();
 recalc();
+if(restoredAt && !storageWarning){
+  setSaveStatus("Picked up where you left off — restored from " + new Date(restoredAt).toLocaleString() + ".", false);
+} else if(storageWarning){
+  setSaveStatus(storageWarning, true);
+}
+
+window.addEventListener("pagehide", saveState);
+document.addEventListener("visibilitychange", function(){
+  if(document.visibilityState === "hidden") saveState();
+});
 </script>
