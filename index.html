@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Wolf Jobs">
-<title>Wolf Architect Jobs</title>
+﻿<title>Wolf Architect Jobs</title>
 <style>
   :root{
     --bg:#f6f7f1;
@@ -652,9 +652,9 @@ var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7}},{"bed"
 // individually on the plan, so only the massed material carries a spacing.
 var SPACING = {
   CAK: '18" OC triangular', DFA: '18" OC triangular',
-  A: '24" OC triangular · 5 eyes min', AD: '18" OC · 5 eyes min',
+  A: '24" OC triangular Â· 5 eyes min', AD: '18" OC Â· 5 eyes min',
   APV: '12" OC', G: '12" OC',
-  H: '18" OC · 2 eyes min', IS: '12" OC triangular · 2-3 fans min',
+  H: '18" OC Â· 2 eyes min', IS: '12" OC triangular Â· 2-3 fans min',
 };
 
 var SPECIES = {
@@ -716,7 +716,7 @@ function setSaveNote(msg){
   if(el) el.textContent = msg;
 }
 
-var MSG_LOCAL_ONLY = "This copy saves to this device only. Counts stay in this browser — they will not follow you to another phone.";
+var MSG_LOCAL_ONLY = "This copy saves to this device only. Counts stay in this browser â€” they will not follow you to another phone.";
 var MSG_OFFLINE = "Working offline. Counts are held on this device and will sync when you are back on signal.";
 var syncAvailable = null; // null = not checked yet, false = no sync here, true = sync exists
 
@@ -760,7 +760,7 @@ function scheduleSave(){
     if(!dbDoc){
       setOffline(true);
       setSaveNote(localOk
-        ? "Saved on this device only — not synced."
+        ? "Saved on this device only â€” not synced."
         : "NOT SAVING here. Send the status report before you close this.");
       return;
     }
@@ -768,10 +768,10 @@ function scheduleSave(){
       lastSavedAt = Date.parse(p.updatedAt);
       setOffline(false);
       var t = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
-      setSaveNote("Saved " + t + " — safe to close.");
+      setSaveNote("Saved " + t + " â€” safe to close.");
     }).catch(function(){
       setOffline(true);
-      setSaveNote("Saved on this device — will sync when signal returns.");
+      setSaveNote("Saved on this device â€” will sync when signal returns.");
     });
   }, 250);
 }
@@ -823,7 +823,7 @@ function renderFlags(){
   var ta = document.createElement("textarea");
   ta.className = "notes";
   ta.id = notesId;
-  ta.placeholder = "Notes — update here as Chris gets back to you...";
+  ta.placeholder = "Notes â€” update here as Chris gets back to you...";
   ta.value = notes[notesId] || "";
   box.appendChild(ta);
   slot.innerHTML = "";
@@ -854,7 +854,7 @@ function renderItem(jobKey, name, target, isAlt){
   counter.className = "counter";
 
   var minus = document.createElement("button");
-  minus.textContent = "−";
+  minus.textContent = "âˆ’";
   minus.setAttribute("aria-label", "decrease " + decode(name));
 
   var input = document.createElement("input");
@@ -944,8 +944,8 @@ function renderBeds(){
   mapWrap.className = "map-wrap";
   mapWrap.innerHTML =
     '<div class="map-title">Site map &mdash; all ' + BEDS.length + " beds</div>" +
-    '<a href="' + BED_IMG + '_map.jpg" target="_blank" rel="noopener">' +
-      imgOrNothing(BED_IMG + "_map.jpg", "Site map with every bed numbered", "map-img") +
+    '<a href="' + BED_IMG + 'site-map.jpg" target="_blank" rel="noopener">' +
+      imgOrNothing(BED_IMG + "site-map.jpg", "Site map with every bed numbered", "map-img") +
     "</a>" +
     '<div class="map-hint">Tap the map to open it full size, then pinch to zoom.</div>';
   container.appendChild(mapWrap);
@@ -1008,7 +1008,7 @@ function renderBeds(){
 
 // Warms the service worker's cache so the pictures are there with no signal.
 function saveMapsOffline(btn){
-  var urls = [BED_IMG + "_map.jpg"].concat(BEDS.map(function(b){
+  var urls = [BED_IMG + "site-map.jpg"].concat(BEDS.map(function(b){
     return BED_IMG + b.bed + ".jpg";
   }));
   var done = 0, failed = 0;
@@ -1024,8 +1024,8 @@ function saveMapsOffline(btn){
   })).then(function(){
     btn.disabled = false;
     btn.textContent = failed
-      ? "Saved " + done + " of " + urls.length + " — retry when you have signal"
-      : "Saved for offline — all " + done + " maps";
+      ? "Saved " + done + " of " + urls.length + " â€” retry when you have signal"
+      : "Saved for offline â€” all " + done + " maps";
   });
 }
 
@@ -1137,11 +1137,11 @@ function wireReportUI(){
           setTimeout(function(){ statusEl.textContent = ""; }, 3000);
         })
         .catch(function(){
-          statusEl.textContent = "Text is selected below — long-press and Copy";
+          statusEl.textContent = "Text is selected below â€” long-press and Copy";
         });
       return;
     }
-    statusEl.textContent = "Text is selected below — long-press and Copy";
+    statusEl.textContent = "Text is selected below â€” long-press and Copy";
   });
 
   closeBtn.addEventListener("click", function(){
@@ -1213,13 +1213,13 @@ function init(){
           fillMissingFromSeed();
           lastSavedAt = remoteAt;
           renderAll();
-          setSaveNote("Synced — showing the latest counts.");
+          setSaveNote("Synced â€” showing the latest counts.");
           setOffline(false);
         } else {
           var p = payload();
           return dbDoc.set(p).then(function(){
             lastSavedAt = Date.parse(p.updatedAt);
-            setSaveNote("Synced — this device had the newer counts.");
+            setSaveNote("Synced â€” this device had the newer counts.");
             setOffline(false);
           });
         }
@@ -1239,7 +1239,7 @@ function init(){
       });
     }).catch(function(){
       setOffline(true);
-      setSaveNote("Saved on this device — will sync when signal returns.");
+      setSaveNote("Saved on this device â€” will sync when signal returns.");
     });
   })();
 }
