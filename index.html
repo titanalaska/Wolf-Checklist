@@ -574,9 +574,15 @@ function setSaveNote(msg){
   if(el) el.textContent = msg;
 }
 
-function setOffline(isOffline){
+var MSG_LOCAL_ONLY = "This copy saves to this device only. Counts stay in this browser — they will not follow you to another phone.";
+var MSG_OFFLINE = "Working offline. Counts are held on this device and will sync when you are back on signal.";
+var syncAvailable = null; // null = not checked yet, false = no sync here, true = sync exists
+
+function setOffline(isOffline, msg){
   var el = document.getElementById("saveWarning");
-  if(el) el.style.display = isOffline ? "block" : "none";
+  if(!el) return;
+  el.style.display = isOffline ? "block" : "none";
+  if(isOffline) el.textContent = msg || (syncAvailable === false ? MSG_LOCAL_ONLY : MSG_OFFLINE);
 }
 
 function payload(){
@@ -881,10 +887,12 @@ function init(){
 
     Promise.resolve(usePromise).then(function(db){
       if(!db){
-        setOffline(true);
-        setSaveNote("Not synced — counts are held on this device only.");
+        syncAvailable = false;
+        setOffline(true, MSG_LOCAL_ONLY);
+        setSaveNote("Saves to this device only.");
         return;
       }
+      syncAvailable = true;
       dbDoc = db.doc(DOC_PATH);
 
       return dbDoc.get().then(function(snap){
