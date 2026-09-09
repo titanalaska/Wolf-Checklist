@@ -352,6 +352,59 @@
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important;scroll-behavior:auto !important;}
   }
+
+  .view-toggle{display:none;gap:8px;margin:14px 16px 0;}
+  .view-toggle.on{display:flex;}
+  .vt{
+    flex:1;padding:10px 8px;border:1px solid var(--line);background:var(--card);
+    border-radius:9px;font-family:inherit;font-weight:700;font-size:0.86rem;
+    color:var(--ink-soft);cursor:pointer;touch-action:manipulation;
+  }
+  .vt.active{border-color:var(--green);background:var(--green-bg);color:var(--green-text);}
+
+  .zone-intro{
+    margin:14px 16px 0;font-size:0.8rem;line-height:1.45;color:var(--ink-soft);
+  }
+  .zone{
+    margin:14px 16px 0;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);overflow:hidden;
+  }
+  .zone-head{
+    display:flex;align-items:center;gap:10px;padding:11px 14px;
+    background:var(--green-bg);border-bottom:1px solid var(--line);
+  }
+  .zone-name{font-weight:700;font-size:1.0rem;color:var(--green-text);}
+  .zone-count{
+    font-size:0.76rem;color:var(--ink-soft);margin-left:auto;
+    font-variant-numeric:tabular-nums;
+  }
+  .loaded-btn{
+    border:1px solid var(--green);background:var(--card);color:var(--green-text);
+    border-radius:8px;padding:7px 11px;font-family:inherit;font-weight:700;
+    font-size:0.78rem;cursor:pointer;touch-action:manipulation;
+  }
+  .zone.done .zone-head{background:var(--green);}
+  .zone.done .zone-name,.zone.done .zone-count{color:var(--on-green);}
+  .zone.done .loaded-btn{background:var(--on-green);color:var(--green);}
+  .zrow{
+    display:flex;align-items:baseline;gap:10px;padding:9px 14px;
+    border-top:1px solid var(--line);
+  }
+  .zqty{
+    font-weight:700;min-width:46px;text-align:right;
+    font-variant-numeric:tabular-nums;font-size:0.98rem;
+  }
+  .zname{flex:1;font-size:0.9rem;}
+  .zcode{font-size:0.7rem;color:var(--ink-soft);letter-spacing:0.05em;}
+  .zflag{
+    font-size:0.68rem;color:var(--amber);font-weight:700;letter-spacing:0.03em;
+    white-space:nowrap;
+  }
+  .zone-note{
+    margin:16px 16px 0;border:1px solid var(--amber);border-radius:10px;
+    background:var(--amber-bg);padding:12px 14px;font-size:0.83rem;line-height:1.45;
+  }
+  .zone-note b{color:var(--amber);}
 </style>
 </head>
 <body>
@@ -381,6 +434,11 @@
     <button id="copyReportBtn" class="report-copy">Copy to clipboard</button>
     <span id="copyStatus" class="copy-status"></span>
   </div>
+</div>
+
+<div class="view-toggle" id="viewToggle">
+  <button class="vt active" id="vtSpecies">Whole job</button>
+  <button class="vt" id="vtZones">Pull by zone</button>
 </div>
 
 <div id="flagsSlot"></div>
@@ -543,12 +601,48 @@ var SEED = {
   "wsrcc:hedge-cotoneaster": 58
 };
 
+// Per-zone pull list, totalled from every callout on sheet L102. The zones are
+// the 3x3 grid of the printed field packet, so A2 here is the A2 page there.
+// 19 of the 22 species add up to the sheet's own plant schedule exactly; the
+// three that do not are flagged below rather than quietly adjusted.
+var ZONES = {
+  A1: {place: "Northwest corner", items: {MSB: 3, BP: 4, CS: 3, JH: 6, SBT: 4, SPA: 5, SV: 3, AD: 26}},
+  A2: {place: "North — parking row and storm water", items: {AP: 7, MSB: 3, JH: 6, SPA: 11, SV: 3, APV: 145}},
+  A3: {place: "Northeast corner", items: {PT: 2, MSB: 3, BP: 5, CS: 4, JH: 7, SBG: 3, SPA: 9, SV: 3, APV: 160}},
+  B1: {place: "West frontage", items: {PT: 3, BP: 3}},
+  B2: {place: "The building, plazas and bike rack", items: {AGN: 3, AP: 1, PTE: 18, CS: 22, JS: 14, SBG: 42, SBT: 13, SPA: 7, SV: 4, CAK: 79, DFA: 42}},
+  B3: {place: "East frontage", items: {PT: 3, PTE: 2, BP: 3, CS: 3, RSA: 7, CAK: 44, DFA: 46, A: 10, AD: 14, H: 33}},
+  C1: {place: "Southwest corner", items: {AP: 5, JH: 13, RSA: 7, SPA: 4, SV: 9, DFA: 5, AD: 45, IS: 72}},
+  C2: {place: "South — Duane Drive frontage", items: {AP: 3, PTE: 8, CS: 9, JH: 16, JS: 20, RSA: 15, SBG: 13, SBT: 36, SPA: 26, SV: 6, CAK: 41, DFA: 22, AD: 71, H: 50, IS: 159}},
+  C3: {place: "Southeast corner", items: {AP: 6, JH: 22, RSA: 4, SBG: 3, SBT: 5, SPA: 11, SV: 16, DFA: 17, AD: 96, G: 67, IS: 107}},
+};
+
+var SPECIES = {
+  AGN: "Amur Maple", AP: "Helena Maple", BP: "Paper Birch",
+  MSB: "Siberian Crabapple", PTE: "Columnar Swedish Aspen", PT: "Quaking Aspen",
+  CS: "Red-twig Dogwood", JH: "Creeping Juniper", JS: "Savin Juniper",
+  RSA: "Rugosa Rose", SBG: "Goldmound Spirea", SBT: "Birchleaf Spirea",
+  SPA: "Miss Kim Lilac", SV: "Late Lilac",
+  CAK: "Karl Foerster Reed Grass", DFA: "Gold Crinkled Hair Grass",
+  A: "Goatsbeard", AD: "False Spirea", APV: "Bishop's Weed",
+  G: "Sweet Woodruff", H: "Hosta Patriot", IS: "Wild Iris",
+};
+
+// Where the plan's own callouts disagree with the plan's own schedule.
+var DISCREPANCY = {
+  SPA: "callouts 73 vs schedule 45",
+  AD: "callouts 252 vs schedule 226",
+  SBT: "callouts 58 vs schedule 63",
+};
+
 var LOCAL_KEY = "wolf-field-checklist-v1";
 var DOC_PATH = "checklist/wolf";
 
 var currentJob = "h2s";
+var view = "species";      // "species" | "zones" -- Home2Suites only
 var state = {};
 var notes = {};
+var loaded = {};           // zone -> true once its plants are on the truck
 var dbDoc = null;
 var saveTimer = null;
 var lastSavedAt = 0;
@@ -594,13 +688,15 @@ function setOffline(isOffline, msg){
 }
 
 function payload(){
-  return {counts: state, notes: notes, updatedAt: new Date().toISOString()};
+  return {counts: state, notes: notes, loaded: loaded,
+          updatedAt: new Date().toISOString()};
 }
 
 function applyPayload(p){
   if(!p) return;
   if(p.counts && typeof p.counts === "object") state = Object.assign({}, p.counts);
   if(p.notes && typeof p.notes === "object") notes = Object.assign({}, p.notes);
+  if(p.loaded && typeof p.loaded === "object") loaded = Object.assign({}, p.loaded);
 }
 
 function fillMissingFromSeed(){
@@ -664,6 +760,9 @@ function renderTabs(){
       '</span><span class="tab-progress">' + p.complete + "/" + p.total + " complete</span>";
     btn.addEventListener("click", function(){
       currentJob = jobKey;
+      // The zone pull list only exists for Home2Suites; leaving that tab drops
+      // back to the species view so the toggle never lies about what is shown.
+      if(jobKey !== "h2s") view = "species";
       renderAll();
     });
     tabsEl.appendChild(btn);
@@ -769,10 +868,93 @@ function renderGroups(){
   });
 }
 
+function renderZones(){
+  var container = document.getElementById("groups");
+  container.innerHTML = "";
+
+  var intro = document.createElement("p");
+  intro.className = "zone-intro";
+  intro.textContent = "Everything sheet L102 calls for, totalled per zone of the printed "
+    + "field packet. Load the buggy from one card, drive to that corner. Tap Loaded "
+    + "to grey a zone out once it is on the truck.";
+  container.appendChild(intro);
+
+  Object.keys(ZONES).forEach(function(z){
+    var zone = ZONES[z];
+    var codes = Object.keys(zone.items).sort(function(a, b){
+      return zone.items[b] - zone.items[a];
+    });
+    var units = codes.reduce(function(n, c){ return n + zone.items[c]; }, 0);
+    var isDone = !!(loaded[z]);
+
+    var card = document.createElement("section");
+    card.className = "zone" + (isDone ? " done" : "");
+
+    var head = document.createElement("div");
+    head.className = "zone-head";
+    var nm = document.createElement("span");
+    nm.className = "zone-name";
+    nm.textContent = "Zone " + z;
+    var ct = document.createElement("span");
+    ct.className = "zone-count";
+    ct.textContent = codes.length + " species · " + units + " units";
+    var btn = document.createElement("button");
+    btn.className = "loaded-btn";
+    btn.textContent = isDone ? "Loaded" : "Mark loaded";
+    btn.addEventListener("click", function(){
+      loaded[z] = !loaded[z];
+      scheduleSave();
+      renderZones();
+    });
+    head.appendChild(nm);
+    head.appendChild(ct);
+    head.appendChild(btn);
+    card.appendChild(head);
+
+    var place = document.createElement("div");
+    place.className = "zrow";
+    place.innerHTML = '<span class="zname zcode">' + zone.place + "</span>";
+    card.appendChild(place);
+
+    codes.forEach(function(c){
+      var row = document.createElement("div");
+      row.className = "zrow";
+      var flag = DISCREPANCY[c]
+        ? '<span class="zflag">check plan</span>' : "";
+      row.innerHTML = '<span class="zqty">' + zone.items[c] + "</span>" +
+        '<span class="zname">' + SPECIES[c] + ' <span class="zcode">' + c + "</span></span>" +
+        flag;
+      card.appendChild(row);
+    });
+
+    container.appendChild(card);
+  });
+
+  var note = document.createElement("div");
+  note.className = "zone-note";
+  note.innerHTML = "<b>Three species do not add up.</b> The callouts on the sheet total "
+    + "73 Miss Kim Lilac against a schedule of 45, 252 False Spirea against 226, and 58 "
+    + "Birchleaf Spirea against 63. Every other species matches exactly. The zone numbers "
+    + "above are what the sheet actually draws &mdash; settle the three with Peter Briggs "
+    + "at Corvus before ordering to them.";
+  container.appendChild(note);
+}
+
 function renderAll(){
   renderTabs();
-  renderFlags();
-  renderGroups();
+  var showZones = (currentJob === "h2s");
+  var toggle = document.getElementById("viewToggle");
+  toggle.classList.toggle("on", showZones);
+  document.getElementById("vtSpecies").classList.toggle("active", view === "species");
+  document.getElementById("vtZones").classList.toggle("active", view === "zones");
+
+  if(showZones && view === "zones"){
+    document.getElementById("flagsSlot").innerHTML = "";
+    renderZones();
+  } else {
+    renderFlags();
+    renderGroups();
+  }
 }
 
 function generateReport(){
@@ -815,6 +997,29 @@ function generateReport(){
     }
     lines.push("");
   });
+
+  lines.push("HOME2SUITES -- PULL LIST BY ZONE (from sheet L102)");
+  Object.keys(ZONES).forEach(function(z){
+    var zone = ZONES[z];
+    var codes = Object.keys(zone.items).sort(function(a, b){
+      return zone.items[b] - zone.items[a];
+    });
+    var units = codes.reduce(function(n, c){ return n + zone.items[c]; }, 0);
+    lines.push("Zone " + z + " -- " + zone.place + " (" + units + " units)" +
+               (loaded[z] ? " [LOADED]" : ""));
+    codes.forEach(function(c){
+      lines.push("  " + zone.items[c] + " x " + SPECIES[c] + " (" + c + ")" +
+                 (DISCREPANCY[c] ? "  ** " + DISCREPANCY[c] + " **" : ""));
+    });
+  });
+  lines.push("");
+  lines.push("NOTE: three species do not reconcile against the sheet's own schedule --");
+  Object.keys(DISCREPANCY).forEach(function(c){
+    lines.push("  " + SPECIES[c] + ": " + DISCREPANCY[c]);
+  });
+  lines.push("Every other species matches exactly. Confirm with Corvus Design before ordering.");
+  lines.push("");
+
   return lines.join("\n");
 }
 
@@ -883,6 +1088,13 @@ function init(){
   var local = readLocal();
   applyPayload(local);
   fillMissingFromSeed();
+  document.getElementById("vtSpecies").addEventListener("click", function(){
+    view = "species"; renderAll();
+  });
+  document.getElementById("vtZones").addEventListener("click", function(){
+    view = "zones"; renderAll();
+  });
+
   renderAll();
   wireReportUI();
   setSaveNote(local ? "Counts loaded from this device." : "Starting from the September 8 baseline.");
