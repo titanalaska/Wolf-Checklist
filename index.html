@@ -565,6 +565,28 @@
   .loc-msg{
     padding:10px 14px;font-size:0.8rem;line-height:1.45;color:var(--ink-soft);
   }
+
+  /* Build-zone banner. One per zone, in the precon's order. */
+  .zonebar{
+    margin:22px 16px 0;border-radius:10px;padding:12px 14px;
+    background:var(--green);color:var(--on-green);
+  }
+  .zb-top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+  .zb-tag{
+    font-weight:700;font-size:0.74rem;letter-spacing:0.06em;
+    border:1px solid var(--on-green);border-radius:5px;padding:2px 6px;
+  }
+  .zb-name{font-weight:700;font-size:1.06rem;}
+  .zb-crew{
+    margin-left:auto;font-size:0.78rem;font-weight:700;opacity:0.9;
+  }
+  .zb-sub{
+    font-size:0.78rem;margin-top:6px;opacity:0.9;
+    font-variant-numeric:tabular-nums;
+  }
+  .zb-note{font-size:0.79rem;line-height:1.45;margin-top:7px;opacity:0.85;}
+  /* The frontage is built last and carries the most work -- flag it amber. */
+  .zonebar-z4{background:var(--amber);}
 </style>
 </head>
 <body>
@@ -766,10 +788,15 @@ var SEED = {
 // the site. Injected from L102-beds.json; do not hand-edit.
 // 19 of the 22 species total to the sheet's own plant schedule exactly; the
 // three that do not are flagged rather than quietly adjusted.
-var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7},"lat":61.5763628,"lon":-149.3941235},{"bed":"B02","where":"North-east corner","units":2,"items":{"PT":2},"lat":61.5763507,"lon":-149.3928477},{"bed":"B03","where":"North-west corner","units":50,"items":{"AD":26,"JH":6,"SPA":5,"SBT":4,"MSB":3,"CS":3,"SV":3},"lat":61.5762718,"lon":-149.3944472},{"bed":"B04","where":"North-east corner","units":8,"items":{"CS":4,"SBG":3,"MSB":1},"lat":61.576259,"lon":-149.3928378},{"bed":"B05","where":"North-east corner","units":5,"items":{"BP":5},"lat":61.5762116,"lon":-149.3928431},{"bed":"B06","where":"North-east corner","units":181,"items":{"APV":160,"SPA":9,"JH":7,"SV":3,"MSB":2},"lat":61.5761805,"lon":-149.3931776},{"bed":"B07","where":"North side","units":168,"items":{"APV":145,"SPA":11,"JH":6,"MSB":3,"SV":3},"lat":61.5761691,"lon":-149.3941442},{"bed":"B08","where":"North-west corner","units":4,"items":{"BP":4},"lat":61.5761823,"lon":-149.3945231},{"bed":"B09","where":"By the building","units":59,"items":{"CAK":21,"DFA":12,"SBT":7,"PTE":6,"SBG":6,"CS":4,"JS":3},"lat":61.5759853,"lon":-149.3937614},{"bed":"B10","where":"By the building","units":25,"items":{"DFA":10,"SPA":5,"CAK":5,"PTE":3,"SV":2},"lat":61.5760238,"lon":-149.3935151},{"bed":"B11","where":"By the building","units":22,"items":{"CAK":19,"PTE":3},"lat":61.5760267,"lon":-149.3936501},{"bed":"B12","where":"By the building","units":1,"items":{"CS":1},"lat":61.5760285,"lon":-149.3936409},{"bed":"B13","where":"East side","units":65,"items":{"H":33,"CAK":10,"A":10,"RSA":7,"CS":3,"PTE":2},"lat":61.5759577,"lon":-149.39314},{"bed":"B14","where":"West side","units":3,"items":{"PT":3},"lat":61.5759974,"lon":-149.3945224},{"bed":"B15","where":"East side","units":3,"items":{"PT":3},"lat":61.5759284,"lon":-149.3928516},{"bed":"B16","where":"By the building","units":15,"items":{"CAK":8,"DFA":7},"lat":61.5759152,"lon":-149.3935151},{"bed":"B17","where":"By the building","units":18,"items":{"SBG":18},"lat":61.5759023,"lon":-149.394079},{"bed":"B18","where":"By the building","units":1,"items":{"SV":1},"lat":61.5758913,"lon":-149.3940698},{"bed":"B19","where":"By the building","units":16,"items":{"CAK":7,"JS":3,"SBG":3,"CS":2,"PTE":1},"lat":61.5758649,"lon":-149.3937614},{"bed":"B20","where":"East side","units":63,"items":{"DFA":38,"CAK":25},"lat":61.5758744,"lon":-149.3933157},{"bed":"B21","where":"West side","units":3,"items":{"BP":3},"lat":61.57584,"lon":-149.3945231},{"bed":"B22","where":"By the building","units":7,"items":{"DFA":4,"CAK":3},"lat":61.5758022,"lon":-149.394079},{"bed":"B23","where":"By the building","units":18,"items":{"DFA":9,"CS":8,"AP":1},"lat":61.5757614,"lon":-149.394181},{"bed":"B24","where":"East side","units":3,"items":{"BP":3},"lat":61.5757695,"lon":-149.3928546},{"bed":"B25","where":"By the building","units":23,"items":{"CAK":12,"SBG":8,"SBT":3},"lat":61.5757211,"lon":-149.3937568},{"bed":"B26","where":"East side","units":31,"items":{"AD":14,"CAK":9,"DFA":8},"lat":61.5757016,"lon":-149.3933111},{"bed":"B27","where":"By the building","units":34,"items":{"DFA":9,"JS":8,"SBG":5,"CAK":4,"AGN":3,"SBT":3,"SPA":2},"lat":61.5756539,"lon":-149.3940843},{"bed":"B28","where":"By the building","units":39,"items":{"CAK":20,"CS":7,"SBT":6,"PTE":4,"SBG":2},"lat":61.5756275,"lon":-149.3937568},{"bed":"B29","where":"By the building","units":1,"items":{"SV":1},"lat":61.5756389,"lon":-149.3940721},{"bed":"B30","where":"South side","units":18,"items":{"RSA":11,"SPA":6,"PTE":1},"lat":61.5756154,"lon":-149.3935535},{"bed":"B31","where":"South-east corner","units":11,"items":{"SV":5,"AP":3,"SPA":3},"lat":61.5755827,"lon":-149.39285},{"bed":"B32","where":"South side","units":1,"items":{"SV":1},"lat":61.5755927,"lon":-149.393545},{"bed":"B33","where":"South-west corner","units":12,"items":{"SV":6,"SPA":4,"AP":2},"lat":61.5755556,"lon":-149.3945331},{"bed":"B34","where":"South side","units":39,"items":{"CS":9,"CAK":8,"SBT":5,"PTE":4,"JS":4,"RSA":4,"SPA":3,"SV":2},"lat":61.5755072,"lon":-149.3935543},{"bed":"B35","where":"South side","units":29,"items":{"CAK":13,"SBT":6,"JS":5,"SPA":3,"PTE":2},"lat":61.5754686,"lon":-149.3937391},{"bed":"B36","where":"South-east corner","units":198,"items":{"G":67,"IS":57,"AD":50,"DFA":10,"JH":7,"SBG":3,"SV":3,"AP":1},"lat":61.5754356,"lon":-149.3931699},{"bed":"B37","where":"South-east corner","units":145,"items":{"IS":50,"AD":46,"JH":15,"SPA":8,"SV":8,"DFA":7,"SBT":5,"RSA":4,"AP":2},"lat":61.5754209,"lon":-149.3928163},{"bed":"B38","where":"South side","units":265,"items":{"IS":128,"AD":50,"H":34,"JH":16,"SBT":10,"SBG":8,"SPA":8,"DFA":8,"AP":3},"lat":61.5754129,"lon":-149.3941526},{"bed":"B39","where":"South side","units":1,"items":{"SV":1},"lat":61.5754547,"lon":-149.3937483},{"bed":"B40","where":"South-west corner","units":148,"items":{"IS":72,"AD":45,"JH":13,"RSA":7,"DFA":5,"AP":3,"SV":3},"lat":61.5754004,"lon":-149.3945339},{"bed":"B41","where":"South side","units":39,"items":{"AD":21,"SBG":5,"DFA":5,"JS":3,"SPA":3,"SBT":2},"lat":61.5753123,"lon":-149.3939232},{"bed":"B42","where":"South side","units":2,"items":{"PTE":2},"lat":61.5753417,"lon":-149.3933563},{"bed":"B43","where":"South side","units":20,"items":{"JS":8,"SBT":7,"SPA":3,"SV":2},"lat":61.5753153,"lon":-149.3934522},{"bed":"B44","where":"South side","units":47,"items":{"IS":31,"H":16},"lat":61.5752672,"lon":-149.3939002}];
+var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7},"lat":61.5763628,"lon":-149.3941235,"zone":"Z1","seq":1},{"bed":"B02","where":"North-east corner","units":2,"items":{"PT":2},"lat":61.5763507,"lon":-149.3928477,"zone":"Z1","seq":2},{"bed":"B03","where":"North-west corner","units":50,"items":{"AD":26,"JH":6,"SPA":5,"SBT":4,"MSB":3,"CS":3,"SV":3},"lat":61.5762718,"lon":-149.3944472,"zone":"Z1","seq":3},{"bed":"B04","where":"North-east corner","units":8,"items":{"CS":4,"SBG":3,"MSB":1},"lat":61.576259,"lon":-149.3928378,"zone":"Z1","seq":4},{"bed":"B05","where":"North-east corner","units":5,"items":{"BP":5},"lat":61.5762116,"lon":-149.3928431,"zone":"Z1","seq":5},{"bed":"B08","where":"North-west corner","units":4,"items":{"BP":4},"lat":61.5761823,"lon":-149.3945231,"zone":"Z1","seq":6},{"bed":"B06","where":"North-east corner","units":181,"items":{"APV":160,"SPA":9,"JH":7,"SV":3,"MSB":2},"lat":61.5761805,"lon":-149.3931776,"zone":"Z1","seq":7},{"bed":"B07","where":"North side","units":168,"items":{"APV":145,"SPA":11,"JH":6,"MSB":3,"SV":3},"lat":61.5761691,"lon":-149.3941442,"zone":"Z1","seq":8},{"bed":"B12","where":"By the building","units":1,"items":{"CS":1},"lat":61.5760285,"lon":-149.3936409,"zone":"Z2","seq":9},{"bed":"B11","where":"By the building","units":22,"items":{"CAK":19,"PTE":3},"lat":61.5760267,"lon":-149.3936501,"zone":"Z2","seq":10},{"bed":"B10","where":"By the building","units":25,"items":{"DFA":10,"SPA":5,"CAK":5,"PTE":3,"SV":2},"lat":61.5760238,"lon":-149.3935151,"zone":"Z2","seq":11},{"bed":"B13","where":"East side","units":65,"items":{"H":33,"CAK":10,"A":10,"RSA":7,"CS":3,"PTE":2},"lat":61.5759577,"lon":-149.39314,"zone":"Z2","seq":12},{"bed":"B15","where":"East side","units":3,"items":{"PT":3},"lat":61.5759284,"lon":-149.3928516,"zone":"Z2","seq":13},{"bed":"B16","where":"By the building","units":15,"items":{"CAK":8,"DFA":7},"lat":61.5759152,"lon":-149.3935151,"zone":"Z2","seq":14},{"bed":"B20","where":"East side","units":63,"items":{"DFA":38,"CAK":25},"lat":61.5758744,"lon":-149.3933157,"zone":"Z2","seq":15},{"bed":"B24","where":"East side","units":3,"items":{"BP":3},"lat":61.5757695,"lon":-149.3928546,"zone":"Z2","seq":16},{"bed":"B26","where":"East side","units":31,"items":{"AD":14,"CAK":9,"DFA":8},"lat":61.5757016,"lon":-149.3933111,"zone":"Z2","seq":17},{"bed":"B30","where":"South side","units":18,"items":{"RSA":11,"SPA":6,"PTE":1},"lat":61.5756154,"lon":-149.3935535,"zone":"Z2","seq":18},{"bed":"B32","where":"South side","units":1,"items":{"SV":1},"lat":61.5755927,"lon":-149.393545,"zone":"Z2","seq":19},{"bed":"B31","where":"South-east corner","units":11,"items":{"SV":5,"AP":3,"SPA":3},"lat":61.5755827,"lon":-149.39285,"zone":"Z2","seq":20},{"bed":"B34","where":"South side","units":39,"items":{"CS":9,"CAK":8,"SBT":5,"PTE":4,"JS":4,"RSA":4,"SPA":3,"SV":2},"lat":61.5755072,"lon":-149.3935543,"zone":"Z2","seq":21},{"bed":"B14","where":"West side","units":3,"items":{"PT":3},"lat":61.5759974,"lon":-149.3945224,"zone":"Z3","seq":22},{"bed":"B09","where":"By the building","units":59,"items":{"CAK":21,"DFA":12,"SBT":7,"PTE":6,"SBG":6,"CS":4,"JS":3},"lat":61.5759853,"lon":-149.3937614,"zone":"Z3","seq":23},{"bed":"B17","where":"By the building","units":18,"items":{"SBG":18},"lat":61.5759023,"lon":-149.394079,"zone":"Z3","seq":24},{"bed":"B18","where":"By the building","units":1,"items":{"SV":1},"lat":61.5758913,"lon":-149.3940698,"zone":"Z3","seq":25},{"bed":"B19","where":"By the building","units":16,"items":{"CAK":7,"JS":3,"SBG":3,"CS":2,"PTE":1},"lat":61.5758649,"lon":-149.3937614,"zone":"Z3","seq":26},{"bed":"B21","where":"West side","units":3,"items":{"BP":3},"lat":61.57584,"lon":-149.3945231,"zone":"Z3","seq":27},{"bed":"B22","where":"By the building","units":7,"items":{"DFA":4,"CAK":3},"lat":61.5758022,"lon":-149.394079,"zone":"Z3","seq":28},{"bed":"B23","where":"By the building","units":18,"items":{"DFA":9,"CS":8,"AP":1},"lat":61.5757614,"lon":-149.394181,"zone":"Z3","seq":29},{"bed":"B25","where":"By the building","units":23,"items":{"CAK":12,"SBG":8,"SBT":3},"lat":61.5757211,"lon":-149.3937568,"zone":"Z3","seq":30},{"bed":"B27","where":"By the building","units":34,"items":{"DFA":9,"JS":8,"SBG":5,"CAK":4,"AGN":3,"SBT":3,"SPA":2},"lat":61.5756539,"lon":-149.3940843,"zone":"Z3","seq":31},{"bed":"B29","where":"By the building","units":1,"items":{"SV":1},"lat":61.5756389,"lon":-149.3940721,"zone":"Z3","seq":32},{"bed":"B28","where":"By the building","units":39,"items":{"CAK":20,"CS":7,"SBT":6,"PTE":4,"SBG":2},"lat":61.5756275,"lon":-149.3937568,"zone":"Z3","seq":33},{"bed":"B33","where":"South-west corner","units":12,"items":{"SV":6,"SPA":4,"AP":2},"lat":61.5755556,"lon":-149.3945331,"zone":"Z3","seq":34},{"bed":"B35","where":"South side","units":29,"items":{"CAK":13,"SBT":6,"JS":5,"SPA":3,"PTE":2},"lat":61.5754686,"lon":-149.3937391,"zone":"Z4","seq":35},{"bed":"B39","where":"South side","units":1,"items":{"SV":1},"lat":61.5754547,"lon":-149.3937483,"zone":"Z4","seq":36},{"bed":"B36","where":"South-east corner","units":198,"items":{"G":67,"IS":57,"AD":50,"DFA":10,"JH":7,"SBG":3,"SV":3,"AP":1},"lat":61.5754356,"lon":-149.3931699,"zone":"Z4","seq":37},{"bed":"B37","where":"South-east corner","units":145,"items":{"IS":50,"AD":46,"JH":15,"SPA":8,"SV":8,"DFA":7,"SBT":5,"RSA":4,"AP":2},"lat":61.5754209,"lon":-149.3928163,"zone":"Z4","seq":38},{"bed":"B38","where":"South side","units":265,"items":{"IS":128,"AD":50,"H":34,"JH":16,"SBT":10,"SBG":8,"SPA":8,"DFA":8,"AP":3},"lat":61.5754129,"lon":-149.3941526,"zone":"Z4","seq":39},{"bed":"B40","where":"South-west corner","units":148,"items":{"IS":72,"AD":45,"JH":13,"RSA":7,"DFA":5,"AP":3,"SV":3},"lat":61.5754004,"lon":-149.3945339,"zone":"Z4","seq":40},{"bed":"B42","where":"South side","units":2,"items":{"PTE":2},"lat":61.5753417,"lon":-149.3933563,"zone":"Z4","seq":41},{"bed":"B43","where":"South side","units":20,"items":{"JS":8,"SBT":7,"SPA":3,"SV":2},"lat":61.5753153,"lon":-149.3934522,"zone":"Z4","seq":42},{"bed":"B41","where":"South side","units":39,"items":{"AD":21,"SBG":5,"DFA":5,"JS":3,"SPA":3,"SBT":2},"lat":61.5753123,"lon":-149.3939232,"zone":"Z4","seq":43},{"bed":"B44","where":"South side","units":47,"items":{"IS":31,"H":16},"lat":61.5752672,"lon":-149.3939002,"zone":"Z4","seq":44}];
 
 // On-centre spacing, straight off the schedule. Trees and shrubs are placed
 // individually on the plan, so only the massed material carries a spacing.
+
+// Build order from the precon deck and the field card. Work away from
+// Duane Drive so no truck ever crosses a finished bed.
+var ZONES = {"Z1":{"name":"North yard","crew":"Both crews","order":1,"note":"Farthest from Duane Dr. Both crews open it together."},"Z2":{"name":"East side","crew":"Crew A","order":2,"note":"North to south. Narrow corridor - stage ahead of the crew, not beside it."},"Z3":{"name":"West side","crew":"Crew B","order":3,"note":"North to south. Gated on the laydown and trailers clearing."},"Z4":{"name":"South frontage","crew":"Both crews, last","order":4,"note":"Walk out to the road, never back through the job. Keep the gravel access corridor open to Day 10."}};
+
 var SPACING = {
   CAK: '18" OC', DFA: '18" OC',
   A: '24" OC', AD: '18" OC',
@@ -1312,7 +1339,27 @@ function renderBeds(){
   locWrap.appendChild(locOut);
   container.appendChild(locWrap);
 
+  var lastZone = null;
   BEDS.forEach(function(b){
+    if(b.zone !== lastZone){
+      lastZone = b.zone;
+      var z = ZONES[b.zone];
+      var zb = document.createElement("div");
+      zb.className = "zonebar zonebar-" + b.zone.toLowerCase();
+      var zBeds = BEDS.filter(function(x){ return x.zone === b.zone; });
+      var zUnits = zBeds.reduce(function(n, x){ return n + x.units; }, 0);
+      var zStake = zBeds.reduce(function(n, x){
+        return n + Object.keys(x.items).reduce(function(m, c){
+          return m + (isStaked(c) ? x.items[c] : 0); }, 0); }, 0);
+      zb.innerHTML =
+        '<div class="zb-top"><span class="zb-tag">' + b.zone + "</span>" +
+        '<span class="zb-name">' + z.name + "</span>" +
+        '<span class="zb-crew">' + z.crew + "</span></div>" +
+        '<div class="zb-sub">' + zBeds.length + " beds &middot; " + zStake +
+          " to stake &middot; " + zUnits + " units</div>" +
+        '<div class="zb-note">' + z.note + "</div>";
+      container.appendChild(zb);
+    }
     var split = bedSplit(b.items);
     var nStake = split.stake.reduce(function(n, c){ return n + b.items[c]; }, 0);
     var isStakedDone = !!staked[b.bed];
@@ -1328,7 +1375,8 @@ function renderBeds(){
       '<span class="bed-no">' + b.bed.replace("B", "") + "</span>" +
       '<span class="zone-id">' +
         '<span class="zone-name">Bed ' + b.bed.replace("B", "") + "</span>" +
-        '<span class="zone-place">' + b.where + "</span>" +
+        '<span class="zone-place">' + b.where + " &middot; " + b.zone +
+          " " + ZONES[b.zone].crew + "</span>" +
         '<span class="zone-count">' + nStake + " to stake &middot; " +
           b.units + " units total" +
           (myPos ? " &middot; " + Math.round(distFt(myPos.lat, myPos.lon, b.lat, b.lon)) +
@@ -1484,10 +1532,17 @@ function generateReport(){
   });
 
   lines.push("HOME2SUITES -- PULL LIST BY BED (from sheet L102)");
-  lines.push("Beds numbered north to south. " + BEDS.length + " beds, " +
+  lines.push("In build order: north yard, east (Crew A), west (Crew B), frontage last. " + BEDS.length + " beds, " +
              BEDS.reduce(function(n, b){ return n + b.units; }, 0) + " units.");
   lines.push("");
+  var rz = null;
   BEDS.forEach(function(b){
+    if(b.zone !== rz){
+      rz = b.zone;
+      lines.push("");
+      lines.push("== " + b.zone + " " + ZONES[b.zone].name.toUpperCase() +
+                 " -- " + ZONES[b.zone].crew + " ==");
+    }
     lines.push("Bed " + b.bed.replace("B", "") + " -- " + b.where +
                " (" + b.units + " units)" +
                (staked[b.bed] ? " [STAKED]" : "") +
