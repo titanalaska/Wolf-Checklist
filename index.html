@@ -536,8 +536,13 @@
     display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
     padding:6px 0;border-top:1px solid var(--line);font-size:0.83rem;
   }
-  .fit-name{flex:1;min-width:120px;}
+  .fit-name{flex:1;min-width:110px;}
   .fit-num{color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .fit-need{
+    font-variant-numeric:tabular-nums;font-weight:700;min-width:66px;text-align:right;
+  }
+  .fit-total{border-top:2px solid var(--line);font-weight:700;}
+  .fit-total .fit-name{color:var(--ink);}
   .fit-ok{color:var(--green-text);font-weight:700;}
   .fit-off{color:var(--amber);font-weight:700;}
 
@@ -1158,20 +1163,36 @@ function renderFit(bed, massCodes){
   var L = parseFloat(m.l), W = parseFloat(m.w);
   var area = (L > 0 && W > 0) ? L * W : null;
 
+  // Each species needs its own area at its own spacing. They share the bed, so
+  // the total of those areas is what has to fit -- not any one of them alone.
+  var needTotal = 0;
   var rows = massCodes.map(function(c){
     var oc = ocOf(c);
-    if(oc === null || area === null) return "";
-    var fits = plantsForArea(oc, area);
-    var want = bed.items[c];
-    var d = fits - want;
-    var verdict = d === 0 ? "exact"
-      : d > 0 ? ("room for " + d + " more")
-              : (Math.abs(d) + " too many for this size");
-    var cls = Math.abs(d) <= Math.max(2, want * 0.1) ? "fit-ok" : "fit-off";
-    return '<div class="fit-row"><span class="fit-name">' + SPECIES[c] +
-      '</span><span class="fit-num">' + want + " planned &middot; " + fits +
-      ' fit</span><span class="' + cls + '">' + verdict + "</span></div>";
+    if(oc === null) return "";
+    var need = bed.items[c] * sqftPerPlant(oc);
+    needTotal += need;
+    return '<div class="fit-row"><span class="fit-name">' + SPECIES[c] + "</span>" +
+      '<span class="fit-num">' + bed.items[c] + ' at ' + oc + '" OC</span>' +
+      '<span class="fit-need">' + Math.round(need) + " sq ft</span></div>";
   }).join("");
+
+  var total = '<div class="fit-row fit-total"><span class="fit-name">' +
+    "Plan needs</span><span class=\"fit-num\"></span>" +
+    '<span class="fit-need">' + Math.round(needTotal) + " sq ft</span></div>";
+
+  var verdict = "";
+  if(area !== null){
+    var d = area - needTotal;
+    var pct = needTotal > 0 ? Math.abs(d) / needTotal * 100 : 0;
+    var cls = pct <= 12 ? "fit-ok" : "fit-off";
+    var word = Math.abs(d) < 2 ? "matches the plan"
+      : d > 0 ? (Math.round(d) + " sq ft spare")
+              : (Math.round(-d) + " sq ft short \u2014 it will not all fit");
+    verdict = '<div class="fit-row fit-total"><span class="fit-name">' +
+      "You measured</span>" +
+      '<span class="fit-num">' + Math.round(area) + " sq ft</span>" +
+      '<span class="' + cls + '">' + word + "</span></div>";
+  }
 
   return '<div class="fit-box">' +
     '<div class="fit-head">Check the bed against the count</div>' +
@@ -1180,78 +1201,12 @@ function renderFit(bed, massCodes){
         'data-bed="' + bed.bed + '" data-dim="l" value="' + (m.l || "") + '"> ft</label>' +
       '<label>Width <input type="number" inputmode="decimal" min="0" step="0.5" ' +
         'data-bed="' + bed.bed + '" data-dim="w" value="' + (m.w || "") + '"> ft</label>' +
-      (area ? '<span class="fit-area">' + Math.round(area) + " sq ft</span>" : "") +
     "</div>" +
-    (area ? rows : '<div class="fit-hint">Pace the bed out and put the two ' +
-      "numbers in &mdash; it will tell you whether the plan's count actually fits.</div>") +
+    rows + total + verdict +
+    (area === null ? '<div class="fit-hint">Pace the bed and put the two numbers ' +
+      "in. Beds are rarely a clean rectangle &mdash; use the average length and " +
+      "width, it only has to be close.</div>" : "") +
     "</div>";
-}
-
-
-// Bed coordinates come from aligning the plan's property line to the borough's
-// parcel polygon -- see tools/georeference.py. Two caveats are surfaced in the
-// UI rather than hidden: a bed's position is taken from its CALLOUT, which sits
-// beside the bed on the end of a leader line, and phone GPS is good to maybe
-// 10-15 ft. So this narrows it to a short list; the picture on the card settles
-// which one you are actually standing in.
-var myPos = null;
-
-function distFt(lat1, lon1, lat2, lon2){
-  var mLat = 111132.0, mLon = 111320.0 * Math.cos(lat1 * Math.PI / 180);
-  var dx = (lon2 - lon1) * mLon, dy = (lat2 - lat1) * mLat;
-  return Math.sqrt(dx * dx + dy * dy) * 3.280839895;
-}
-
-function nearestBeds(n){
-  if(!myPos) return [];
-  return BEDS.filter(function(b){ return b.lat; })
-    .map(function(b){ return {b: b, d: distFt(myPos.lat, myPos.lon, b.lat, b.lon)}; })
-    .sort(function(x, y){ return x.d - y.d; })
-    .slice(0, n);
-}
-
-function locateMe(btn, panel){
-  if(!navigator.geolocation){
-    panel.innerHTML = '<div class="loc-msg">This phone will not give a position.</div>';
-    return;
-  }
-  btn.disabled = true;
-  btn.textContent = "Finding you...";
-  navigator.geolocation.getCurrentPosition(function(pos){
-    myPos = {lat: pos.coords.latitude, lon: pos.coords.longitude,
-             acc: pos.coords.accuracy * 3.280839895};
-    btn.disabled = false;
-    renderBeds();
-    var top = nearestBeds(1)[0];
-    if(top){
-      var card = document.getElementById("bed-" + top.b.bed);
-      if(card){ card.scrollIntoView({block: "start"}); window.scrollBy(0, -60); }
-    }
-  }, function(err){
-    btn.disabled = false;
-    btn.textContent = "Where am I?";
-    panel.innerHTML = '<div class="loc-msg">' +
-      (err.code === 1 ? "Location is blocked. Allow it for this site in the browser."
-                      : "Could not get a position out here.") + "</div>";
-  }, {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000});
-}
-
-function locationPanel(){
-  if(!myPos) return "";
-  var near = nearestBeds(3);
-  var rows = near.map(function(n, i){
-    return '<div class="loc-row' + (i === 0 ? " first" : "") + '">' +
-      '<span class="loc-bed">Bed ' + n.b.bed.replace("B", "") + "</span>" +
-      '<span class="loc-where">' + n.b.where + "</span>" +
-      '<span class="loc-d">' + Math.round(n.d) + " ft</span></div>";
-  }).join("");
-  var warn = "";
-  if(near.length > 1 && (near[1].d - near[0].d) < myPos.acc){
-    warn = '<div class="loc-msg">Those top two are closer together than your GPS ' +
-           "is accurate. Check the picture on the card before you trust it.</div>";
-  }
-  return '<div class="loc-panel"><div class="loc-head">Nearest beds &mdash; GPS good to about ' +
-    Math.round(myPos.acc) + " ft</div>" + rows + warn + "</div>";
 }
 
 function renderBeds(){
