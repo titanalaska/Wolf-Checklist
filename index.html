@@ -370,12 +370,17 @@
     background:var(--card);overflow:hidden;
   }
   .zone-head{
-    display:flex;align-items:center;gap:10px;padding:11px 14px;
+    display:flex;align-items:center;gap:12px;padding:11px 14px;
     background:var(--green-bg);border-bottom:1px solid var(--line);
   }
-  .zone-name{font-weight:700;font-size:1.0rem;color:var(--green-text);}
+  .zone-loc{flex-shrink:0;display:block;}
+  .zone-id{flex:1;min-width:0;}
+  .zone-name{font-weight:700;font-size:1.0rem;color:var(--green-text);display:block;}
+  .zone-place{
+    font-size:0.76rem;color:var(--ink-soft);display:block;margin-top:2px;
+  }
   .zone-count{
-    font-size:0.76rem;color:var(--ink-soft);margin-left:auto;
+    font-size:0.74rem;color:var(--ink-soft);display:block;margin-top:2px;
     font-variant-numeric:tabular-nums;
   }
   .loaded-btn{
@@ -868,15 +873,47 @@ function renderGroups(){
   });
 }
 
+// A thumbnail of the same 3x3 grid as the printed packet, with this zone filled.
+// North is up on sheet L102 (checked against its compass), the building sits in
+// the middle cell, and Duane Drive runs along the south edge -- which is enough
+// to place yourself without unrolling the big sheet.
+function zoneLocator(z){
+  var row = "ABC".indexOf(z.charAt(0));
+  var col = parseInt(z.charAt(1), 10) - 1;
+  var cells = "";
+  for(var r = 0; r < 3; r++){
+    for(var c = 0; c < 3; c++){
+      var on = (r === row && c === col);
+      cells += '<rect x="' + (3 + c * 22) + '" y="' + (17 + r * 22) + '" width="20" height="20"'
+        + ' fill="' + (on ? "var(--green)" : "var(--card)") + '"'
+        + ' stroke="var(--line)" stroke-width="1"/>';
+    }
+  }
+  // Building footprint hint, centred on B2.
+  var bldg = '<rect x="30" y="44" width="12" height="12" fill="none"'
+    + ' stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="2 2"/>';
+  return '<svg class="zone-loc" viewBox="0 0 72 96" width="58" height="77" role="img"'
+    + ' aria-label="Zone ' + z + ' position, north at top">'
+    + '<text x="36" y="8" text-anchor="middle" font-size="9" font-weight="700"'
+    + ' fill="var(--ink-soft)">N</text>'
+    + '<path d="M36 9 l3.5 6 h-7 z" fill="var(--ink-soft)"/>'
+    + cells + bldg
+    + '<text x="36" y="92" text-anchor="middle" font-size="7.5"'
+    + ' fill="var(--ink-soft)">Duane Dr</text>'
+    + "</svg>";
+}
+
 function renderZones(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
 
   var intro = document.createElement("p");
   intro.className = "zone-intro";
-  intro.textContent = "Everything sheet L102 calls for, totalled per zone of the printed "
-    + "field packet. Load the buggy from one card, drive to that corner. Tap Loaded "
-    + "to grey a zone out once it is on the truck.";
+  intro.innerHTML = "Everything sheet L102 calls for, totalled per zone of the printed "
+    + "field packet &mdash; <b>A2 here is the A2 page there</b>. North is up: "
+    + "<b>A</b> row is the north side (storm water, parking row), <b>C</b> row fronts "
+    + "Duane Drive, column <b>1</b> is west and <b>3</b> is east. The building is B2. "
+    + "Load the buggy from one card, drive to that corner, tap Mark loaded.";
   container.appendChild(intro);
 
   Object.keys(ZONES).forEach(function(z){
@@ -892,12 +929,13 @@ function renderZones(){
 
     var head = document.createElement("div");
     head.className = "zone-head";
-    var nm = document.createElement("span");
-    nm.className = "zone-name";
-    nm.textContent = "Zone " + z;
-    var ct = document.createElement("span");
-    ct.className = "zone-count";
-    ct.textContent = codes.length + " species · " + units + " units";
+    head.innerHTML = zoneLocator(z) +
+      '<span class="zone-id">' +
+        '<span class="zone-name">Zone ' + z + "</span>" +
+        '<span class="zone-place">' + zone.place + "</span>" +
+        '<span class="zone-count">' + codes.length + " species &middot; " + units + " units</span>" +
+      "</span>";
+
     var btn = document.createElement("button");
     btn.className = "loaded-btn";
     btn.textContent = isDone ? "Loaded" : "Mark loaded";
@@ -906,15 +944,8 @@ function renderZones(){
       scheduleSave();
       renderZones();
     });
-    head.appendChild(nm);
-    head.appendChild(ct);
     head.appendChild(btn);
     card.appendChild(head);
-
-    var place = document.createElement("div");
-    place.className = "zrow";
-    place.innerHTML = '<span class="zname zcode">' + zone.place + "</span>";
-    card.appendChild(place);
 
     codes.forEach(function(c){
       var row = document.createElement("div");
@@ -999,6 +1030,9 @@ function generateReport(){
   });
 
   lines.push("HOME2SUITES -- PULL LIST BY ZONE (from sheet L102)");
+  lines.push("Zones are the 3x3 grid of the printed field packet. North is up:");
+  lines.push("A row = north side, C row = Duane Drive frontage, 1 = west, 3 = east.");
+  lines.push("The building is B2.");
   Object.keys(ZONES).forEach(function(z){
     var zone = ZONES[z];
     var codes = Object.keys(zone.items).sort(function(a, b){
