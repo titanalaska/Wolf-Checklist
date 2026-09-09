@@ -493,6 +493,53 @@
   }
   .zone.partdone{border-color:var(--green);}
   .zone.partdone .zone-head{background:var(--green-bg);}
+
+  .how-box{
+    margin:14px 16px 0;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);overflow:hidden;
+  }
+  .how-head{
+    padding:11px 14px;font-weight:700;font-size:0.95rem;
+    background:var(--gray-bg);border-bottom:1px solid var(--line);
+  }
+  .how-list{margin:0;padding:12px 14px 12px 32px;}
+  .how-list li{font-size:0.87rem;line-height:1.5;margin-bottom:9px;}
+  .how-list li:last-child{margin-bottom:0;}
+  .how-note{
+    padding:11px 14px;border-top:1px solid var(--line);
+    background:var(--amber-bg);font-size:0.82rem;line-height:1.45;
+  }
+
+  .fit-box{
+    border-top:1px solid var(--line);background:var(--bg);padding:11px 14px 13px;
+  }
+  .fit-head{
+    font-size:0.76rem;font-weight:700;letter-spacing:0.03em;
+    text-transform:uppercase;color:var(--ink-soft);margin-bottom:9px;
+  }
+  .fit-inputs{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;
+  }
+  .fit-inputs label{font-size:0.82rem;color:var(--ink-soft);}
+  .fit-inputs input{
+    width:66px;padding:7px 8px;margin:0 3px;border:1px solid var(--line);
+    border-radius:7px;background:var(--card);color:var(--ink);
+    font-family:inherit;font-size:0.95rem;font-weight:700;
+    font-variant-numeric:tabular-nums;
+  }
+  .fit-area{
+    font-weight:700;font-size:0.86rem;color:var(--green-text);
+    font-variant-numeric:tabular-nums;
+  }
+  .fit-hint{font-size:0.8rem;color:var(--ink-soft);line-height:1.45;}
+  .fit-row{
+    display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+    padding:6px 0;border-top:1px solid var(--line);font-size:0.83rem;
+  }
+  .fit-name{flex:1;min-width:120px;}
+  .fit-num{color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .fit-ok{color:var(--green-text);font-weight:700;}
+  .fit-off{color:var(--amber);font-weight:700;}
 </style>
 </head>
 <body>
@@ -699,10 +746,10 @@ var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7}},{"bed"
 // On-centre spacing, straight off the schedule. Trees and shrubs are placed
 // individually on the plan, so only the massed material carries a spacing.
 var SPACING = {
-  CAK: '18" OC triangular', DFA: '18" OC triangular',
-  A: '24" OC triangular &middot; 5 eyes min', AD: '18" OC &middot; 5 eyes min',
+  CAK: '18" OC', DFA: '18" OC',
+  A: '24" OC', AD: '18" OC',
   APV: '12" OC', G: '12" OC',
-  H: '18" OC &middot; 2 eyes min', IS: '12" OC triangular &middot; 2-3 fans min',
+  H: '18" OC', IS: '12" OC',
 };
 
 var SPECIES = {
@@ -732,6 +779,7 @@ var state = {};
 var notes = {};
 var staked = {};           // bed -> true once its spots are marked out
 var planted = {};          // bed -> true once its plants are actually in
+var measured = {};         // bed -> {l, w} in feet, as paced out on site
 var dbDoc = null;
 var saveTimer = null;
 var lastSavedAt = 0;
@@ -778,7 +826,7 @@ function setOffline(isOffline, msg){
 
 function payload(){
   return {counts: state, notes: notes, staked: staked, planted: planted,
-          updatedAt: new Date().toISOString()};
+          measured: measured, updatedAt: new Date().toISOString()};
 }
 
 function applyPayload(p){
@@ -787,6 +835,7 @@ function applyPayload(p){
   if(p.notes && typeof p.notes === "object") notes = Object.assign({}, p.notes);
   if(p.staked && typeof p.staked === "object") staked = Object.assign({}, p.staked);
   if(p.planted && typeof p.planted === "object") planted = Object.assign({}, p.planted);
+  if(p.measured && typeof p.measured === "object") measured = Object.assign({}, p.measured);
   // Anything ticked before the staked/planted split meant "done with".
   if(p.loaded && typeof p.loaded === "object"){
     Object.keys(p.loaded).forEach(function(k){
@@ -980,9 +1029,6 @@ var CATEGORY = {
   A: "perennials", AD: "perennials", APV: "perennials",
   G: "perennials", H: "perennials", IS: "perennials",
 };
-var CAT_LABEL = {
-  trees: "Trees", shrubs: "Shrubs", grasses: "Grasses", perennials: "Perennials",
-};
 
 // Trees and shrubs are drawn as individual symbols, so each one is a spot to
 // stake. Grasses and perennials are massed at an on-centre spacing -- you mark
@@ -992,13 +1038,41 @@ function isStaked(code){
   return c === "trees" || c === "shrubs";
 }
 
+// Every massed species on this sheet is triangular (staggered rows), checked
+// against the schedule's Notes column. Triangular packs ~15% more plants into
+// the same area than square rows, so the distinction matters for a count.
+//
+//   row spacing = OC x 0.866      (equilateral triangle height)
+//   area/plant  = OC^2 x 0.866
+var ROOT3_2 = 0.8660254;
+
+function ocOf(code){
+  var m = SPACING[code] && SPACING[code].match(/(\d+)"/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function rowSpacing(oc){ return Math.round(oc * ROOT3_2 * 10) / 10; }
+
+function sqftPerPlant(oc){ return (oc * oc * ROOT3_2) / 144; }
+
+function plantsForArea(oc, sqft){ return Math.round(sqft / sqftPerPlant(oc)); }
+
+function spacingLine(code, qty){
+  var oc = ocOf(code);
+  if(oc === null) return "";
+  var covers = Math.round(qty * sqftPerPlant(oc));
+  return oc + '" OC triangular &middot; rows ' + rowSpacing(oc) +
+         '" apart &middot; covers about ' + covers + " sq ft";
+}
+
 function imgOrNothing(src, alt, cls){
   return '<img class="' + cls + '" src="' + src + '" alt="' + alt +
          '" loading="lazy" decoding="async" onerror="this.remove()">';
 }
 
 function bedRow(code, qty){
-  var sp = SPACING[code] ? '<span class="zspace">' + SPACING[code] + "</span>" : "";
+  var sp = SPACING[code]
+    ? '<span class="zspace">' + spacingLine(code, qty) + "</span>" : "";
   var flag = DISCREPANCY[code] ? '<span class="zflag">check plan</span>' : "";
   return '<div class="zrow">' +
     '<span class="zqty">' + qty + "</span>" +
@@ -1023,6 +1097,42 @@ function countBy(pred){
     });
   });
   return n;
+}
+
+// Measure the bed, and the plan's count either fits it or it does not. Catches a
+// bed dug the wrong size before anything goes in the ground.
+function renderFit(bed, massCodes){
+  var m = measured[bed.bed] || {};
+  var L = parseFloat(m.l), W = parseFloat(m.w);
+  var area = (L > 0 && W > 0) ? L * W : null;
+
+  var rows = massCodes.map(function(c){
+    var oc = ocOf(c);
+    if(oc === null || area === null) return "";
+    var fits = plantsForArea(oc, area);
+    var want = bed.items[c];
+    var d = fits - want;
+    var verdict = d === 0 ? "exact"
+      : d > 0 ? ("room for " + d + " more")
+              : (Math.abs(d) + " too many for this size");
+    var cls = Math.abs(d) <= Math.max(2, want * 0.1) ? "fit-ok" : "fit-off";
+    return '<div class="fit-row"><span class="fit-name">' + SPECIES[c] +
+      '</span><span class="fit-num">' + want + " planned &middot; " + fits +
+      ' fit</span><span class="' + cls + '">' + verdict + "</span></div>";
+  }).join("");
+
+  return '<div class="fit-box">' +
+    '<div class="fit-head">Check the bed against the count</div>' +
+    '<div class="fit-inputs">' +
+      '<label>Length <input type="number" inputmode="decimal" min="0" step="0.5" ' +
+        'data-bed="' + bed.bed + '" data-dim="l" value="' + (m.l || "") + '"> ft</label>' +
+      '<label>Width <input type="number" inputmode="decimal" min="0" step="0.5" ' +
+        'data-bed="' + bed.bed + '" data-dim="w" value="' + (m.w || "") + '"> ft</label>' +
+      (area ? '<span class="fit-area">' + Math.round(area) + " sq ft</span>" : "") +
+    "</div>" +
+    (area ? rows : '<div class="fit-hint">Pace the bed out and put the two ' +
+      "numbers in &mdash; it will tell you whether the plan's count actually fits.</div>") +
+    "</div>";
 }
 
 function renderBeds(){
@@ -1050,12 +1160,35 @@ function renderBeds(){
       '<span class="chip chip-perennials">perennials</span></div>';
   container.appendChild(intro);
 
+  var how = document.createElement("div");
+  how.className = "how-box";
+  how.innerHTML =
+    '<div class="how-head">Laying out the massed beds</div>' +
+    "<ol class=\"how-list\">" +
+      "<li>Every spacing on this sheet is <b>triangular</b>, not square rows. " +
+        "Offset each row by half the on-centre spacing, so a plant sits in the " +
+        "gap between the two above it.</li>" +
+      "<li><b>Rows go closer than the spacing.</b> Row spacing is the OC figure " +
+        "&times; 0.866 &mdash; 12&Prime; OC means rows " + rowSpacing(12) +
+        "&Prime; apart, 18&Prime; OC means " + rowSpacing(18) +
+        "&Prime;, 24&Prime; OC means " + rowSpacing(24) + "&Prime;.</li>" +
+      "<li>Cut one stick to the OC length and a second to the row spacing. " +
+        "Those two sticks lay out the whole bed without a tape.</li>" +
+      "<li>Start from the bed edge that people see and work back, so any " +
+        "leftover gap lands at the back.</li>" +
+    "</ol>" +
+    '<div class="how-note">Trees and shrubs are placed individually on the plan, ' +
+      "not spaced off a rule. Scale those off the drawing using the <b>bar scale</b>, " +
+      "not the written ratio &mdash; the sheet says 1&Prime;=20&prime; at 22&times;34 " +
+      "and the print you are holding is bigger, so the written ratio is wrong but the " +
+      "bar is always right.</div>";
+  container.appendChild(how);
+
   var hint = document.createElement("p");
   hint.className = "zone-intro";
   hint.innerHTML = "Beds numbered <b>north to south</b>. Find your bed on the map, " +
     "stake it, then tick <b>Staked</b>. <b>Planted</b> is separate, so plants can " +
-    "come up a few at a time later without losing the marking work. Pinch to zoom " +
-    "any picture.";
+    "come up a few at a time later without losing the marking work.";
   container.appendChild(hint);
 
   var mapWrap = document.createElement("div");
@@ -1129,9 +1262,27 @@ function renderBeds(){
         '<div class="sub-head">Mass planting &mdash; mark the bed edge</div>');
       card.insertAdjacentHTML("beforeend",
         split.mass.map(function(c){ return bedRow(c, b.items[c]); }).join(""));
+      card.insertAdjacentHTML("beforeend", renderFit(b, split.mass));
     }
 
     container.appendChild(card);
+  });
+
+  container.querySelectorAll(".fit-inputs input").forEach(function(inp){
+    inp.addEventListener("input", function(){
+      var id = inp.dataset.bed;
+      measured[id] = measured[id] || {};
+      measured[id][inp.dataset.dim] = inp.value;
+      clearTimeout(inp._t);
+      inp._t = setTimeout(function(){
+        scheduleSave();
+        var pos = inp.selectionStart;
+        renderBeds();
+        var again = document.querySelector('.fit-inputs input[data-bed="' + id +
+          '"][data-dim="' + inp.dataset.dim + '"]');
+        if(again){ again.focus(); try{ again.setSelectionRange(pos, pos); }catch(e){} }
+      }, 500);
+    });
   });
 
   var note = document.createElement("div");
@@ -1162,8 +1313,8 @@ function saveMapsOffline(btn){
   })).then(function(){
     btn.disabled = false;
     btn.textContent = failed
-      ? "Saved " + done + " of " + urls.length + " — retry when you have signal"
-      : "Saved for offline — all " + done + " maps";
+      ? "Saved " + done + " of " + urls.length + " - retry when you have signal"
+      : "Saved for offline - all " + done + " maps";
   });
 }
 
@@ -1236,7 +1387,8 @@ function generateReport(){
                (planted[b.bed] ? " [PLANTED]" : ""));
     Object.keys(b.items).forEach(function(c){
       lines.push("  " + b.items[c] + " x " + SPECIES[c] + " (" + c + ")" +
-                 (SPACING[c] ? "  " + SPACING[c] : "") +
+                 (SPACING[c] ? "  " + ocOf(c) + "\" OC triangular, rows " +
+                   rowSpacing(ocOf(c)) + "\" apart" : "") +
                  (DISCREPANCY[c] ? "  ** " + DISCREPANCY[c] + " **" : ""));
     });
   });
