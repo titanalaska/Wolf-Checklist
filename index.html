@@ -445,6 +445,54 @@
     cursor:pointer;touch-action:manipulation;
   }
   .offline-btn:disabled{opacity:0.65;}
+
+  /* Marking-out summary. This is the number that matters when the plants are
+     not on site yet: how many spots have to be put in the ground today. */
+  .stake-summary{
+    margin:14px 16px 0;border:1px solid var(--green);border-radius:10px;
+    background:var(--green-bg);overflow:hidden;
+  }
+  .ss-head{
+    padding:10px 14px;font-weight:700;font-size:0.95rem;color:var(--green-text);
+    border-bottom:1px solid var(--line);
+  }
+  .ss-rows{padding:4px 14px;}
+  .ss-row{
+    padding:8px 0;font-size:0.88rem;line-height:1.4;
+    border-bottom:1px solid var(--line);
+  }
+  .ss-row:last-child{border-bottom:none;}
+  .ss-row b{font-size:1.35rem;font-variant-numeric:tabular-nums;margin-right:4px;}
+  .ss-note{
+    padding:10px 14px;border-top:1px solid var(--line);
+    font-size:0.78rem;color:var(--ink-soft);
+  }
+  .chip{
+    display:inline-block;margin:3px 4px 0 0;padding:2px 8px;border-radius:20px;
+    font-size:0.72rem;font-weight:700;color:#fff;
+  }
+  /* Same four tints the drawing itself uses, so flag colour matches the sheet. */
+  .chip-trees{background:#1b7f3b;}
+  .chip-shrubs{background:#1565c0;}
+  .chip-grasses{background:#c2620a;}
+  .chip-perennials{background:#7b2fa3;}
+
+  .bed-acts{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line);}
+  .act-btn{
+    flex:1;padding:10px 8px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink-soft);border-radius:9px;font-family:inherit;font-weight:700;
+    font-size:0.84rem;cursor:pointer;touch-action:manipulation;
+  }
+  .act-btn.on{
+    border-color:var(--green);background:var(--green);color:var(--on-green);
+  }
+  .sub-head{
+    padding:9px 14px;border-top:1px solid var(--line);
+    background:var(--gray-bg);font-size:0.76rem;font-weight:700;
+    letter-spacing:0.03em;color:var(--ink-soft);text-transform:uppercase;
+  }
+  .zone.partdone{border-color:var(--green);}
+  .zone.partdone .zone-head{background:var(--green-bg);}
 </style>
 </head>
 <body>
@@ -682,7 +730,8 @@ var currentJob = "h2s";
 var view = "species";      // "species" | "zones" -- Home2Suites only
 var state = {};
 var notes = {};
-var loaded = {};           // zone -> true once its plants are on the truck
+var staked = {};           // bed -> true once its spots are marked out
+var planted = {};          // bed -> true once its plants are actually in
 var dbDoc = null;
 var saveTimer = null;
 var lastSavedAt = 0;
@@ -728,7 +777,7 @@ function setOffline(isOffline, msg){
 }
 
 function payload(){
-  return {counts: state, notes: notes, loaded: loaded,
+  return {counts: state, notes: notes, staked: staked, planted: planted,
           updatedAt: new Date().toISOString()};
 }
 
@@ -736,7 +785,14 @@ function applyPayload(p){
   if(!p) return;
   if(p.counts && typeof p.counts === "object") state = Object.assign({}, p.counts);
   if(p.notes && typeof p.notes === "object") notes = Object.assign({}, p.notes);
-  if(p.loaded && typeof p.loaded === "object") loaded = Object.assign({}, p.loaded);
+  if(p.staked && typeof p.staked === "object") staked = Object.assign({}, p.staked);
+  if(p.planted && typeof p.planted === "object") planted = Object.assign({}, p.planted);
+  // Anything ticked before the staked/planted split meant "done with".
+  if(p.loaded && typeof p.loaded === "object"){
+    Object.keys(p.loaded).forEach(function(k){
+      if(p.loaded[k] && planted[k] === undefined) planted[k] = true;
+    });
+  }
 }
 
 function fillMissingFromSeed(){
@@ -914,6 +970,28 @@ function renderGroups(){
 // still work. The installed copy on the phone is the one that shows pictures.
 var BED_IMG = "./beds/";
 
+// The sheet tints callouts by category. Same four groups here, so a flag colour
+// on the ground can match the colour on the drawing.
+var CATEGORY = {
+  AGN: "trees", AP: "trees", BP: "trees", MSB: "trees", PTE: "trees", PT: "trees",
+  CS: "shrubs", JH: "shrubs", JS: "shrubs", RSA: "shrubs",
+  SBG: "shrubs", SBT: "shrubs", SPA: "shrubs", SV: "shrubs",
+  CAK: "grasses", DFA: "grasses",
+  A: "perennials", AD: "perennials", APV: "perennials",
+  G: "perennials", H: "perennials", IS: "perennials",
+};
+var CAT_LABEL = {
+  trees: "Trees", shrubs: "Shrubs", grasses: "Grasses", perennials: "Perennials",
+};
+
+// Trees and shrubs are drawn as individual symbols, so each one is a spot to
+// stake. Grasses and perennials are massed at an on-centre spacing -- you mark
+// the bed edge and the spacing, not 305 separate holes.
+function isStaked(code){
+  var c = CATEGORY[code];
+  return c === "trees" || c === "shrubs";
+}
+
 function imgOrNothing(src, alt, cls){
   return '<img class="' + cls + '" src="' + src + '" alt="' + alt +
          '" loading="lazy" decoding="async" onerror="this.remove()">';
@@ -929,16 +1007,56 @@ function bedRow(code, qty){
     flag + "</div>";
 }
 
+function bedSplit(items){
+  var stake = [], mass = [];
+  Object.keys(items).forEach(function(c){
+    (isStaked(c) ? stake : mass).push(c);
+  });
+  return {stake: stake, mass: mass};
+}
+
+function countBy(pred){
+  var n = 0;
+  BEDS.forEach(function(b){
+    Object.keys(b.items).forEach(function(c){
+      if(pred(c)) n += b.items[c];
+    });
+  });
+  return n;
+}
+
 function renderBeds(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
 
-  var intro = document.createElement("p");
-  intro.className = "zone-intro";
-  intro.innerHTML = "Every planting bed on sheet L102, numbered <b>north to south</b> " +
-    "&mdash; so the numbers walk the site. Find your bed on the map, then work down " +
-    "its card. Pinch to zoom any picture.";
+  var stakes = countBy(isStaked);
+  var massed = countBy(function(c){ return !isStaked(c); });
+
+  var intro = document.createElement("div");
+  intro.className = "stake-summary";
+  intro.innerHTML =
+    '<div class="ss-head">Marking out</div>' +
+    '<div class="ss-rows">' +
+      '<div class="ss-row"><b>' + stakes + "</b> spots to stake individually " +
+        '<span class="zcode">trees and shrubs, one symbol each</span></div>' +
+      '<div class="ss-row"><b>' + massed + "</b> massed " +
+        '<span class="zcode">grasses and perennials &mdash; mark the bed edge and the ' +
+        "spacing, not each plant</span></div>" +
+    "</div>" +
+    '<div class="ss-note">Flag colours match the drawing: ' +
+      '<span class="chip chip-trees">trees</span>' +
+      '<span class="chip chip-shrubs">shrubs</span>' +
+      '<span class="chip chip-grasses">grasses</span>' +
+      '<span class="chip chip-perennials">perennials</span></div>';
   container.appendChild(intro);
+
+  var hint = document.createElement("p");
+  hint.className = "zone-intro";
+  hint.innerHTML = "Beds numbered <b>north to south</b>. Find your bed on the map, " +
+    "stake it, then tick <b>Staked</b>. <b>Planted</b> is separate, so plants can " +
+    "come up a few at a time later without losing the marking work. Pinch to zoom " +
+    "any picture.";
+  container.appendChild(hint);
 
   var mapWrap = document.createElement("div");
   mapWrap.className = "map-wrap";
@@ -958,10 +1076,13 @@ function renderBeds(){
   container.appendChild(offline);
 
   BEDS.forEach(function(b){
-    var codes = Object.keys(b.items);
-    var isDone = !!loaded[b.bed];
+    var split = bedSplit(b.items);
+    var nStake = split.stake.reduce(function(n, c){ return n + b.items[c]; }, 0);
+    var isStakedDone = !!staked[b.bed];
+    var isPlanted = !!planted[b.bed];
+
     var card = document.createElement("section");
-    card.className = "zone" + (isDone ? " done" : "");
+    card.className = "zone" + (isPlanted ? " done" : isStakedDone ? " partdone" : "");
 
     var head = document.createElement("div");
     head.className = "zone-head";
@@ -970,28 +1091,45 @@ function renderBeds(){
       '<span class="zone-id">' +
         '<span class="zone-name">Bed ' + b.bed.replace("B", "") + "</span>" +
         '<span class="zone-place">' + b.where + "</span>" +
-        '<span class="zone-count">' + codes.length + " species &middot; " +
-          b.units + " units</span>" +
+        '<span class="zone-count">' + nStake + " to stake &middot; " +
+          b.units + " units total</span>" +
       "</span>";
-    var btn = document.createElement("button");
-    btn.className = "loaded-btn";
-    btn.textContent = isDone ? "Loaded" : "Mark loaded";
-    btn.addEventListener("click", function(){
-      loaded[b.bed] = !loaded[b.bed];
-      scheduleSave();
-      renderBeds();
-    });
-    head.appendChild(btn);
     card.appendChild(head);
 
-    var rows = codes.map(function(c){ return bedRow(c, b.items[c]); }).join("");
+    var acts = document.createElement("div");
+    acts.className = "bed-acts";
+    [["Staked", staked, isStakedDone], ["Planted", planted, isPlanted]].forEach(function(t){
+      var btn = document.createElement("button");
+      btn.className = "act-btn" + (t[2] ? " on" : "");
+      btn.textContent = t[2] ? t[0] : "Mark " + t[0].toLowerCase();
+      btn.addEventListener("click", function(){
+        t[1][b.bed] = !t[1][b.bed];
+        scheduleSave();
+        renderBeds();
+      });
+      acts.appendChild(btn);
+    });
+    card.appendChild(acts);
+
     var pic = document.createElement("div");
     pic.className = "bed-pic";
     pic.innerHTML = '<a href="' + BED_IMG + b.bed + '.jpg" target="_blank" rel="noopener">' +
       imgOrNothing(BED_IMG + b.bed + ".jpg", "Bed " + b.bed + " on the plan", "bed-img") +
       "</a>";
     card.appendChild(pic);
-    card.insertAdjacentHTML("beforeend", rows);
+
+    if(split.stake.length){
+      card.insertAdjacentHTML("beforeend",
+        '<div class="sub-head">Stake each one &mdash; ' + nStake + " spots</div>");
+      card.insertAdjacentHTML("beforeend",
+        split.stake.map(function(c){ return bedRow(c, b.items[c]); }).join(""));
+    }
+    if(split.mass.length){
+      card.insertAdjacentHTML("beforeend",
+        '<div class="sub-head">Mass planting &mdash; mark the bed edge</div>');
+      card.insertAdjacentHTML("beforeend",
+        split.mass.map(function(c){ return bedRow(c, b.items[c]); }).join(""));
+    }
 
     container.appendChild(card);
   });
@@ -1024,8 +1162,8 @@ function saveMapsOffline(btn){
   })).then(function(){
     btn.disabled = false;
     btn.textContent = failed
-      ? "Saved " + done + " of " + urls.length + " â€” retry when you have signal"
-      : "Saved for offline â€” all " + done + " maps";
+      ? "Saved " + done + " of " + urls.length + " — retry when you have signal"
+      : "Saved for offline — all " + done + " maps";
   });
 }
 
@@ -1093,7 +1231,9 @@ function generateReport(){
   lines.push("");
   BEDS.forEach(function(b){
     lines.push("Bed " + b.bed.replace("B", "") + " -- " + b.where +
-               " (" + b.units + " units)" + (loaded[b.bed] ? " [LOADED]" : ""));
+               " (" + b.units + " units)" +
+               (staked[b.bed] ? " [STAKED]" : "") +
+               (planted[b.bed] ? " [PLANTED]" : ""));
     Object.keys(b.items).forEach(function(c){
       lines.push("  " + b.items[c] + " x " + SPECIES[c] + " (" + c + ")" +
                  (SPACING[c] ? "  " + SPACING[c] : "") +
