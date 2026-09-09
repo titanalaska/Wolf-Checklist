@@ -1209,6 +1209,73 @@ function renderFit(bed, massCodes){
     "</div>";
 }
 
+
+// Bed coordinates come from aligning the plan's property line to the borough's
+// parcel polygon -- see tools/georeference.py. Two caveats are surfaced in the
+// UI rather than hidden: a bed's position is taken from its CALLOUT, which sits
+// beside the bed on the end of a leader line, and phone GPS is good to maybe
+// 10-15 ft. So this narrows it to a short list; the picture on the card settles
+// which one you are actually standing in.
+var myPos = null;
+
+function distFt(lat1, lon1, lat2, lon2){
+  var mLat = 111132.0, mLon = 111320.0 * Math.cos(lat1 * Math.PI / 180);
+  var dx = (lon2 - lon1) * mLon, dy = (lat2 - lat1) * mLat;
+  return Math.sqrt(dx * dx + dy * dy) * 3.280839895;
+}
+
+function nearestBeds(n){
+  if(!myPos) return [];
+  return BEDS.filter(function(b){ return b.lat; })
+    .map(function(b){ return {b: b, d: distFt(myPos.lat, myPos.lon, b.lat, b.lon)}; })
+    .sort(function(x, y){ return x.d - y.d; })
+    .slice(0, n);
+}
+
+function locateMe(btn, panel){
+  if(!navigator.geolocation){
+    panel.innerHTML = '<div class="loc-msg">This phone will not give a position.</div>';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Finding you...";
+  navigator.geolocation.getCurrentPosition(function(pos){
+    myPos = {lat: pos.coords.latitude, lon: pos.coords.longitude,
+             acc: pos.coords.accuracy * 3.280839895};
+    btn.disabled = false;
+    renderBeds();
+    var top = nearestBeds(1)[0];
+    if(top){
+      var card = document.getElementById("bed-" + top.b.bed);
+      if(card){ card.scrollIntoView({block: "start"}); window.scrollBy(0, -60); }
+    }
+  }, function(err){
+    btn.disabled = false;
+    btn.textContent = "Where am I?";
+    panel.innerHTML = '<div class="loc-msg">' +
+      (err.code === 1 ? "Location is blocked. Allow it for this site in the browser."
+                      : "Could not get a position out here.") + "</div>";
+  }, {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000});
+}
+
+function locationPanel(){
+  if(!myPos) return "";
+  var near = nearestBeds(3);
+  var rows = near.map(function(n, i){
+    return '<div class="loc-row' + (i === 0 ? " first" : "") + '">' +
+      '<span class="loc-bed">Bed ' + n.b.bed.replace("B", "") + "</span>" +
+      '<span class="loc-where">' + n.b.where + "</span>" +
+      '<span class="loc-d">' + Math.round(n.d) + " ft</span></div>";
+  }).join("");
+  var warn = "";
+  if(near.length > 1 && (near[1].d - near[0].d) < myPos.acc){
+    warn = '<div class="loc-msg">Those top two are closer together than your GPS ' +
+           "is accurate. Check the picture on the card before you trust it.</div>";
+  }
+  return '<div class="loc-panel"><div class="loc-head">Nearest beds &mdash; GPS good to about ' +
+    Math.round(myPos.acc) + " ft</div>" + rows + warn + "</div>";
+}
+
 function renderBeds(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
