@@ -1,1113 +1,934 @@
-﻿<title>Titan Alaska — Species Substitution Checklist</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Wolf Architect Jobs</title>
 <style>
+  :root{
+    --bg:#f6f7f1;
+    --ink:#20261f;
+    --ink-soft:#4c5449;
+    --line:#dcded2;
+    --green:#2f5233;
+    --green-bg:#e4ece2;
+    --green-text:#2f5233;
+    --amber:#a6461d;
+    --amber-bg:#f3e4da;
+    --gray-bg:#eceee6;
+    --card:#ffffff;
+    --notes-bg:#fffdfb;
+    --notes-line:#d9c3b3;
+    --over:#7a3ea1;
+    --over-bg:#f1e7f6;
+    --danger:#b3261e;
+    --danger-bg:#fbe9e7;
+    --danger-ink:#7f1d18;
+    --on-green:#ffffff;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14170f;
+      --ink:#e8ebe1;
+      --ink-soft:#a3aa99;
+      --line:#333a2d;
+      --green:#7fb383;
+      --green-bg:#1f2c1f;
+      --green-text:#9ccfa0;
+      --amber:#e0895c;
+      --amber-bg:#33211a;
+      --gray-bg:#242a1f;
+      --card:#1b1f17;
+      --notes-bg:#221a15;
+      --notes-line:#4d3a2e;
+      --over:#c39ade;
+      --over-bg:#2a1f33;
+      --danger:#f2837a;
+      --danger-bg:#33191a;
+      --danger-ink:#f7bdb8;
+      --on-green:#10140c;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14170f;
+    --ink:#e8ebe1;
+    --ink-soft:#a3aa99;
+    --line:#333a2d;
+    --green:#7fb383;
+    --green-bg:#1f2c1f;
+    --green-text:#9ccfa0;
+    --amber:#e0895c;
+    --amber-bg:#33211a;
+    --gray-bg:#242a1f;
+    --card:#1b1f17;
+    --notes-bg:#221a15;
+    --notes-line:#4d3a2e;
+    --over:#c39ade;
+    --over-bg:#2a1f33;
+    --danger:#f2837a;
+    --danger-bg:#33191a;
+    --danger-ink:#f7bdb8;
+    --on-green:#10140c;
+  }
   *{box-sizing:border-box;}
-  html, body{background:#ffffff;}
   body{
-    margin:0; color:#161616;
-    font-family:"Helvetica Neue",Arial,"Segoe UI",system-ui,sans-serif;
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
-    font-size:16px;
+    padding-bottom:48px;
   }
-  .sheet{max-width:820px; margin:0 auto; padding:30px 24px 70px;}
-
-  .masthead{border-bottom:4px solid #1e4d3a; padding-bottom:16px; margin-bottom:6px;}
-  .masthead .id{font-size:13px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#4a4a4a;}
-  .masthead .id b{color:#b3872f;}
-  .masthead h1{font-size:32px; font-weight:800; margin:6px 0 10px; letter-spacing:-.01em; color:#1e4d3a;}
-  .masthead .sub{font-size:14.5px; color:#333; line-height:1.6;}
-  .masthead .sub b{color:#161616;}
-
-  .legend{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;}
-  .legend .job-chip{cursor:default;}
-  .legend-label{font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#4a4a4a; align-self:center; margin-right:2px;}
-
-  .job-status{margin-top:14px; padding-top:12px; border-top:1.5px solid #ccc;}
-  .job-status-row{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
-  .job-status-row:last-child{margin-bottom:0;}
-  .job-status-row .status-text{font-size:14px; color:#333;}
-  .job-status-row .status-text b{color:#8a5a00;}
-
-  .job-chip{
-    display:inline-block; font-size:13px; font-weight:800; color:#fff;
-    padding:3px 10px; border-radius:20px; white-space:nowrap; letter-spacing:.01em;
+  header{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--bg);
+    padding:16px 16px 0;
+    border-bottom:1px solid var(--line);
   }
-  .job-baxter{background:#2a5d8c;}
-  .job-wsrcc{background:#a44a2f;}
-  .job-h2s{background:#1f6f6f;}
-  .job-waca{background:#6b3f7a;}
-  .jobs{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 2px;}
-
-  .tally{
-    border:2.5px solid #1e4d3a; margin:18px 0 8px; padding:16px 18px; border-radius:6px;
+  h1{
+    font-size:1.25rem;
+    font-weight:700;
+    margin:0 0 2px;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
   }
-  .tally .th{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#1e4d3a; margin-bottom:10px;}
-  .tally-rows{display:flex; flex-direction:column; gap:6px;}
-  .tally-row{display:flex; align-items:baseline; gap:8px; font-size:15px;}
-  .tally-row .src-name{font-weight:700; min-width:120px;}
-  .tally-row .amt{font-variant-numeric:tabular-nums; font-weight:800; color:#1e4d3a;}
-  .tally-row .pending{font-size:12px; color:#4a4a4a; font-style:italic;}
-  .tally-grand{
-    display:flex; align-items:baseline; gap:8px; margin-top:11px; padding-top:11px;
-    border-top:2.5px solid #1e4d3a; font-size:19px; font-weight:800;
+  .subhead{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin:0 0 12px;
   }
-  .tally-grand .amt{font-variant-numeric:tabular-nums; margin-left:auto; color:#b3872f;}
-  .tally-units{
-    display:flex; align-items:baseline; gap:8px; margin-top:9px; padding-top:9px;
-    border-top:1.5px solid #ccc; font-size:14px; font-weight:700; color:#333;
+  .asof{
+    font-size:0.76rem;
+    color:var(--green-text);
+    font-weight:600;
+    margin:0 0 4px;
   }
-  .tally-units .num{font-variant-numeric:tabular-nums; margin-left:auto; font-weight:800; color:#1e4d3a;}
-  .tally-actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;}
-  .tally-reset, .tally-export{
-    font-size:13px; padding:8px 14px; cursor:pointer; font-family:inherit; font-weight:700;
-    border-radius:6px;
-  }
-  .tally-reset{background:none; border:1.5px solid #999; color:#4a4a4a;}
-  .tally-export{background:#1e4d3a; border:1.5px solid #1e4d3a; color:#fff;}
-  .tally-undo{background:#b3872f; border:1.5px solid #8a5a00; color:#fff; font-weight:800;
-    padding:10px 16px; border-radius:5px; font-size:15px; cursor:pointer;}
-  .save-status{margin-top:12px; font-size:14px; color:#3d6b4f; font-weight:600;}
-  .save-status.warn{color:#8a1c10; font-weight:800;}
-
-  .jobroll{border:2.5px solid #b3872f; margin:14px 0 8px; padding:16px 18px; border-radius:6px;}
-  .jobroll .th{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#8a5a00; margin-bottom:10px;}
-  .jobroll-row{display:flex; align-items:center; gap:10px; font-size:15px; margin-bottom:8px;}
-  .jobroll-row:last-child{margin-bottom:0;}
-  .jobroll-row .amt{margin-left:auto; font-weight:800; font-variant-numeric:tabular-nums; color:#8a5a00;}
-  .jobroll-grand{display:flex; align-items:center; gap:10px; margin-top:10px; padding-top:10px; border-top:2px solid #e0d3ba; font-size:16px; font-weight:800;}
-  .jobroll-grand .amt{margin-left:auto; color:#b3872f;}
-  .jobroll-note{font-size:12px; color:#4a4a4a; font-style:italic; margin-top:10px; padding-top:8px; border-top:1.5px solid #e0d3ba; line-height:1.5;}
-
-  .freight-panel{border:1.5px solid #999; margin:14px 0 8px; padding:16px 18px; border-radius:6px;}
-  .freight-panel .th{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#4a4a4a; margin-bottom:10px;}
-  .freight-row{display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap;}
-  .freight-row input[type=text]{flex:1 1 160px; font-size:14px; padding:6px 8px; border:1.5px solid #999; border-radius:5px; font-family:inherit;}
-  .freight-row select{font-size:13px; padding:6px 6px; border:1.5px solid #999; border-radius:5px; font-family:inherit;}
-  .freight-row .freight-amt{width:84px; font-size:14px; padding:6px 6px; border:1.5px solid #999; border-radius:5px; font-family:inherit;}
-  .freight-row .rm-btn{background:none; border:1.5px solid #b33; color:#b33; border-radius:5px; font-size:12px; padding:5px 9px; cursor:pointer; font-weight:700; font-family:inherit;}
-  .freight-empty{font-size:13px; color:#999; font-style:italic; margin-bottom:8px;}
-  .freight-add{font-size:13px; padding:8px 14px; background:none; border:1.5px solid #1e4d3a; color:#1e4d3a; border-radius:6px; cursor:pointer; font-weight:700; font-family:inherit;}
-  .freight-total{display:flex; gap:8px; margin-top:12px; padding-top:10px; border-top:1.5px solid #ccc; font-weight:800; font-size:14.5px;}
-  .freight-total .amt{margin-left:auto; color:#1e4d3a;}
-
-  .proclog-panel{border:1.5px solid #999; margin:14px 0 8px; padding:16px 18px; border-radius:6px;}
-  .proclog-panel .th{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#4a4a4a; margin-bottom:4px;}
-  .proclog-sub{font-size:12px; color:#4a4a4a; margin-bottom:10px; line-height:1.5;}
-  .proclog-scroll{overflow-x:auto;}
-  .proclog-table{width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;}
-  .proclog-table th{text-align:left; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:#4a4a4a; padding:4px 6px; border-bottom:2px solid #999;}
-  .proclog-table td{padding:6px 6px; border-bottom:1px dotted #ccc; vertical-align:middle;}
-  .proclog-table tr.late td{background:#fdeceb;}
-  .proclog-table tr.no-date td{background:#fff2d9;}
-  .proclog-table input[type=date]{font-size:13px; padding:3px 4px; border:1.5px solid #999; border-radius:4px; font-family:inherit;}
-  .proclog-table input[type=text]{font-size:13px; padding:3px 5px; border:1.5px solid #999; border-radius:4px; font-family:inherit; width:100%;}
-  .proclog-table select{font-size:12.5px; padding:3px 4px; border:1.5px solid #999; border-radius:4px; font-family:inherit;}
-  .proclog-flag{font-size:11px; font-weight:800; padding:2px 7px; border-radius:10px; white-space:nowrap;}
-  .proclog-flag.late{background:#f8d7d3; color:#8a2a1a;}
-  .proclog-flag.nodate{background:#fff2d9; color:#8a5a00;}
-  .proclog-empty{font-size:13px; color:#999; font-style:italic; padding:8px 0;}
-
-  .cat{
-    font-size:14px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
-    border-bottom:3px solid #b3872f; padding-bottom:5px; margin:34px 0 6px; color:#1e4d3a;
+  .savenote{
+    font-size:0.74rem;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+    font-variant-numeric:tabular-nums;
   }
 
-  .species{margin-top:26px; padding-top:2px;}
-  .species-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; border-bottom:1.5px solid #999; padding-bottom:5px;}
-  .species-name{font-size:21px; font-weight:800;}
-  .species-tag{font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; background:#b3872f; color:#fff; padding:2px 8px; border-radius:4px;}
-  .species-need{font-size:14px; font-weight:800; color:#4a4a4a; margin-left:auto; white-space:nowrap;}
-  .species-progress{font-size:13px; font-weight:800; white-space:nowrap; padding:2px 9px; border-radius:12px;}
-  .species-progress.short{background:#fff2d9; color:#8a5a00;}
-  .species-progress.met{background:#e2efe7; color:#1e4d3a;}
-
-  .opt{display:flex; align-items:center; gap:10px; padding:9px 0 9px 2px; border-bottom:1px dotted #ccc; flex-wrap:wrap;}
-  .opt:last-child{border-bottom:none;}
-  .opt input[type=checkbox]{
-    width:24px; height:24px; margin:2px 0 0; flex-shrink:0; accent-color:#1e4d3a;
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    padding-bottom:12px;
   }
-  .opt .txt{flex:1 1 230px; font-size:15.5px; line-height:1.45;}
-  .opt .src{font-weight:800;}
-  .opt .px{color:#333;}
-  .opt.dim{color:#555;}
-  .opt.dim .txt{color:#555; font-style:italic; font-size:14.5px;}
-  .opt.dim input{visibility:hidden;}
-  .opt .warn{font-weight:800; text-decoration:underline;}
-
-  .qty-cell{flex-shrink:0;}
-  .qty-in{width:56px; font-size:15px; padding:5px 4px; border:1.5px solid #999; border-radius:5px; font-family:inherit; text-align:center; font-weight:700; color:#161616;}
-  .qty-in:focus{border-color:#1e4d3a; outline:none;}
-  .qty-in.has-val{background:#e2efe7; border-color:#1e4d3a;}
-
-  .price-cell{flex-shrink:0; font-size:14px; font-weight:700; color:#333; white-space:nowrap; display:flex; align-items:center; gap:2px;}
-  .price-in{width:68px; font-size:14px; padding:5px 5px; border:1.5px solid #999; border-radius:5px; font-family:inherit;}
-  .price-in:focus{border-color:#1e4d3a; outline:none;}
-  .price-in::placeholder{color:#b33; font-weight:700;}
-
-  .line-total{flex-shrink:0; min-width:78px; text-align:right; font-weight:800; font-variant-numeric:tabular-nums; color:#1e4d3a;}
-  .line-total.zero{color:#999; font-weight:700;}
-  .line-total.pending{color:#b33;}
-
-  .col-legend{font-size:11.5px; font-weight:800; color:#4a4a4a; margin:22px 0 -6px; text-transform:uppercase; letter-spacing:.07em;}
-  .col-legend b{color:#1e4d3a;}
-
-  .note{
-    margin-top:26px; padding-top:12px; border-top:2px solid #999;
-    font-size:13.5px; line-height:1.7; color:#333;
+  .tab{
+    border:1px solid var(--line);
+    background:var(--card);
+    border-radius:9px;
+    padding:9px 6px;
+    text-align:center;
+    font-family:inherit;
+    cursor:pointer;
+    color:var(--ink);
   }
-  .note b{color:#161616;}
-  .note + .note{margin-top:10px; border-top:none; padding-top:0;}
+  .tab .tab-name{
+    display:block;
+    font-size:0.86rem;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .tab .tab-progress{
+    display:block;
+    font-size:0.72rem;
+    color:var(--ink-soft);
+    margin-top:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .tab.active{
+    border-color:var(--green);
+    background:var(--green-bg);
+  }
+  .tab.active .tab-name{color:var(--green-text);}
+  .tab:focus-visible,.counter button:focus-visible,.report-btn:focus-visible,
+  .report-copy:focus-visible,.report-close:focus-visible,
+  .counter input:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--green);
+    outline-offset:2px;
+  }
 
-  @media print{
-    body{font-size:15px;}
-    .sheet{max-width:100%; padding:0.25in 0.3in;}
-    .cat{break-after:avoid;}
-    .species{break-inside:avoid;}
-    .tally-actions{display:none;}
-    .save-status{display:none;}
-    .freight-add, .rm-btn{display:none;}
+  .flags{
+    margin:14px 16px 4px;
+    border:1px solid var(--amber);
+    border-radius:10px;
+    background:var(--amber-bg);
+    padding:12px 14px;
+  }
+  .flags h2{
+    font-size:0.92rem;
+    margin:0 0 8px;
+    color:var(--amber);
+    font-weight:700;
+  }
+  .flag-item{
+    font-size:0.86rem;
+    line-height:1.45;
+    margin-bottom:8px;
+  }
+  .flag-item:last-child{margin-bottom:0;}
+  textarea.notes{
+    width:100%;
+    margin-top:10px;
+    border:1px solid var(--notes-line);
+    border-radius:8px;
+    background:var(--notes-bg);
+    font-family:inherit;
+    font-size:0.85rem;
+    padding:8px 10px;
+    resize:vertical;
+    min-height:44px;
+    color:var(--ink);
+  }
+
+  section.group{margin:22px 16px 0;}
+  .group-title{
+    font-size:1.02rem;
+    font-weight:700;
+    margin:0 0 8px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 10px;
+    background:var(--card);
+    border-radius:8px;
+    margin-bottom:8px;
+    border-left:4px solid var(--gray-bg);
+  }
+  .item.partial{border-left-color:var(--amber);}
+  .item.complete{border-left-color:var(--green);background:var(--green-bg);}
+  .item.over{border-left-color:var(--over);background:var(--over-bg);}
+
+  .item-info{flex:1;min-width:0;}
+  .item-name{font-size:0.95rem;font-weight:600;}
+  .item-target{font-size:0.78rem;color:var(--ink-soft);margin-top:1px;}
+
+  .counter{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .counter button{
+    width:34px;
+    height:34px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:var(--gray-bg);
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--ink);
+    touch-action:manipulation;
+    cursor:pointer;
+  }
+  .counter button:active{background:var(--line);}
+  .counter input{
+    width:48px;
+    height:34px;
+    text-align:center;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:0.98rem;
+    font-weight:700;
+    color:var(--ink);
+    background:var(--card);
+    -moz-appearance:textfield;
+    font-variant-numeric:tabular-nums;
+  }
+  .counter input::-webkit-outer-spin-button,
+  .counter input::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+  }
+
+  footer{
+    margin:26px 16px 0;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+
+  .report-btn-wrap{padding:12px 16px 0;}
+  .report-btn{
+    width:100%;
+    padding:12px;
+    border:1px solid var(--green);
+    background:var(--green);
+    color:var(--on-green);
+    border-radius:9px;
+    font-weight:700;
+    font-size:0.92rem;
+    font-family:inherit;
+    touch-action:manipulation;
+    cursor:pointer;
+  }
+  .report-panel{
+    margin:12px 16px 0;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    padding:12px;
+  }
+  .report-panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .report-close{
+    border:none;
+    background:none;
+    font-size:1.1rem;
+    color:var(--ink-soft);
+    padding:4px 8px;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .report-textarea{
+    width:100%;
+    min-height:280px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:0.76rem;
+    line-height:1.4;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px;
+    color:var(--ink);
+    background:var(--bg);
+    white-space:pre-wrap;
+  }
+  .report-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:8px;
+    flex-wrap:wrap;
+  }
+  .report-copy{
+    padding:10px 14px;
+    border-radius:8px;
+    border:1px solid var(--green);
+    background:var(--green-bg);
+    color:var(--green-text);
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .copy-status{
+    font-size:0.82rem;
+    color:var(--green-text);
+    font-weight:600;
+  }
+  .save-warning{
+    display:none;
+    margin:12px 16px 0;
+    border:1px solid var(--danger);
+    background:var(--danger-bg);
+    color:var(--danger-ink);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:0.84rem;
+    line-height:1.4;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;scroll-behavior:auto !important;}
   }
 </style>
+</head>
+<body>
 
-<div class="sheet">
+<header>
+  <h1>Wolf Architect Jobs</h1>
+  <p class="subhead" id="dateLine"></p>
+  <p class="asof">Plant sort counts &middot; four active jobs</p>
+  <p class="savenote" id="saveNote">Loading your counts&hellip;</p>
+  <div class="tabs" id="tabs"></div>
+</header>
 
-  <div class="masthead">
-    <div class="id">Titan <b>Alaska</b> · Field Ops</div>
-    <h1>Species Substitution Checklist</h1>
-    <div class="sub">
-      For the Wolf meeting follow-up — rebuilt from the four active job proposals so every number is a real, traceable total instead of one flat combined list. <b>Nothing is pre-approved</b>, including our own nursery stock. Every species below shows the specific variety and exactly which job(s) need it — no more "any variety."<br><br>
-      Danny (Alaska Trees, Wasilla) — cheaper than Martin on almost everything he carries; his own words on quantities: "I didn't go count - All" — treat as estimates, not confirmed counts, unlike Martin's. Lowe's = Tudor store pull, 7/20 (no prices found). Home Depot = researched pricing only, nothing purchased. Martin = his 7/21 quote plus full spring catalog. Bron &amp; Sons = confirmed order #137198, <b>not yet delivered, no ship date set</b>, landed price = quoted price doubled for BC-to-Anchorage freight (Titan's working assumption). McKay/Bailey prices are plant cost only — freight never quoted.
-    </div>
-    <div class="legend">
-      <span class="legend-label">Jobs:</span>
-      <span class="job-chip job-baxter">Baxter Family Housing</span>
-      <span class="job-chip job-wsrcc">WSRCC · 5800 Boundary Ave</span>
-      <span class="job-chip job-h2s">Home2 Suites · Wasilla</span>
-      <span class="job-chip job-waca">Wasilla Charter Academy</span>
-    </div>
-    <div class="job-status">
-      <div class="job-status-row"><span class="job-chip job-waca">Charter Academy</span><span class="status-text"><b>Started July 20 — already past due, most urgent job on this sheet.</b> GC: Jeremy Mohs, Roger Hickel Contracting, 907-360-4120</span></div>
-      <div class="job-status-row"><span class="job-chip job-baxter">Baxter</span><span class="status-text">Target was mid-June, also past — still "waiting to confirm." GC: Jeff Lamm, H5 Construction, 907-223-0792</span></div>
-      <div class="job-status-row"><span class="job-chip job-h2s">Home2Suites</span><span class="status-text">No start date set yet — "waiting to confirm." Contact: Cole Danielson, H5 Construction</span></div>
-      <div class="job-status-row"><span class="job-chip job-wsrcc">WSRCC</span><span class="status-text">Scheduled for August 2026 — the one job with real breathing room. GC: Saigen Harris, F&amp;W, 907-884-3217</span></div>
-    </div>
-  </div>
-
-  <div class="tally" id="tally">
-    <div class="th">Running tally — by supplier (plants only, no freight)</div>
-    <div class="tally-rows" id="tallyRows"></div>
-    <div class="tally-grand">Plant cost total<span class="amt" id="tallyGrand">$0</span></div>
-    <div class="tally-units">Plants still needed, overall<span class="num" id="tallyUnits">—</span></div>
-    <div class="save-status" id="saveStatus">Your entries save automatically on this device.</div>
-    <div class="tally-actions">
-      <button class="tally-export" onclick="exportSummary()">Export decisions (.txt)</button>
-      <button class="tally-export" onclick="backupJSON()">Save backup file</button>
-      <button class="tally-export" onclick="document.getElementById('restoreFile').click()">Restore backup</button>
-      <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreJSON(this)">
-      <button class="tally-reset" onclick="resetAll()">Clear all quantities</button>
-      <button class="tally-undo" id="undoBtn" onclick="undoReset()" style="display:none">Undo clear</button>
-    </div>
-  </div>
-
-  <div class="jobroll" id="jobRoll">
-    <div class="th">Per-job rollup — plant cost + freight</div>
-    <div id="jobRollRows"></div>
-    <div class="jobroll-grand">Grand total, all 4 jobs<span class="amt" id="jobRollGrand">$0</span></div>
-    <div class="jobroll-note">Species needed by more than one job split their cost proportionally to each job's share of the need (e.g. a species needed 20 by WSRCC and 28 by Home2Suites splits 20/48 · 28/48 of whatever gets ordered). Freight lines below post directly to the job picked, or split evenly across all four when marked "All jobs."</div>
-  </div>
-
-  <div class="freight-panel" id="freightPanel">
-    <div class="th">Freight &amp; shipping add-ons</div>
-    <div id="freightRows"></div>
-    <button class="freight-add" onclick="addFreightRow()">+ Add freight line</button>
-    <div class="freight-total">Freight total<span class="amt" id="freightGrand">$0</span></div>
-  </div>
-
-  <div class="proclog-panel" id="procLogPanel">
-    <div class="th">Procurement log — arrival tracking</div>
-    <div class="proclog-sub">Auto-filled the moment a quantity is entered anywhere below. Fill in expected arrival as orders get confirmed — rows with no date yet are flagged and sorted to the top, since we're already late in the season.</div>
-    <div class="proclog-scroll">
-      <table class="proclog-table">
-        <thead><tr><th>Species</th><th>Supplier</th><th>Qty</th><th>Arrival</th><th>Status</th><th>Notes</th></tr></thead>
-        <tbody id="procLogBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="col-legend"><b>Qty</b> · Supplier &amp; sourcing notes · <b>$ / unit</b> (editable) · <b>Line total</b></div>
-
-  <div class="cat">Trees</div>
-
-  <div class="species" data-need="48">
-    <div class="species-head"><span class="species-name">Columnar Swedish Aspen</span><span class="species-need">need 48 · 2" cal</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 20</span><span class="job-chip job-h2s">Home2Suites · 28</span></div>
-    <div class="opt" data-idx="1" data-src="Nursery" data-qty="12" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — on hand, all calipers <span class="px">· 12 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-1">—</div></div>
-    <div class="opt" data-idx="2" data-src="Martin" data-qty="48" data-price="606"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Swedish Aspen 2–2.25" cal <span class="px">· 48 available, $606/ea</span> — no 1.5" available</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="606" value="606" oninput="recalc()"></div><div class="line-total" id="lt-2">—</div></div>
-    <div class="opt" data-idx="3" data-src="Danny" data-price="460"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Swedish Aspen 2" cal <span class="px">· $460/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="460" value="460" oninput="recalc()"></div><div class="line-total" id="lt-3">—</div></div>
-    <div class="opt" data-idx="4" data-src="Danny" data-price="220"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Swedish Aspen 1.5" cal <span class="px">· $220/ea</span> — Martin has no 1.5" at all</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="220" value="220" oninput="recalc()"></div><div class="line-total" id="lt-4">—</div></div>
-    <div class="opt" data-idx="5" data-src="Bailey" data-qty="123"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — <span class="px">#10 container, 123 available</span> — <span class="warn">caliper not stated, size unconfirmed, plant cost only</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-5">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bron — only 1.25–1.5" liner stock, under spec &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at landscape caliper</div></div>
-  </div>
-
-  <div class="species" data-need="41">
-    <div class="species-head"><span class="species-name">Helena Maple</span><span class="species-need">need 41 · 1.5–2" cal</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 19</span><span class="job-chip job-h2s">Home2Suites · 22</span></div>
-    <div class="opt" data-idx="6" data-src="Martin" data-qty="41" data-price="635"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Helena Maple 2–2.25" cal <span class="px">· 41 available, $635/ea</span> — starts at 1.75"</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="635" value="635" oninput="recalc()"></div><div class="line-total" id="lt-6">—</div></div>
-    <div class="opt" data-idx="7" data-src="Danny" data-price="460"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Helena Maple 2" cal <span class="px">· $460/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="460" value="460" oninput="recalc()"></div><div class="line-total" id="lt-7">—</div></div>
-    <div class="opt" data-idx="8" data-src="Danny" data-price="360"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Helena Maple 1.5" cal <span class="px">· $360/ea</span> — Martin starts at 1.75"</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="360" value="360" oninput="recalc()"></div><div class="line-total" id="lt-8">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — <span class="warn">count was never recorded in the audit (blank cell) — treat as unconfirmed, not zero, worth a physical check</span> &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bailey — not in catalog &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at landscape caliper</div></div>
-  </div>
-
-  <div class="species" data-need="56">
-    <div class="species-head"><span class="species-name">Paper Birch</span><span class="species-need">need 56 · 1.5–2" cal</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 8</span><span class="job-chip job-wsrcc">WSRCC · 27</span><span class="job-chip job-h2s">Home2Suites · 15</span><span class="job-chip job-waca">Charter · 6</span></div>
-    <div class="opt" data-idx="9" data-src="Nursery" data-qty="2" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Paper Birch <span class="px">· 2 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-9">—</div></div>
-    <div class="opt" data-idx="10" data-src="Bailey" data-qty="578"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — <span class="px">#10, 578 available</span> — <span class="warn">clump form, not single-stem like spec calls for</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-10">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Martin — says "no Birch" right now, worth rechecking later in season &nbsp;·&nbsp; Danny — not listed for this species &nbsp;·&nbsp; Lowe's / Home Depot — unlikely, not checked</div></div>
-  </div>
-
-  <div class="species" data-need="43">
-    <div class="species-head"><span class="species-name">Quaking Aspen</span><span class="species-need">need 43 · 1.5–2" cal</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 35</span><span class="job-chip job-h2s">Home2Suites · 8</span></div>
-    <div class="opt" data-idx="11" data-src="Danny" data-price="220"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Quaking Aspen 2" cal <span class="px">· $220/ea</span> — Martin grows it but never quoted a price</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="220" value="220" oninput="recalc()"></div><div class="line-total" id="lt-11">—</div></div>
-    <div class="opt" data-idx="12" data-src="Danny" data-price="175"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Quaking Aspen 1.5" cal <span class="px">· $175/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="175" value="175" oninput="recalc()"></div><div class="line-total" id="lt-12">—</div></div>
-    <div class="opt" data-idx="13" data-src="Bailey" data-qty="396" data-price="171.90"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — <span class="px">#25, 1.5" cal, 396 available, $171.90/ea</span> (or 1.75" cal, 133 avail, $180.85)</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="171.90" value="171.90" oninput="recalc()"></div><div class="line-total" id="lt-13">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — form/size mismatch, not usable &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's / Home Depot — unlikely, not checked</div></div>
-  </div>
-
-  <div class="species" data-need="19">
-    <div class="species-head"><span class="species-name">Scotch Pine</span><span class="species-need">need 19 · 7' HT</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 19</span></div>
-    <div class="opt" data-idx="14" data-src="Danny" data-price="460"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Scotch Pine 7' <span class="px">· $460/ea</span> — true variety, Martin can't source it at all</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="460" value="460" oninput="recalc()"></div><div class="line-total" id="lt-14">—</div></div>
-    <div class="opt" data-idx="15" data-src="Martin" data-qty="19" data-price="802"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Rostrata Pine 7'–8' <span class="px">· 19 available, $802/ea</span> — not true Scotch Pine, says "no Scotch"</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="802" value="802" oninput="recalc()"></div><div class="line-total" id="lt-15">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay / Bailey — not carried &nbsp;·&nbsp; Bron — only 2 of 19 on order, at 90cm (~3'), way undersized &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at 7' landscape size</div></div>
-  </div>
-
-  <div class="species" data-need="8">
-    <div class="species-head"><span class="species-name">Prairiefire Crabapple</span><span class="species-need">need 8 · 2" cal</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 8</span></div>
-    <div class="opt" data-idx="16" data-src="Danny" data-price="460"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Prairiefire Crabapple 2" <span class="px">· $460/ea</span> — true variety, Martin can't source it at all</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="460" value="460" oninput="recalc()"></div><div class="line-total" id="lt-16">—</div></div>
-    <div class="opt" data-idx="17" data-src="Martin" data-price="625"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Perfect Purple Crabapple 2" B&amp;B <span class="px">· $625/ea</span> — not true variety, says "don't do Prairiefire"</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="625" value="625" oninput="recalc()"></div><div class="line-total" id="lt-17">—</div></div>
-    <div class="opt" data-idx="18" data-src="Martin" data-price="225"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Royalty Crabapple <span class="px">· 1.5" only, $225/ea</span> — also not true variety, smaller size</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="225" value="225" oninput="recalc()"></div><div class="line-total" id="lt-18">—</div></div>
-    <div class="opt" data-idx="19" data-src="Bailey" data-qty="438" data-price="155.95"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — Prairiefire Crabapple <span class="px">· #25, 1.5"–1.75" cal, 438 available, $155.95–175.00/ea</span> — true variety</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="155.95" value="155.95" oninput="recalc()"></div><div class="line-total" id="lt-19">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bron — ships Radiant Crabapple as sub, undersized &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at landscape caliper</div></div>
-  </div>
-
-  <div class="species" data-need="2">
-    <div class="species-head"><span class="species-name">Parkland Pillar Birch</span><span class="species-need">need 2 · 1.5" cal</span></div>
-    <div class="jobs"><span class="job-chip job-waca">Charter · 2</span></div>
-    <div class="opt" data-idx="20" data-src="Danny" data-price="440"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Pillar Birch 1.5" cal <span class="px">· $440/ea</span> — matches spec size</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="440" value="440" oninput="recalc()"></div><div class="line-total" id="lt-20">—</div></div>
-    <div class="opt" data-idx="21" data-src="Martin" data-qty="2" data-price="495"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Pillar Birch 3" cal <span class="px">· 2 available, $495/ea</span> — oversize for spec</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="495" value="495" oninput="recalc()"></div><div class="line-total" id="lt-21">—</div></div>
-    <div class="opt" data-idx="22" data-src="Bailey" data-qty="374" data-price="199.00"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — <span class="px">#25, 1.5" cal, 374 available, $199.00/ea</span> — only need 2, huge minimum order gap</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="199.00" value="199.00" oninput="recalc()"></div><div class="line-total" id="lt-22">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bron — only .75–1" on order, well under spec</div></div>
-  </div>
-
-  <div class="species" data-need="20">
-    <div class="species-head"><span class="species-name">Colorado Green Spruce</span><span class="species-need">need 20 · 6' HT</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 20</span></div>
-    <div class="opt" data-idx="23" data-src="Nursery"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Colorado Blue Spruce, 6' <span class="px">· 6 on hand per current audit</span> — <span class="warn">an earlier sellable/rough breakdown (2 sellable, 3 rough) doesn't reconcile to this total and isn't backed by any note in the spreadsheet — worth a fresh eyeball count</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-23">—</div></div>
-    <div class="opt" data-idx="24" data-src="Danny" data-qty="20" data-price="425"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Colorado Spruce, Blue, 6' <span class="px">· ~20 available (his estimate), $425/ea</span> — ready now, not mid-August</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="425" value="425" oninput="recalc()"></div><div class="line-total" id="lt-24">—</div></div>
-    <div class="opt" data-idx="25" data-src="Martin" data-price="495"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Colorado Spruce, Blue <span class="px">· $495/ea</span> — harvestable mid-August; or possibly $325 AK-grown, <span class="warn">confirm which tree</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="495" value="495" oninput="recalc()"></div><div class="line-total" id="lt-25">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — #5 pot, 1000+ avail, but only "Fat Albert" cultivar — <span class="warn">wrong cultivar</span> &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at 6' landscape size</div></div>
-  </div>
-
-  <div class="species" data-need="9">
-    <div class="species-head"><span class="species-name">White Spruce</span><span class="species-need">need 9 · 6' HT</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 9</span></div>
-    <div class="opt" data-idx="26" data-src="Nursery" data-qty="1" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — White Spruce <span class="px">· 1 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-26">—</div></div>
-    <div class="opt" data-idx="27" data-src="Danny" data-price="110"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — White Spruce 6' <span class="px">· $110/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="110" value="110" oninput="recalc()"></div><div class="line-total" id="lt-27">—</div></div>
-    <div class="opt" data-idx="28" data-src="Martin" data-qty="6" data-price="195"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — White Spruce 6' <span class="px">· 6 available, $195/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="195" value="195" oninput="recalc()"></div><div class="line-total" id="lt-28">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bron — 0 of 9 confirmed on order, largest only 3–4', undersized &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bailey — not in catalog &nbsp;·&nbsp; Lowe's / Home Depot — unlikely at 6' landscape size</div></div>
-  </div>
-
-  <div class="species" data-need="3">
-    <div class="species-head"><span class="species-name">Amur Maple</span><span class="species-tag">new</span><span class="species-need">need 3 · 1.5" cal</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 3</span></div>
-    <div class="opt" data-idx="29" data-src="Nursery" data-qty="19" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">19 combined surplus maples on hand</span> (Crimson King 2, Crimson Sentry 1, Deborah 9, Silver Queen 3, Prairie Splendor 4) — <span class="warn">substitute cultivars, not Amur Maple — needs Wolf's sign-off, but already owned and far more than the 3 needed</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-29">—</div></div>
-    <div class="opt" data-idx="30" data-src="Nursery" data-qty="51" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">51 "Flame Amur Maple"</span> (#10, from Bailey's May shipment) — <span class="warn">different named cultivar, not plain Amur Maple — needs Wolf's sign-off, but already owned and far more than the 3 needed</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-30">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — 3 Amur Maple on hand, but <span class="warn">clump form only — spec calls for single-stem, not a match</span> &nbsp;·&nbsp; Martin / Danny / McKay / Bailey — ask directly, not yet quoted for this species</div></div>
-  </div>
-
-  <div class="species" data-need="9">
-    <div class="species-head"><span class="species-name">Siberian Crabapple</span><span class="species-tag">new</span><span class="species-need">need 9 · 1.5" cal</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 9</span></div>
-    <div class="opt" data-idx="31" data-src="Bailey" data-qty="9" data-price="155.95"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — Prairiefire Crabapple as substitute <span class="px">· #25, 1.5"–1.75" cal, same pool as the Prairiefire Crabapple need below (438 available combined), $155.95/ea</span> — <span class="warn">different bloom color and habit than Siberian Crab — needs Wolf's sign-off, plant cost only, freight never quoted</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="155.95" value="155.95" oninput="recalc()"></div><div class="line-total" id="lt-31">—</div></div>
-    <div class="opt" data-idx="32" data-src="Martin" data-price="225"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Royalty Crabapple as substitute <span class="px">· 1.5" cal, matches this spec's size, $225/ea</span> — <span class="warn">different variety, purple-leaf ornamental crab — needs Wolf's sign-off</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="225" value="225" oninput="recalc()"></div><div class="line-total" id="lt-32">—</div></div>
-    <div class="opt" data-idx="33" data-src="Danny" data-price="460"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Prairiefire Crabapple as substitute <span class="px">· 2" cal, $460/ea</span> — <span class="warn">different variety, oversize for this 1.5" spec — needs Wolf's sign-off</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="460" value="460" oninput="recalc()"></div><div class="line-total" id="lt-33">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay — ask directly, not yet quoted for this species</div></div>
-  </div>
-
-  <div class="cat">Shrubs</div>
-
-  <div class="species" data-need="117">
-    <div class="species-head"><span class="species-name">Abbottswood Potentilla</span><span class="species-need">need 117 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 117</span></div>
-    <div class="opt" data-idx="34" data-src="Nursery" data-qty="31" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Abbotswood Potentilla <span class="px">· 31 on hand</span> — main audit count</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-34">—</div></div>
-    <div class="opt" data-idx="35" data-src="Nursery" data-qty="26" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">26 more from Bailey's May shipment</span> — <span class="warn">already paid for and potted, tracked separately from the main audit</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-35">—</div></div>
-    <div class="opt" data-idx="36" data-src="Danny"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Abbotswood Potentilla <span class="px">· price never confirmed, cut off in his message — worth a call</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-36">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — carries other cultivars (Dakota Sunspot, Marmalade), not Abbotswood or Goldfinger by name &nbsp;·&nbsp; McKay — not confirmed for this cultivar</div></div>
-  </div>
-
-  <div class="species" data-need="97">
-    <div class="species-head"><span class="species-name">Goldfinger Potentilla</span><span class="species-need">need 97 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 97</span></div>
-    <div class="opt" data-idx="37" data-src="Nursery" data-qty="1" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Goldfinger Potentilla <span class="px">· 1 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-37">—</div></div>
-    <div class="opt" data-idx="38" data-src="Home Depot" data-price="9.99"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Home Depot</span> — Goldfinger (Bush Cinquefoil) <span class="px">· $9.99/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="9.99" value="9.99" oninput="recalc()"></div><div class="line-total" id="lt-38">—</div></div>
-    <div class="opt" data-idx="39" data-src="Martin" data-qty="95" data-price="48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Gold Finger Potentilla <span class="px">· 95 available, $48/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="48" value="48" oninput="recalc()"></div><div class="line-total" id="lt-39">—</div></div>
-    <div class="opt" data-idx="40" data-src="Danny" data-qty="95" data-price="28"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Goldfinger Potentilla <span class="px">· ~95 available (his estimate), $28/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="28" value="28" oninput="recalc()"></div><div class="line-total" id="lt-40">—</div></div>
-    <div class="opt" data-idx="41" data-src="McKay" data-qty="433" data-price="17.50"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Goldfinger Potentilla <span class="px">· #3 (need #5), 433 available, $17.50/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="17.50" value="17.50" oninput="recalc()"></div><div class="line-total" id="lt-41">—</div></div>
-    <div class="opt" data-idx="42" data-src="Bron" data-qty="97" data-price="45.48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Goldfinger Potentilla <span class="px">· 97 confirmed on order #137198, ~$45.48/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="45.48" value="45.48" oninput="recalc()"></div><div class="line-total" id="lt-42">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — carries other cultivars, not Goldfinger by name &nbsp;·&nbsp; Lowe's — no cultivar specified in stock count</div></div>
-  </div>
-
-  <div class="species" data-need="120">
-    <div class="species-head"><span class="species-name">Pink Beauty Potentilla</span><span class="species-need">need 120 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 120</span></div>
-    <div class="opt" data-idx="43" data-src="Lowe's" data-qty="29"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Lowe's (Tudor)</span> — generic Potentilla, no cultivar listed <span class="px">· 29 in stock, price unknown</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-43">—</div></div>
-    <div class="opt" data-idx="44" data-src="Home Depot" data-price="16.49"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Home Depot</span> — Pink Beauty Potentilla <span class="px">· $16.49/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="16.49" value="16.49" oninput="recalc()"></div><div class="line-total" id="lt-44">—</div></div>
-    <div class="opt" data-idx="45" data-src="Martin" data-qty="35" data-price="48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — McKay's White Potentilla <span class="px">· 35 available, $48/ea</span> — Martin says mixable with Pink Beauty count</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="48" value="48" oninput="recalc()"></div><div class="line-total" id="lt-45">—</div></div>
-    <div class="opt" data-idx="46" data-src="Bron" data-qty="120" data-price="45.48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Pink Beauty Potentilla <span class="px">· 120 confirmed on order #137198, exact quantity match, ~$45.48/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="45.48" value="45.48" oninput="recalc()"></div><div class="line-total" id="lt-46">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand &nbsp;·&nbsp; McKay / Bailey — not confirmed for this cultivar</div></div>
-  </div>
-
-  <div class="species" data-need="55">
-    <div class="species-head"><span class="species-name">Yellow Potentilla</span><span class="species-need">need 55 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 55</span></div>
-    <div class="opt" data-idx="47" data-src="Nursery" data-qty="8" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Yellow Potentilla (unconfirmed ID) <span class="px">· 8 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-47">—</div></div>
-    <div class="opt" data-idx="48" data-src="Bron" data-qty="44" data-price="27.26"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Yellow Potentilla <span class="px">· 44 confirmed on order #137198, ~$27.26/ea landed (2x freight)</span> — <span class="warn">ships as #5, spec calls for #2 — order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="27.26" value="27.26" oninput="recalc()"></div><div class="line-total" id="lt-48">—</div></div>
-    <div class="opt" data-idx="49" data-src="Nursery" data-qty="60" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">60 combined</span> (Gold Drop Potentilla 2, Katherine Dykes Potentilla 8, Lemon Meringue Potentilla 50 from Bailey's May shipment) — <span class="warn">different cultivars, not true Yellow — needs Wolf's sign-off, but combined with the counts above, more than closes the gap</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-49">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey / Martin / Danny — not confirmed for this exact cultivar</div></div>
-  </div>
-
-  <div class="species" data-need="154">
-    <div class="species-head"><span class="species-name">Birchleaf Spirea</span><span class="species-need">need 154 · #2/#5</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 26</span><span class="job-chip job-wsrcc">WSRCC · 65</span><span class="job-chip job-h2s">Home2Suites · 63</span></div>
-    <div class="opt" data-idx="50" data-src="Nursery" data-qty="5" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Tor Birchleaf Spirea <span class="px">· 5 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-50">—</div></div>
-    <div class="opt" data-idx="51" data-src="Home Depot" data-price="16.49"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Home Depot</span> — Tor Birchleaf Spirea <span class="px">· $16.49/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="16.49" value="16.49" oninput="recalc()"></div><div class="line-total" id="lt-51">—</div></div>
-    <div class="opt" data-idx="52" data-src="Martin" data-qty="91" data-price="48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Birchleaf Spirea <span class="px">· 91 available, $48/ea</span> — true variety match</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="48" value="48" oninput="recalc()"></div><div class="line-total" id="lt-52">—</div></div>
-    <div class="opt" data-idx="53" data-src="Danny" data-qty="75" data-price="32"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Birchleaf Spirea <span class="px">· ~75 available (his estimate), $32/ea</span> — true variety match, cheapest option</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="32" value="32" oninput="recalc()"></div><div class="line-total" id="lt-53">—</div></div>
-    <div class="opt" data-idx="54" data-src="McKay" data-qty="298" data-price="18.50"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Birchleaf Spirea (Tor) <span class="px">· #3 (need #2/#5), 298 available, $18.50/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="18.50" value="18.50" oninput="recalc()"></div><div class="line-total" id="lt-54">—</div></div>
-    <div class="opt" data-idx="55" data-src="Bron" data-qty="156" data-price="43.96"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Birchleaf Spirea <span class="px">· 156 confirmed on order #137198, ~$43.96/ea landed (2x freight)</span> — ships as Tor variety — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="43.96" value="43.96" oninput="recalc()"></div><div class="line-total" id="lt-55">—</div></div>
-    <div class="opt" data-idx="56" data-src="Nursery" data-qty="112" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">up to 112 spare Goldflame Spirea</span> (140 on hand − 28 Goldflame Spirea needs for itself) — <span class="warn">shared pool with the Goldflame Spirea species above — checking this reduces its backup coverage. Different cultivar, needs Wolf's sign-off. Already owned, $0.</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-56">—</div></div>
-    <div class="opt" data-idx="57" data-src="Nursery" data-qty="31" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">up to 31 spare Gold Mound Spirea</span> (92 on hand − 61 Goldmound Spirea needs for itself) — <span class="warn">shared pool with the Goldmound Spirea species below — checking this reduces its margin there. Different cultivar, needs Wolf's sign-off. Already owned, $0.</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-57">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — not carried &nbsp;·&nbsp; Lowe's — not found in Tudor stock &nbsp;·&nbsp; Home Depot also has Little Princess ($24.99), Snowmound ($26.49), and Renaissance ($24.99) Spirea — different cultivars, don't count against this need</div></div>
-  </div>
-
-  <div class="species" data-need="28">
-    <div class="species-head"><span class="species-name">Goldflame Spirea</span><span class="species-need">need 28 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-waca">Charter · 28</span></div>
-    <div class="opt" data-idx="58" data-src="Nursery" data-qty="140" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">140 on hand</span> — <span class="warn">fresh hand count 7/23, packed tight on pallets so treat as approximate — supersedes the older pallet-log/audit count of 15 and the shipment's unconfirmed "TBD", covers this need on its own</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-58">—</div></div>
-    <div class="opt" data-idx="59" data-src="Martin" data-qty="2" data-price="48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Gold Flame Spirea <span class="px">· 2 available, $48/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="48" value="48" oninput="recalc()"></div><div class="line-total" id="lt-59">—</div></div>
-    <div class="opt" data-idx="60" data-src="Danny" data-price="28"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Goldflame Spirea <span class="px">· said "all," no firm count, $28/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="28" value="28" oninput="recalc()"></div><div class="line-total" id="lt-60">—</div></div>
-    <div class="opt" data-idx="61" data-src="McKay" data-qty="198" data-price="17.75"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Goldflame Spirea <span class="px">· #3 (need #5), 198 available, $17.75/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="17.75" value="17.75" oninput="recalc()"></div><div class="line-total" id="lt-61">—</div></div>
-    <div class="opt" data-idx="62" data-src="Bron" data-qty="28" data-price="43.96"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Goldflame Spirea <span class="px">· 28 confirmed on order #137198, exact quantity match, ~$43.96/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="43.96" value="43.96" oninput="recalc()"></div><div class="line-total" id="lt-62">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Bailey — not carried &nbsp;·&nbsp; Lowe's / Home Depot — not found &nbsp;·&nbsp; <span class="warn">112 of the 140 above is also checkable as a substitute under Birchleaf Spirea — if that gets used, this need loses its nursery backing</span></div></div>
-  </div>
-
-  <div class="species" data-need="61">
-    <div class="species-head"><span class="species-name">Goldmound Spirea</span><span class="species-tag">new</span><span class="species-need">need 61 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 61</span></div>
-    <div class="opt" data-idx="63" data-src="Nursery" data-qty="92" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Gold Mound Spirea <span class="px">· 92 on hand</span> — <span class="warn">fresh hand count 7/23, packed tight on pallets so treat as approximate — supersedes the older combined audit + shipment total of 147, still exceeds this need on its own</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-63">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin / Danny / McKay / Bailey / Lowe's / Home Depot — not yet researched for this species (nursery stock alone covers it, so lower priority) &nbsp;·&nbsp; <span class="warn">31 of the 92 above is also checkable as a substitute under Birchleaf Spirea — if that gets used, this need loses its margin</span></div></div>
-  </div>
-
-  <div class="species" data-need="81">
-    <div class="species-head"><span class="species-name">Creeping Juniper (Blue Rug)</span><span class="species-need">need 81 · #3/#5</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 11</span><span class="job-chip job-h2s">Home2Suites · 70</span></div>
-    <div class="opt" data-idx="64" data-src="Nursery" data-qty="50" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Blue Rug Juniper <span class="px">· 50 on hand</span> — true creeping form</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-64">—</div></div>
-    <div class="opt" data-idx="65" data-src="Lowe's" data-qty="63"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Lowe's (Tudor)</span> — Blue Rug Juniper <span class="px">· 63 in stock, price unknown</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-65">—</div></div>
-    <div class="opt" data-idx="66" data-src="Home Depot" data-price="22.49"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Home Depot</span> — Sea Green <span class="px">· $22.49/ea</span> — spreading form</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="22.49" value="22.49" oninput="recalc()"></div><div class="line-total" id="lt-66">—</div></div>
-    <div class="opt" data-idx="67" data-src="Martin" data-price="68"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Blue Rug Juniper <span class="px">· #5, $68/ea</span> — <span class="warn">confirm current stock</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="68" value="68" oninput="recalc()"></div><div class="line-total" id="lt-67">—</div></div>
-    <div class="opt" data-idx="68" data-src="Martin" data-price="68"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Blue Chip Juniper <span class="px">· #5, $68/ea</span> — <span class="warn">confirm current stock</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="68" value="68" oninput="recalc()"></div><div class="line-total" id="lt-68">—</div></div>
-    <div class="opt" data-idx="69" data-src="McKay" data-qty="280" data-price="22.50"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Blue Rug Creeping Juniper <span class="px">· #3, 280 available, $22.50/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="22.50" value="22.50" oninput="recalc()"></div><div class="line-total" id="lt-69">—</div></div>
-    <div class="opt" data-idx="70" data-src="Bron" data-qty="70" data-price="49.66"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Creeping Juniper <span class="px">· 70 confirmed on order #137198, ~$49.66/ea landed (2x freight)</span> — ships as Blue Chip variety — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="49.66" value="49.66" oninput="recalc()"></div><div class="line-total" id="lt-70">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery also has Andorra Compact (13) and Prince of Wales (16) Juniper — <span class="warn">checkable as a substitute under Savin Juniper below, not here — don't claim the same stock twice</span> &nbsp;·&nbsp; Lowe's has Juniper Old Gold (49), different cultivar &nbsp;·&nbsp; Bailey — not confirmed</div></div>
-  </div>
-
-  <div class="species" data-need="34">
-    <div class="species-head"><span class="species-name">Savin Juniper</span><span class="species-need">need 34 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 34</span></div>
-    <div class="opt" data-idx="71" data-src="Home Depot" data-price="22.49"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Home Depot</span> — Calgary Carpet <span class="px">· $22.49/ea</span> — Savin cultivar, direct match</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="22.49" value="22.49" oninput="recalc()"></div><div class="line-total" id="lt-71">—</div></div>
-    <div class="opt" data-idx="72" data-src="McKay" data-qty="728" data-price="22.50"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Savin Juniper <span class="px">· #3 (need #5), 728 available, $22.50/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="22.50" value="22.50" oninput="recalc()"></div><div class="line-total" id="lt-72">—</div></div>
-    <div class="opt" data-idx="73" data-src="Nursery" data-qty="29" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">29 combined on hand</span> (13 Andorra Compact + 16 Prince of Wales Juniper) — <span class="warn">different species, low-spreading design substitute — needs Wolf's sign-off; same stock as the Creeping Juniper note below, only claim it in one place</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-73">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none confirmed by name &nbsp;·&nbsp; Bailey — not confirmed &nbsp;·&nbsp; Bron — not on order &nbsp;·&nbsp; Lowe's — not found</div></div>
-  </div>
-
-  <div class="species" data-need="156">
-    <div class="species-head"><span class="species-name">Ivory Halo Dogwood</span><span class="species-need">need 156 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 156</span></div>
-    <div class="opt" data-idx="74" data-src="Martin" data-price="58"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Ivory Halo Dogwood <span class="px">· #5, $58/ea</span> — <span class="warn">confirm current stock with a call</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="58" value="58" oninput="recalc()"></div><div class="line-total" id="lt-74">—</div></div>
-    <div class="opt" data-idx="75" data-src="Bron" data-qty="156" data-price="47.00"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">156 confirmed on order #137198, exact quantity match, ~$47.00/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="47.00" value="47.00" oninput="recalc()"></div><div class="line-total" id="lt-75">—</div></div>
-    <div class="opt" data-idx="76" data-src="Bailey" data-qty="640" data-price="29.75"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — <span class="px">#5, 640 available, $29.75/ea</span> (or #2, 500 avail, $19.80)</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="29.75" value="29.75" oninput="recalc()"></div><div class="line-total" id="lt-76">—</div></div>
-    <div class="opt" data-idx="77" data-src="Nursery" data-qty="90" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">up to 90 spare Red-Twig Dogwood</span> (247 total between the main audit and Bailey's shipment, minus the 157 Red-Twig Dogwood needs for itself) — <span class="warn">shared pool with the Red-Twig Dogwood species below — checking this reduces what's left there, since nothing else is currently lined up for its own need. Different look, no variegation. Needs Wolf's sign-off.</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-77">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — #3 only (need #5), 0 available now, 427 in August, $23.75/ea &nbsp;·&nbsp; Lowe's — not found &nbsp;·&nbsp; Home Depot — not researched</div></div>
-  </div>
-
-  <div class="species" data-need="157">
-    <div class="species-head"><span class="species-name">Red-Twig Dogwood</span><span class="species-tag">new</span><span class="species-need">need 157 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 116</span><span class="job-chip job-h2s">Home2Suites · 41</span></div>
-    <div class="opt" data-idx="78" data-src="Nursery" data-qty="1" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">1 on hand</span> — <span class="warn">real audit count, corrects an earlier "~90 available" note that was wrong</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-78">—</div></div>
-    <div class="opt" data-idx="79" data-src="Nursery" data-qty="246" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">246 from Bailey's May shipment</span> — <span class="warn">already paid for and potted, this is our own stock, not a new purchase — covers this need on its own</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-79">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin / Danny / McKay / Lowe's / Home Depot — <span class="warn">not yet researched</span> &nbsp;·&nbsp; <span class="warn">90 of this pool is also checkable as a substitute under Ivory Halo Dogwood above — if that gets used, this need loses backup coverage</span></div></div>
-  </div>
-
-  <div class="species" data-need="45">
-    <div class="species-head"><span class="species-name">Miss Kim Lilac</span><span class="species-need">need 45 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 45</span></div>
-    <div class="opt" data-idx="80" data-src="Martin" data-qty="26" data-price="48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Miss Kim Lilac <span class="px">· 26 available, $48/ea</span> — exact match</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="48" value="48" oninput="recalc()"></div><div class="line-total" id="lt-80">—</div></div>
-    <div class="opt" data-idx="81" data-src="Danny" data-qty="26" data-price="32"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Danny</span> — Miss Kim Lilac <span class="px">· ~26 available (his estimate), $32/ea</span> — exact match, cheapest option</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="32" value="32" oninput="recalc()"></div><div class="line-total" id="lt-81">—</div></div>
-    <div class="opt" data-idx="82" data-src="Bron" data-qty="45" data-price="47.96"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Miss Kim Lilac <span class="px">· 45 confirmed on order #137198, exact quantity match, ~$47.96/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="47.96" value="47.96" oninput="recalc()"></div><div class="line-total" id="lt-82">—</div></div>
-    <div class="opt" data-idx="83" data-src="McKay" data-qty="383" data-price="22.50"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Miss Kim Compact Lilac <span class="px">· #5, 383 available, $22.50/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="22.50" value="22.50" oninput="recalc()"></div><div class="line-total" id="lt-83">—</div></div>
-    <div class="opt" data-idx="84" data-src="Bailey" data-qty="300" data-price="20.35"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — Miss Kim Lilac <span class="px">· #2, 300 available, $20.35/ea</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="20.35" value="20.35" oninput="recalc()"></div><div class="line-total" id="lt-84">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — none on hand for this exact cultivar (Donald Wyman/James MacFarlane/Miss Canada surplus lilacs are <span class="warn">checkable as a substitute under Late Lilac below, not here</span>) &nbsp;·&nbsp; Home Depot — had lilacs on the shelf, never priced them — worth checking next visit &nbsp;·&nbsp; Lowe's — not found</div></div>
-  </div>
-
-  <div class="species" data-need="44">
-    <div class="species-head"><span class="species-name">Late Lilac</span><span class="species-tag">new</span><span class="species-need">need 44 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 44</span></div>
-    <div class="opt" data-idx="85" data-src="Nursery" data-qty="7" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Villosa Late Lilac <span class="px">· 7 on hand</span> — different variety, still a lilac</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-85">—</div></div>
-    <div class="opt" data-idx="86" data-src="Nursery" data-qty="57" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">57 more combined</span> (Donald Wyman 17, James MacFarlane 28, Miss Canada 12) — <span class="warn">different named lilac cultivars, unclaimed by any other need — combined with the Villosa above, fully covers this need — needs Wolf's sign-off</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-86">—</div></div>
-    <div class="opt" data-idx="87" data-src="Nursery" data-qty="50" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Common Lilac (purple) <span class="px">· 50 from Bailey's May shipment</span> — <span class="warn">already paid for and potted, #2 pot — matches this #5-ish container spec far better than the 6' HT tree-form need it was originally under. Different cultivar, needs Wolf's sign-off.</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-87">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin / Danny / McKay / Bailey / Lowe's / Home Depot — not yet researched for this species, but nursery stock now covers it several times over</div></div>
-  </div>
-
-  <div class="species" data-need="2">
-    <div class="species-head"><span class="species-name">Hardy Purple Common Lilac</span><span class="species-tag">new</span><span class="species-need">need 2 · 6' HT</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 2 (alternate)</span></div>
-    <div class="opt" data-idx="88" data-src="Martin" data-price="375"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Bloomarang, dark purple <span class="px">· Tree form, #25, 1.5" cal, $375/ea</span> — <span class="warn">real tree form, much closer match to the 6' HT spec than a potted liner would be</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="375" value="375" oninput="recalc()"></div><div class="line-total" id="lt-88">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt"><span class="warn">Conditional — Baxter's proposal lists this only as an alternate for a power-line conflict spot; confirm with Todd whether it's actually needed before sourcing</span> &nbsp;·&nbsp; Nursery has 6 general Common Lilac on hand from the main audit, different variety but close &nbsp;·&nbsp; the 50 Common Lilac (purple) from Bailey's shipment moved to Late Lilac — #2 pot was too small for this 6' HT spec</div></div>
-  </div>
-
-  <div class="species" data-need="14">
-    <div class="species-head"><span class="species-name">Dwarf American Cranberry</span><span class="species-need">need 14 · #3</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 14</span></div>
-    <div class="opt" data-idx="89" data-src="Nursery" data-qty="4" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — American Cranberrybush <span class="px">· 4 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-89">—</div></div>
-    <div class="opt" data-idx="90" data-src="Nursery" data-qty="3" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Bailey Compact American Cranberrybush <span class="px">· 3 on hand</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-90">—</div></div>
-    <div class="opt" data-idx="91" data-src="Martin" data-price="48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — American Highbush Cranberry <span class="px">· #5, $48/ea</span> — <span class="warn">confirm current stock</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="48" value="48" oninput="recalc()"></div><div class="line-total" id="lt-91">—</div></div>
-    <div class="opt" data-idx="92" data-src="Martin" data-price="46"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Bailey Compact Cranberry <span class="px">· #5, $46/ea</span> — <span class="warn">confirm current stock</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="46" value="46" oninput="recalc()"></div><div class="line-total" id="lt-92">—</div></div>
-    <div class="opt" data-idx="93" data-src="Bron" data-qty="14" data-price="47.96"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — Dwarf American Cranberry <span class="px">· 14 confirmed on order #137198, exact quantity match, ~$47.96/ea landed (2x freight)</span> — ships as Bailey Compact #5 sub — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="47.96" value="47.96" oninput="recalc()"></div><div class="line-total" id="lt-93">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey — not confirmed for this one &nbsp;·&nbsp; Lowe's — not found &nbsp;·&nbsp; Home Depot — not researched</div></div>
-  </div>
-
-  <div class="species" data-need="71">
-    <div class="species-head"><span class="species-name">Rugosa Rose</span><span class="species-tag">new</span><span class="species-need">need 71 · #3/#5</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 38</span><span class="job-chip job-h2s">Home2Suites · 33</span></div>
-    <div class="opt" data-idx="94" data-src="Nursery" data-qty="67" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">67 usable</span> (69 received from Bailey's May shipment, Proven Winners mix incl. Alba/white, minus 2 known losses) — <span class="warn">already paid for and potted, this is our own stock — nearly covers this need on its own</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-94">—</div></div>
-    <div class="opt" data-idx="95" data-src="Nursery" data-qty="4" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">4 more</span> reclassified as "Rugosa Mauve" — <span class="warn">distinct cultivar, not plain Rugosa Rose — needs Wolf's sign-off, but combined with the shipment stock above, exactly covers this need</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-95">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin / Danny / McKay / Bailey / Lowe's / Home Depot — not yet researched, but nursery stock now covers it</div></div>
-  </div>
-
-  <div class="species" data-need="92">
-    <div class="species-head"><span class="species-name">Hedge Cotoneaster</span><span class="species-tag">new</span><span class="species-need">need 92 · #5</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 58</span><span class="job-chip job-waca">Charter · 34</span></div>
-    <div class="opt" data-idx="96" data-src="Nursery" data-qty="79" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Cotoneaster <span class="px">· 79 on hand</span> — main audit count</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-96">—</div></div>
-    <div class="opt" data-idx="97" data-src="Nursery" data-qty="172" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">172 more from Bailey's May shipment</span> (80 #2 + 92 #5) — <span class="warn">already paid for and potted, tracked separately from the main audit — combined with the count above, fully covers this need</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-97">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin / Danny / McKay / Bailey / Lowe's / Home Depot — not researched, but nursery stock now covers it</div></div>
-  </div>
-
-  <div class="species" data-need="374">
-    <div class="species-head"><span class="species-name">Alaska Flag / Wild Iris</span><span class="species-need">need 374 · #1</span></div>
-    <div class="jobs"><span class="job-chip job-baxter">Baxter · 36</span><span class="job-chip job-h2s">Home2Suites · 338</span></div>
-    <div class="opt" data-idx="98" data-src="Nursery" data-qty="25" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Arctic Iris <span class="px">· 25 on hand</span> — different variety, close sub</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-98">—</div></div>
-    <div class="opt" data-idx="99" data-src="Martin" data-price="8"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Alaskan Iris <span class="px">· $8/ea</span> — only confirmed source</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="8" value="8" oninput="recalc()"></div><div class="line-total" id="lt-99">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; Bailey — not carried &nbsp;·&nbsp; Bron &amp; Sons — not on the confirmed order &nbsp;·&nbsp; Lowe's / Home Depot — very unlikely, native/specialty variety</div></div>
-  </div>
-
-  <div class="cat">Grasses &amp; Perennials</div>
-
-  <div class="species" data-need="363">
-    <div class="species-head"><span class="species-name">Karl Foerster Feather Reed Grass</span><span class="species-need">need 363 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 65</span><span class="job-chip job-h2s">Home2Suites · 164</span><span class="job-chip job-waca">Charter · 134</span></div>
-    <div class="opt" data-idx="100" data-src="Nursery" data-qty="70" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">70 on hand</span> — from today's audit count, flag if Wolf wants a fresher recount</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-100">—</div></div>
-    <div class="opt" data-idx="101" data-src="Martin" data-qty="272" data-price="16"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — <span class="px">272 available, $16/ea</span> — his cheapest item, doesn't fully cover the need alone</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="16" value="16" oninput="recalc()"></div><div class="line-total" id="lt-101">—</div></div>
-    <div class="opt" data-idx="102" data-src="Bron" data-qty="522" data-price="26.96"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">522 confirmed on order #137198, ~$26.96/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set — fully covers the need if it lands</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="26.96" value="26.96" oninput="recalc()"></div><div class="line-total" id="lt-102">—</div></div>
-    <div class="opt" data-idx="103" data-src="McKay" data-qty="4732" data-price="7.75"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — <span class="px">#1, 4,732 available, $7.75/ea</span> (or #3, 622 avail, $20.25)</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="7.75" value="7.75" oninput="recalc()"></div><div class="line-total" id="lt-103">—</div></div>
-    <div class="opt" data-idx="104" data-src="Bailey" data-qty="14" data-price="9.65"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bailey</span> — <span class="px">#1, only 14 available, $9.65/ea</span> — nowhere near enough on its own</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="9.65" value="9.65" oninput="recalc()"></div><div class="line-total" id="lt-104">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Danny — hasn't priced grasses yet, said "perennial prices to follow" &nbsp;·&nbsp; Lowe's / Home Depot — not researched</div></div>
-  </div>
-
-  <div class="species" data-need="74">
-    <div class="species-head"><span class="species-name">Overdam (Variegated) Reed Grass</span><span class="species-need">need 74 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-wsrcc">WSRCC · 74</span></div>
-    <div class="opt" data-idx="105" data-src="Nursery" data-qty="15" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">15 on hand</span> — from today's audit count, flag if Wolf wants a fresher recount</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-105">—</div></div>
-    <div class="opt" data-idx="106" data-src="McKay" data-qty="83" data-price="22.25"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — <span class="px">#3, 83 available, $22.25/ea</span> — true variety, covers this need on its own</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="22.25" value="22.25" oninput="recalc()"></div><div class="line-total" id="lt-106">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Martin — says "no Overdam grass" &nbsp;·&nbsp; Danny — hasn't priced grasses yet &nbsp;·&nbsp; Bailey — not confirmed &nbsp;·&nbsp; Lowe's / Home Depot — not researched</div></div>
-  </div>
-
-  <div class="species" data-need="226">
-    <div class="species-head"><span class="species-name">False Spirea (Sem / Ash-leaf)</span><span class="species-need">need 226 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 226</span></div>
-    <div class="opt" data-idx="107" data-src="Nursery" data-qty="48" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — <span class="px">48 on hand</span> — matches both the audit summary and the pallet-by-pallet log</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-107">—</div></div>
-    <div class="opt" data-idx="108" data-src="Bron" data-qty="226" data-price="27.72"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">226 confirmed on order #137198, exact quantity match, ~$27.72/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="27.72" value="27.72" oninput="recalc()"></div><div class="line-total" id="lt-108">—</div></div>
-    <div class="opt" data-idx="109" data-src="Martin"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — not on his current spring catalog, but <span class="warn">Matt's own experience working there says he carries it as a regular plant — may be sold out, worth a direct call</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-109">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay — not carried &nbsp;·&nbsp; not researched anywhere else yet</div></div>
-  </div>
-
-  <div class="species" data-need="305">
-    <div class="species-head"><span class="species-name">Bishop's Weed</span><span class="species-need">need 305 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 305</span></div>
-    <div class="opt" data-idx="110" data-src="Bron" data-qty="305" data-price="14.90"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">305 confirmed on order #137198, exact quantity match, ~$14.90/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="14.90" value="14.90" oninput="recalc()"></div><div class="line-total" id="lt-110">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; McKay — not carried &nbsp;·&nbsp; Bailey — not confirmed either way</div></div>
-  </div>
-
-  <div class="species" data-need="132">
-    <div class="species-head"><span class="species-name">Gold Crinkled Hair Grass</span><span class="species-need">need 132 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 132</span></div>
-    <div class="opt" data-idx="111" data-src="Nursery" data-qty="35" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Tufted Hair Grass <span class="px">· 35 on hand</span> — same genus, unclaimed elsewhere</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-111">—</div></div>
-    <div class="opt" data-idx="112" data-src="Nursery" data-qty="33" data-price="0"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Nursery</span> — Bronze Tufted Hair Grass <span class="px">· 33 on hand</span> — same genus, unclaimed elsewhere</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="0" value="0" oninput="recalc()"></div><div class="line-total" id="lt-112">—</div></div>
-    <div class="opt" data-idx="113" data-src="Bron" data-qty="208" data-price="14.90"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">208 confirmed on order #137198, ~$14.90/ea landed (2x freight)</span> — <span class="warn">shipped as "Golden Pendant," a substitute variety, smaller pot (#1) than spec'd (#2) — order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="14.90" value="14.90" oninput="recalc()"></div><div class="line-total" id="lt-113">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey — not confirmed either way &nbsp;·&nbsp; North Creek (PA) — ruled out, plug/liner supplier only &nbsp;·&nbsp; Little Prince OR — only carries wrong Deschampsia cultivar, worth revisiting next season</div></div>
-  </div>
-
-  <div class="species" data-need="83">
-    <div class="species-head"><span class="species-name">Hosta Patriot</span><span class="species-need">need 83 · #1</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 83</span></div>
-    <div class="opt" data-idx="114" data-src="McKay" data-qty="427" data-price="8.25"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">McKay</span> — Hosta Patriot <span class="px">· #1, 427 available, $8.25/ea</span> — true variety, exact match, plenty of stock</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="8.25" value="8.25" oninput="recalc()"></div><div class="line-total" id="lt-114">—</div></div>
-    <div class="opt" data-idx="115" data-src="Martin" data-price="16"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Martin</span> — Hosta "Stained Glass" <span class="px">· #1, $16/ea</span> — different cultivar than Patriot</div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="16" value="16" oninput="recalc()"></div><div class="line-total" id="lt-115">—</div></div>
-    <div class="opt" data-idx="116" data-src="Bron" data-qty="83" data-price="15.48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">83 confirmed on order #137198, exact quantity match, ~$15.48/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="15.48" value="15.48" oninput="recalc()"></div><div class="line-total" id="lt-116">—</div></div>
-    <div class="opt" data-idx="117" data-src="Little Prince OR"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Little Prince of Oregon</span> (Aurora, OR) — <span class="warn">confirmed handles Hosta, but 5-tray/360-unit minimum per variety — way more than needed, ask if a smaller custom order is possible</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="TBD" oninput="recalc()"></div><div class="line-total" id="lt-117">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; Bailey — not confirmed &nbsp;·&nbsp; Lowe's / Home Depot — not researched</div></div>
-  </div>
-
-  <div class="species" data-need="67">
-    <div class="species-head"><span class="species-name">Sweet Woodruff</span><span class="species-need">need 67 · #1</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 67</span></div>
-    <div class="opt" data-idx="118" data-src="Bron" data-qty="67" data-price="15.48"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">67 confirmed on order #137198, exact quantity match, ~$15.48/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="15.48" value="15.48" oninput="recalc()"></div><div class="line-total" id="lt-118">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">Nursery — not in today's audit at all, likely never stocked &nbsp;·&nbsp; McKay — not carried</div></div>
-  </div>
-
-  <div class="species" data-need="10">
-    <div class="species-head"><span class="species-name">Goatsbeard</span><span class="species-need">need 10 · #2</span></div>
-    <div class="jobs"><span class="job-chip job-h2s">Home2Suites · 10</span></div>
-    <div class="opt" data-idx="119" data-src="Bron" data-qty="10" data-price="14.90"><div class="qty-cell"><input type="number" class="qty-in" min="0" step="1" placeholder="0" oninput="recalc()"></div><div class="txt"><span class="src">Bron &amp; Sons</span> — <span class="px">10 confirmed on order #137198, exact quantity match, ~$14.90/ea landed (2x freight)</span> — <span class="warn">order not delivered, no ship date set</span></div><div class="price-cell">$<input type="number" class="price-in" step="0.01" placeholder="14.90" value="14.90" oninput="recalc()"></div><div class="line-total" id="lt-119">—</div></div>
-    <div class="opt dim"><input type="checkbox" disabled><div class="txt">McKay / Bailey — not confirmed either way &nbsp;·&nbsp; Nursery — not in today's audit at all, likely never stocked</div></div>
-  </div>
-
-  <div class="note">
-    <b>What changed:</b> every "need" number on this sheet is now the real sum of what's specified across the four currently active jobs (color-coded above) — not a single flat list. Several numbers went up a lot (Ivory Halo Dogwood, Juniper, Potentilla, Miss Kim Lilac especially), a few new species appeared that weren't tracked before, and one (Colorado Spruce) actually came down. "Any variety" is gone — every line is the exact cultivar a real job calls for.
-  </div>
-  <div class="note">
-    <b>Greyed-out lines</b> are dead ends or informational notes, not real sourcing options. Everything else, including our own nursery stock, has an open <b>Qty</b> box — nothing is pre-approved, and nothing is picked for you. <b>Underlined text</b> needs a phone call or a second look before relying on it. Type in exactly how many you're actually ordering from each source; the $/unit box is pre-filled from the quoted price but is fully editable if a real number comes in different. The line total, species "still short / covered" badge, the running tally, the per-job rollup, and the procurement log below all update live as you type. Nothing is saved to a server — it lives in this browser only, so <b>Export decisions (.txt)</b> before closing the tab if the work isn't done.
-  </div>
-
+<div id="saveWarning" class="save-warning">
+  Working offline. Counts are held on this device and will sync when you are back on signal.
 </div>
 
+<div class="report-btn-wrap">
+  <button id="reportBtn" class="report-btn">Send status report to Chris</button>
+</div>
+<div id="reportPanel" class="report-panel" style="display:none;">
+  <div class="report-panel-header">
+    <span>Status report &mdash; all 4 jobs</span>
+    <button id="closeReportBtn" class="report-close">&#10005; close</button>
+  </div>
+  <textarea id="reportText" class="report-textarea" readonly></textarea>
+  <div class="report-actions">
+    <button id="copyReportBtn" class="report-copy">Copy to clipboard</button>
+    <span id="copyStatus" class="copy-status"></span>
+  </div>
+</div>
+
+<div id="flagsSlot"></div>
+<div id="groups"></div>
+
+<footer>Counts save as you tap.</footer>
+
 <script>
-const JOB_DEFS = [
-  {key:"baxter", label:"Baxter Family Housing", cls:"job-baxter"},
-  {key:"wsrcc",  label:"WSRCC · 5800 Boundary Ave", cls:"job-wsrcc"},
-  {key:"h2s",    label:"Home2 Suites · Wasilla", cls:"job-h2s"},
-  {key:"waca",   label:"Wasilla Charter Academy", cls:"job-waca"},
-];
-const SOURCES = ["Nursery","Lowe's","Home Depot","Martin","Danny","Bron & Sons","McKay","Bailey","Little Prince OR"];
-const STORE_KEY = "wolfChecklist_v2";
+var JOBS = {
+  h2s: {
+    label: "Home2Suites",
+    short: "Home2Suites",
+    groups: {
+      trees: { label: "Trees", items: [
+        ["Columnar Swedish Aspen", 28],
+        ["Helena Maple", 22],
+        ["Paper Birch", 15],
+        ["Quaking Aspen", 8],
+        ["Amur Maple", 3],
+        ["Siberian Crabapple", 9]
+      ]},
+      shrubs: { label: "Shrubs", items: [
+        ["Birchleaf Spirea", 63],
+        ["Goldmound Spirea", 61],
+        ["Creeping Juniper", 70],
+        ["Savin Juniper", 34],
+        ["Red-Twig Dogwood", 41],
+        ["Miss Kim Lilac", 45],
+        ["Late Lilac", 44],
+        ["Rugosa Rose", 33]
+      ]},
+      grasses: { label: "Iris, perennials &amp; grasses", items: [
+        ["Alaska Flag Iris", 338],
+        ["Karl Foerster Reed Grass", 164],
+        ["False Spirea", 226],
+        ["Bishop&#39;s Weed (Goutweed)", 305],
+        ["Gold Crinkled Hair Grass (sub)", 132],
+        ["Hosta Patriot", 83],
+        ["Sweet Woodruff", 67],
+        ["Goatsbeard", 10]
+      ]}
+    },
+    flags: [
+      "&#128230; Bron order number on file (#723699) doesn&#39;t match the number on Chris&#39;s Wolf checklist doc (#137198) &mdash; probably just reissued, worth a quick confirm.",
+      "&#10067; <strong>Miss Kim Lilac</strong> &mdash; showing 46 sorted against a target of 45, one over. Confirm whether that is buffer stock or a miscount.",
+      "&#127807; <strong>Gold Crinkled Hair Grass</strong> &mdash; still 0 of 132, and the only species here marked (sub). Kalco quoted the real spec item (#2, $19.50); Mid-Valley offered 61 in #2, or 132 bronze tufted in #1. Check whether Kalco was ever cut a PO before filing a substitution request.",
+      "&#128666; <strong>Bron cutoff is Friday, September 11</strong> &mdash; last load of the season. Ships the 17th, lands Anchorage the 21st. Tree counts have to be on Cara&#39;s list by then."
+    ]
+  },
+  charter: {
+    label: "Wasilla Charter Academy",
+    short: "Charter",
+    groups: {
+      trees: { label: "Trees", items: [
+        ["Paper Birch", 6],
+        ["Parkland Pillar Birch", 2]
+      ]},
+      shrubs: { label: "Shrubs", items: [
+        ["Goldflame Spirea", 28],
+        ["Hedge Cotoneaster", 34]
+      ]},
+      grasses: { label: "Grasses", items: [
+        ["Karl Foerster Reed Grass", 134]
+      ]}
+    },
+    flags: []
+  },
+  baxter: {
+    label: "Baxter Family Housing",
+    short: "Baxter",
+    groups: {
+      trees: { label: "Trees", items: [
+        ["Paper Birch", 8],
+        ["Prairiefire Crabapple", 8],
+        ["White Spruce", 9],
+        ["Hardy Purple Common Lilac", 2, true]
+      ]},
+      shrubs: { label: "Shrubs", items: [
+        ["Yellow Potentilla", 55],
+        ["Birchleaf Spirea", 26],
+        ["Creeping Juniper", 11],
+        ["Dwarf American Cranberry", 14],
+        ["Rugosa Rose", 38]
+      ]},
+      grasses: { label: "Iris", items: [
+        ["Alaska Flag Iris", 36]
+      ]}
+    },
+    flags: []
+  },
+  wsrcc: {
+    label: "WSRCC &mdash; 5800 Boundary Ave",
+    short: "WSRCC",
+    groups: {
+      trees: { label: "Trees", items: [
+        ["Columnar Swedish Aspen", 20],
+        ["Helena Maple", 19],
+        ["Paper Birch", 27],
+        ["Quaking Aspen", 35],
+        ["Scotch Pine", 19],
+        ["Colorado Green Spruce", 20]
+      ]},
+      shrubs: { label: "Shrubs", items: [
+        ["Abbottswood Potentilla", 117],
+        ["Goldfinger Potentilla", 97],
+        ["Pink Beauty Potentilla", 120],
+        ["Birchleaf Spirea", 65],
+        ["Ivory Halo Dogwood", 156],
+        ["Red-Twig Dogwood", 116],
+        ["Hedge Cotoneaster", 58]
+      ]},
+      grasses: { label: "Grasses", items: [
+        ["Karl Foerster Reed Grass", 65],
+        ["Overdam Reed Grass", 74]
+      ]}
+    },
+    flags: [
+      "&#9888;&#65039; <strong>Pink Beauty Potentilla</strong> &mdash; 62 sorted, short 58 of 120. 3 additional units were rejected on quality and not counted."
+    ]
+  }
+};
 
-let freightRows = [];
-let freightSeq = 0;
-let logExtra = {};
+// Baseline: the 9/4 sort log, plus the six filled in by hand on 9/8
+// (Amur Maple, Savin Juniper, Goldflame Spirea, Hardy Purple Lilac,
+// Creeping Juniper, Dwarf American Cranberry). Used only when a viewer
+// has no saved counts yet -- after that, saved counts always win.
+var SEED = {
+  "h2s:birchleaf-spirea": 63,
+  "h2s:goldmound-spirea": 61,
+  "h2s:creeping-juniper": 70,
+  "h2s:savin-juniper": 34,
+  "h2s:amur-maple": 3,
+  "h2s:red-twig-dogwood": 41,
+  "h2s:miss-kim-lilac": 46,
+  "h2s:late-lilac": 44,
+  "h2s:rugosa-rose": 33,
+  "h2s:alaska-flag-iris": 338,
+  "h2s:karl-foerster-reed-grass": 164,
+  "h2s:false-spirea": 226,
+  "h2s:bishop-s-weed-goutweed": 305,
+  "h2s:hosta-patriot": 83,
+  "h2s:sweet-woodruff": 67,
+  "h2s:goatsbeard": 10,
 
-function money(n){ return "$" + Math.round(n).toLocaleString(); }
-function num(v){ if(v === "" || v == null) return null; const n = parseFloat(v); return isNaN(n) ? null : n; }
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  "charter:goldflame-spirea": 28,
+  "charter:hedge-cotoneaster": 34,
+  "charter:karl-foerster-reed-grass": 134,
+
+  "baxter:hardy-purple-common-lilac": 2,
+  "baxter:yellow-potentilla": 55,
+  "baxter:birchleaf-spirea": 26,
+  "baxter:creeping-juniper": 11,
+  "baxter:dwarf-american-cranberry": 14,
+  "baxter:rugosa-rose": 38,
+  "baxter:alaska-flag-iris": 36,
+
+  "wsrcc:abbottswood-potentilla": 60,
+  "wsrcc:pink-beauty-potentilla": 62,
+  "wsrcc:ivory-halo-dogwood": 96,
+  "wsrcc:hedge-cotoneaster": 58
+};
+
+var LOCAL_KEY = "wolf-field-checklist-v1";
+var DOC_PATH = "checklist/wolf";
+
+var currentJob = "h2s";
+var state = {};
+var notes = {};
+var dbDoc = null;
+var saveTimer = null;
+var lastSavedAt = 0;
+
+function decode(html){
+  var d = document.createElement("textarea");
+  d.innerHTML = html;
+  return d.value;
 }
 
-function recalc(){
-  const bySource = {};
-  SOURCES.forEach(s => bySource[s] = {amt:0, pending:0});
-  const jobCost = {baxter:0, wsrcc:0, h2s:0, waca:0};
-  let plantGrand = 0;
-  let totalNeed = 0, totalPurchased = 0;
+function slug(name){
+  return decode(name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
 
-  document.querySelectorAll(".species").forEach(sp => {
-    const need = sp.dataset.need ? parseFloat(sp.dataset.need) : null;
+function readLocal(){
+  try{
+    var raw = localStorage.getItem(LOCAL_KEY);
+    if(!raw) return null;
+    var v = JSON.parse(raw);
+    return (v && typeof v === "object") ? v : null;
+  }catch(e){ return null; }
+}
 
-    const jobQtys = {};
-    let jobTotal = 0;
-    sp.querySelectorAll(".jobs .job-chip").forEach(chip => {
-      const jd = JOB_DEFS.find(j => chip.classList.contains(j.cls));
-      if(!jd) return;
-      const m = chip.textContent.match(/·\s*(\d+(?:\.\d+)?)/);
-      const q = m ? parseFloat(m[1]) : 0;
-      jobQtys[jd.key] = (jobQtys[jd.key] || 0) + q;
-      jobTotal += q;
+function writeLocal(p){
+  try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(p)); return true; }
+  catch(e){ return false; }
+}
+
+function setSaveNote(msg){
+  var el = document.getElementById("saveNote");
+  if(el) el.textContent = msg;
+}
+
+function setOffline(isOffline){
+  var el = document.getElementById("saveWarning");
+  if(el) el.style.display = isOffline ? "block" : "none";
+}
+
+function payload(){
+  return {counts: state, notes: notes, updatedAt: new Date().toISOString()};
+}
+
+function applyPayload(p){
+  if(!p) return;
+  if(p.counts && typeof p.counts === "object") state = Object.assign({}, p.counts);
+  if(p.notes && typeof p.notes === "object") notes = Object.assign({}, p.notes);
+}
+
+function fillMissingFromSeed(){
+  Object.keys(JOBS).forEach(function(jobKey){
+    Object.keys(JOBS[jobKey].groups).forEach(function(gk){
+      JOBS[jobKey].groups[gk].items.forEach(function(row){
+        var k = jobKey + ":" + slug(row[0]);
+        if(state[k] === undefined || state[k] === null){
+          state[k] = SEED[k] !== undefined ? SEED[k] : 0;
+        }
+      });
     });
+  });
+}
 
-    let speciesQty = 0, speciesCost = 0;
-
-    sp.querySelectorAll(".opt[data-idx]").forEach(opt => {
-      const idx = opt.dataset.idx;
-      const src = opt.dataset.src;
-      const qtyIn = opt.querySelector(".qty-in");
-      const priceIn = opt.querySelector(".price-in");
-      const qty = num(qtyIn.value) || 0;
-      const price = num(priceIn.value);
-      qtyIn.classList.toggle("has-val", qty > 0);
-
-      const ltEl = document.getElementById("lt-" + idx);
-      if(!bySource[src]) bySource[src] = {amt:0, pending:0};
-
-      if(qty <= 0){
-        ltEl.textContent = "—";
-        ltEl.classList.remove("pending");
-        ltEl.classList.add("zero");
-      } else if(price != null){
-        const lt = qty * price;
-        ltEl.textContent = money(lt);
-        ltEl.classList.remove("zero","pending");
-        speciesCost += lt;
-        speciesQty += qty;
-        bySource[src].amt += lt;
-      } else {
-        ltEl.textContent = "price?";
-        ltEl.classList.remove("zero");
-        ltEl.classList.add("pending");
-        speciesQty += qty;
-        bySource[src].pending++;
-      }
+function scheduleSave(){
+  var p = payload();
+  var localOk = writeLocal(p);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    if(!dbDoc){
+      setOffline(true);
+      setSaveNote(localOk
+        ? "Saved on this device only — not synced."
+        : "NOT SAVING here. Send the status report before you close this.");
+      return;
+    }
+    dbDoc.set(p).then(function(){
+      lastSavedAt = Date.parse(p.updatedAt);
+      setOffline(false);
+      var t = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+      setSaveNote("Saved " + t + " — safe to close.");
+    }).catch(function(){
+      setOffline(true);
+      setSaveNote("Saved on this device — will sync when signal returns.");
     });
+  }, 250);
+}
 
-    plantGrand += speciesCost;
-    if(need != null){ totalNeed += need; totalPurchased += speciesQty; }
+function jobProgress(jobKey){
+  var complete = 0, total = 0;
+  var job = JOBS[jobKey];
+  Object.keys(job.groups).forEach(function(gk){
+    job.groups[gk].items.forEach(function(row){
+      total++;
+      var k = jobKey + ":" + slug(row[0]);
+      if((state[k] || 0) >= row[1]) complete++;
+    });
+  });
+  return {complete: complete, total: total};
+}
 
-    if(jobTotal > 0 && speciesCost > 0){
-      Object.keys(jobQtys).forEach(jk => {
-        if(jobCost[jk] != null) jobCost[jk] += speciesCost * (jobQtys[jk] / jobTotal);
+function renderTabs(){
+  var tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  Object.keys(JOBS).forEach(function(jobKey){
+    var p = jobProgress(jobKey);
+    var btn = document.createElement("button");
+    btn.className = "tab" + (jobKey === currentJob ? " active" : "");
+    btn.innerHTML = '<span class="tab-name">' + JOBS[jobKey].short +
+      '</span><span class="tab-progress">' + p.complete + "/" + p.total + " complete</span>";
+    btn.addEventListener("click", function(){
+      currentJob = jobKey;
+      renderAll();
+    });
+    tabsEl.appendChild(btn);
+  });
+}
+
+function renderFlags(){
+  var slot = document.getElementById("flagsSlot");
+  var job = JOBS[currentJob];
+  if(!job.flags || job.flags.length === 0){ slot.innerHTML = ""; return; }
+
+  var box = document.createElement("div");
+  box.className = "flags";
+  box.innerHTML = "<h2>Open with Chris</h2>" +
+    job.flags.map(function(f){ return '<div class="flag-item">' + f + "</div>"; }).join("");
+
+  var notesId = "notes-" + currentJob;
+  var ta = document.createElement("textarea");
+  ta.className = "notes";
+  ta.id = notesId;
+  ta.placeholder = "Notes — update here as Chris gets back to you...";
+  ta.value = notes[notesId] || "";
+  box.appendChild(ta);
+  slot.innerHTML = "";
+  slot.appendChild(box);
+
+  ta.addEventListener("input", function(){
+    notes[notesId] = ta.value;
+    scheduleSave();
+  });
+}
+
+function itemClass(v, target){
+  return "item" + (v > target ? " over" : v === target ? " complete" : v > 0 ? " partial" : "");
+}
+
+function renderItem(jobKey, name, target, isAlt){
+  var k = jobKey + ":" + slug(name);
+  var received = state[k] || 0;
+  var wrap = document.createElement("div");
+  wrap.className = itemClass(received, target);
+
+  var info = document.createElement("div");
+  info.className = "item-info";
+  info.innerHTML = '<div class="item-name">' + name + '</div><div class="item-target">need ' +
+    target + (isAlt ? " (alt / optional)" : "") + "</div>";
+
+  var counter = document.createElement("div");
+  counter.className = "counter";
+
+  var minus = document.createElement("button");
+  minus.textContent = "−";
+  minus.setAttribute("aria-label", "decrease " + decode(name));
+
+  var input = document.createElement("input");
+  input.type = "number";
+  input.inputMode = "numeric";
+  input.min = "0";
+  input.value = received;
+  input.setAttribute("aria-label", decode(name) + " received count");
+
+  var plus = document.createElement("button");
+  plus.textContent = "+";
+  plus.setAttribute("aria-label", "increase " + decode(name));
+
+  function commit(newVal){
+    newVal = Math.max(0, parseInt(newVal, 10) || 0);
+    state[k] = newVal;
+    input.value = newVal;
+    wrap.className = itemClass(newVal, target);
+    renderTabs();
+    scheduleSave();
+  }
+
+  minus.addEventListener("click", function(){ commit((state[k] || 0) - 1); });
+  plus.addEventListener("click", function(){ commit((state[k] || 0) + 1); });
+  input.addEventListener("change", function(){ commit(input.value); });
+
+  counter.appendChild(minus);
+  counter.appendChild(input);
+  counter.appendChild(plus);
+  wrap.appendChild(info);
+  wrap.appendChild(counter);
+  return wrap;
+}
+
+function renderGroups(){
+  var container = document.getElementById("groups");
+  container.innerHTML = "";
+  var job = JOBS[currentJob];
+  Object.keys(job.groups).forEach(function(gk){
+    var g = job.groups[gk];
+    var section = document.createElement("section");
+    section.className = "group";
+    var title = document.createElement("div");
+    title.className = "group-title";
+    title.innerHTML = g.label;
+    section.appendChild(title);
+    g.items.forEach(function(row){
+      section.appendChild(renderItem(currentJob, row[0], row[1], row[2]));
+    });
+    container.appendChild(section);
+  });
+}
+
+function renderAll(){
+  renderTabs();
+  renderFlags();
+  renderGroups();
+}
+
+function generateReport(){
+  var lines = [];
+  lines.push("TITAN ALASKA -- PLANT SORT STATUS");
+  lines.push(new Date().toLocaleDateString(undefined, {
+    weekday: "long", month: "long", day: "numeric", year: "numeric"
+  }));
+  lines.push("");
+  Object.keys(JOBS).forEach(function(jobKey){
+    var job = JOBS[jobKey];
+    var p = jobProgress(jobKey);
+    lines.push(decode(job.label).toUpperCase() + " (" + p.complete + "/" + p.total + " complete)");
+    Object.keys(job.groups).forEach(function(gk){
+      job.groups[gk].items.forEach(function(row){
+        var name = row[0], target = row[1], isAlt = row[2];
+        var k = jobKey + ":" + slug(name);
+        var received = state[k] || 0;
+        var status;
+        if(received > target) status = "OVER by " + (received - target);
+        else if(received === target) status = "complete";
+        else if(received > 0) status = "short " + (target - received);
+        else status = "open";
+        lines.push("- " + decode(name) + ": " + received + "/" + target +
+          (isAlt ? " (alt)" : "") + " -- " + status);
+      });
+    });
+    if(job.flags && job.flags.length){
+      lines.push("Flags:");
+      job.flags.forEach(function(f){
+        var tmp = document.createElement("div");
+        tmp.innerHTML = f;
+        lines.push("- " + (tmp.textContent || "").trim());
       });
     }
-
-    let badge = sp.querySelector(".species-progress");
-    if(!badge){
-      badge = document.createElement("span");
-      badge.className = "species-progress";
-      sp.querySelector(".species-head").appendChild(badge);
+    var noteText = (notes["notes-" + jobKey] || "").trim();
+    if(noteText){
+      lines.push("Notes:");
+      lines.push(noteText);
     }
-    badge.classList.remove("short", "met");
-    if(speciesQty === 0 || need == null){
-      badge.textContent = "";
-    } else if(speciesQty < need){
-      badge.textContent = "still short " + Math.ceil(need - speciesQty);
-      badge.classList.add("short");
-    } else {
-      badge.textContent = "covered";
-      badge.classList.add("met");
-    }
-  });
-
-  const rowsEl = document.getElementById("tallyRows");
-  rowsEl.innerHTML = "";
-  let anyEntered = false;
-  SOURCES.forEach(src => {
-    const t = bySource[src];
-    if(!t || (t.amt === 0 && t.pending === 0)) return;
-    anyEntered = true;
-    const row = document.createElement("div");
-    row.className = "tally-row";
-    row.innerHTML = "<span class=\"src-name\">" + src + "</span><span class=\"amt\">" + money(t.amt) + "</span>" +
-      (t.pending ? "<span class=\"pending\">+ " + t.pending + " pending price</span>" : "");
-    rowsEl.appendChild(row);
-  });
-  if(!anyEntered){
-    rowsEl.innerHTML = "<div class=\"tally-row\" style=\"color:#999;font-style:italic\">Nothing entered yet</div>";
-  }
-  document.getElementById("tallyGrand").textContent = money(plantGrand);
-  document.getElementById("tallyUnits").textContent =
-    Math.max(0, Math.ceil(totalNeed - totalPurchased)).toLocaleString() + " of " + totalNeed.toLocaleString() + " total";
-
-  const freightGrand = freightRows.reduce((s,r) => s + (num(r.amt) || 0), 0);
-  freightRows.forEach(r => {
-    const amt = num(r.amt) || 0;
-    if(amt === 0) return;
-    if(r.job === "all"){
-      JOB_DEFS.forEach(j => jobCost[j.key] += amt / 4);
-    } else if(jobCost[r.job] != null){
-      jobCost[r.job] += amt;
-    }
-  });
-  document.getElementById("freightGrand").textContent = money(freightGrand);
-
-  const jrRows = document.getElementById("jobRollRows");
-  jrRows.innerHTML = "";
-  let jobGrand = 0;
-  JOB_DEFS.forEach(j => {
-    jobGrand += jobCost[j.key];
-    const row = document.createElement("div");
-    row.className = "jobroll-row";
-    row.innerHTML = "<span class=\"job-chip " + j.cls + "\">" + j.label + "</span><span class=\"amt\">" + money(jobCost[j.key]) + "</span>";
-    jrRows.appendChild(row);
-  });
-  document.getElementById("jobRollGrand").textContent = money(jobGrand);
-
-  renderProcLog();
-  saveState();
-}
-
-let undoSnapshot = null;
-
-function resetAll(){
-  let entered = 0;
-  document.querySelectorAll(".opt[data-idx] .qty-in").forEach(i => { if(num(i.value)) entered++; });
-  if(entered === 0){ return; }
-  if(!confirm("Clear all " + entered + " quantities you've entered?\n\nFreight lines and the procurement log stay. You can undo this right after.")) return;
-  undoSnapshot = {};
-  document.querySelectorAll(".opt[data-idx] .qty-in").forEach(i => {
-    undoSnapshot[i.closest(".opt").dataset.idx] = i.value;
-    i.value = "";
-  });
-  document.getElementById("undoBtn").style.display = "";
-  recalc();
-}
-
-function undoReset(){
-  if(!undoSnapshot) return;
-  document.querySelectorAll(".opt[data-idx]").forEach(opt => {
-    const v = undoSnapshot[opt.dataset.idx];
-    if(v != null) opt.querySelector(".qty-in").value = v;
-  });
-  undoSnapshot = null;
-  document.getElementById("undoBtn").style.display = "none";
-  recalc();
-}
-
-function addFreightRow(){
-  freightSeq++;
-  freightRows.push({id: freightSeq, desc:"", job:"all", amt:""});
-  renderFreight();
-  recalc();
-}
-function removeFreightRow(id){
-  freightRows = freightRows.filter(r => r.id !== id);
-  renderFreight();
-  recalc();
-}
-function updateFreightField(id, field, value){
-  const r = freightRows.find(r => r.id === id);
-  if(r) r[field] = value;
-  recalc();
-}
-
-function renderFreight(){
-  const el = document.getElementById("freightRows");
-  el.innerHTML = "";
-  if(freightRows.length === 0){
-    el.innerHTML = "<div class=\"freight-empty\">No freight lines yet.</div>";
-    return;
-  }
-  freightRows.forEach(r => {
-    const row = document.createElement("div");
-    row.className = "freight-row";
-    const opts = JOB_DEFS.map(j => "<option value=\"" + j.key + "\"" + (r.job===j.key?" selected":"") + ">" + j.label + "</option>").join("")
-      + "<option value=\"all\"" + (r.job==="all"?" selected":"") + ">All jobs (split evenly)</option>";
-    row.innerHTML =
-      "<input type=\"text\" placeholder=\"e.g. Bron & Sons container freight\" value=\"" + escapeHtml(r.desc) + "\" oninput=\"updateFreightField(" + r.id + ",'desc',this.value)\">" +
-      "<select onchange=\"updateFreightField(" + r.id + ",'job',this.value)\">" + opts + "</select>" +
-      "<span>$</span><input type=\"number\" class=\"freight-amt\" step=\"0.01\" value=\"" + escapeHtml(r.amt) + "\" oninput=\"updateFreightField(" + r.id + ",'amt',this.value)\">" +
-      "<button class=\"rm-btn\" onclick=\"removeFreightRow(" + r.id + ")\">Remove</button>";
-    el.appendChild(row);
-  });
-}
-
-function updateLogField(idx, field, value, rerender){
-  if(!logExtra[idx]) logExtra[idx] = {arrival:"", status:"Ordered", notes:""};
-  logExtra[idx][field] = value;
-  if(rerender) renderProcLog();
-  saveState();
-}
-
-function renderProcLog(){
-  const body = document.getElementById("procLogBody");
-  const today = new Date(); today.setHours(0,0,0,0);
-  const rows = [];
-
-  document.querySelectorAll(".opt[data-idx]").forEach(opt => {
-    const idx = opt.dataset.idx;
-    const qty = num(opt.querySelector(".qty-in").value) || 0;
-    if(qty <= 0) return;
-    const species = opt.closest(".species").querySelector(".species-name").textContent.trim();
-    const src = opt.dataset.src;
-    const extra = logExtra[idx] || {arrival:"", status:"Ordered", notes:""};
-    rows.push({idx, species, src, qty, arrival: extra.arrival || "", status: extra.status || "Ordered", notes: extra.notes || ""});
-  });
-
-  rows.sort((a,b) => {
-    if(!a.arrival && b.arrival) return -1;
-    if(a.arrival && !b.arrival) return 1;
-    if(a.arrival && b.arrival && a.arrival !== b.arrival) return a.arrival < b.arrival ? -1 : 1;
-    return a.species.localeCompare(b.species);
-  });
-
-  body.innerHTML = "";
-  if(rows.length === 0){
-    body.innerHTML = "<tr><td colspan=\"6\" class=\"proclog-empty\">Nothing ordered yet — enter a quantity above to add a row here.</td></tr>";
-    return;
-  }
-
-  rows.forEach(r => {
-    const tr = document.createElement("tr");
-    let flag = "";
-    let rowClass = "";
-    if(!r.arrival){
-      rowClass = "no-date";
-      flag = "<span class=\"proclog-flag nodate\">no date</span>";
-    } else {
-      const d = new Date(r.arrival + "T00:00:00");
-      if(d < today && r.status !== "Delivered"){
-        rowClass = "late";
-        flag = "<span class=\"proclog-flag late\">late</span>";
-      }
-    }
-    tr.className = rowClass;
-    const statusOpts = ["Ordered","Shipped","Delivered"].map(s =>
-      "<option" + (r.status===s ? " selected" : "") + ">" + s + "</option>").join("");
-    tr.innerHTML =
-      "<td>" + escapeHtml(r.species) + "</td>" +
-      "<td>" + escapeHtml(r.src) + "</td>" +
-      "<td>" + r.qty + "</td>" +
-      "<td><input type=\"date\" value=\"" + r.arrival + "\" onchange=\"updateLogField(" + r.idx + ",'arrival',this.value,true)\"> " + flag + "</td>" +
-      "<td><select onchange=\"updateLogField(" + r.idx + ",'status',this.value,true)\">" + statusOpts + "</select></td>" +
-      "<td><input type=\"text\" value=\"" + escapeHtml(r.notes) + "\" placeholder=\"notes\" oninput=\"updateLogField(" + r.idx + ",'notes',this.value,false)\"></td>";
-    body.appendChild(tr);
-  });
-}
-
-function collectState(){
-  const opts = {};
-  document.querySelectorAll(".opt[data-idx]").forEach(opt => {
-    const idx = opt.dataset.idx;
-    opts[idx] = {
-      qty: opt.querySelector(".qty-in").value,
-      price: opt.querySelector(".price-in").value
-    };
-  });
-  return {opts, freight: freightRows, freightSeq, log: logExtra, savedAt: new Date().toISOString()};
-}
-
-let storageWarning = null;
-
-function setSaveStatus(msg, warn){
-  const el = document.getElementById("saveStatus");
-  if(!el) return;
-  el.textContent = msg;
-  el.classList.toggle("warn", !!warn);
-}
-
-function saveState(){
-  try{
-    localStorage.setItem(STORE_KEY, JSON.stringify(collectState()));
-    const t = new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
-    if(storageWarning) setSaveStatus(storageWarning + " (last saved " + t + ")", true);
-    else setSaveStatus("Saved " + t + " — safe to close or back out of this page.", false);
-  }catch(e){
-    storageWarning = "NOT SAVING on this device — private/incognito mode or storage is full. Use “Save backup file” before you leave this page.";
-    setSaveStatus(storageWarning, true);
-  }
-}
-
-function loadState(){
-  let state = null;
-  let blocked = false;
-  try{
-    const probe = "__wolfprobe";
-    localStorage.setItem(probe, "1");
-    localStorage.removeItem(probe);
-    state = JSON.parse(localStorage.getItem(STORE_KEY));
-  }catch(e){
-    blocked = true;
-  }
-
-  if(blocked){
-    storageWarning = "NOT SAVING on this device — private/incognito mode or storage is blocked. Use “Save backup file” before you leave this page.";
-  } else if(location.protocol === "file:"){
-    storageWarning = "Opened as a downloaded file, so entries are tied to this one copy and won't follow you to the web link.";
-  }
-
-  if(!state || !state.opts) return null;
-  applyState(state);
-  return state.savedAt || null;
-}
-
-function backupJSON(){
-  const blob = new Blob([JSON.stringify(collectState(), null, 1)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Titan-Wolf-Checklist-backup-" + new Date().toISOString().slice(0,10) + ".json";
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function restoreJSON(input){
-  const file = input.files && input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    let state;
-    try{ state = JSON.parse(ev.target.result); }
-    catch(e){ alert("That file isn't a valid checklist backup."); input.value = ""; return; }
-    if(!state || !state.opts){ alert("That file isn't a valid checklist backup."); input.value = ""; return; }
-    const when = state.savedAt ? new Date(state.savedAt).toLocaleString() : "an earlier session";
-    if(!confirm("Restore the backup from " + when + "?\n\nThis replaces everything currently entered on this page.")){ input.value = ""; return; }
-    applyState(state);
-    renderFreight();
-    recalc();
-    input.value = "";
-  };
-  reader.readAsText(file);
-}
-
-function applyState(state){
-  document.querySelectorAll(".opt[data-idx]").forEach(opt => {
-    const saved = state.opts[opt.dataset.idx];
-    if(!saved) return;
-    if(saved.qty != null) opt.querySelector(".qty-in").value = saved.qty;
-    if(saved.price !== "" && saved.price != null) opt.querySelector(".price-in").value = saved.price;
-  });
-  freightRows = Array.isArray(state.freight) ? state.freight : [];
-  freightSeq = typeof state.freightSeq === "number" ? state.freightSeq : 0;
-  logExtra = state.log || {};
-}
-
-function exportSummary(){
-  recalc();
-
-  const bySource = {};
-  SOURCES.forEach(s => bySource[s] = 0);
-  let plantGrand = 0;
-  let pendingCount = 0;
-  const detailLines = [];
-  const shortSpecies = [];
-
-  document.querySelectorAll(".species").forEach(sp => {
-    const name = sp.querySelector(".species-name").textContent.trim();
-    const needTxt = sp.querySelector(".species-need").textContent.trim();
-    const need = sp.dataset.need ? parseFloat(sp.dataset.need) : null;
-    let speciesQty = 0;
-    let printedHeader = false;
-
-    sp.querySelectorAll(".opt[data-idx]").forEach(opt => {
-      const qty = num(opt.querySelector(".qty-in").value) || 0;
-      if(qty <= 0) return;
-      const price = num(opt.querySelector(".price-in").value);
-      const src = opt.dataset.src;
-      speciesQty += qty;
-      if(!printedHeader){
-        detailLines.push("");
-        detailLines.push(name + (needTxt ? " (" + needTxt + ")" : ""));
-        printedHeader = true;
-      }
-      const desc = opt.querySelector(".txt").textContent.replace(/\s+/g, " ").trim();
-      if(price != null){
-        const lt = qty * price;
-        plantGrand += lt;
-        bySource[src] = (bySource[src] || 0) + lt;
-        detailLines.push("  " + qty + " x " + src + " @ $" + price + "/ea = " + money(lt) + "  — " + desc);
-      } else {
-        pendingCount++;
-        detailLines.push("  " + qty + " x " + src + " @ price TBD  — " + desc);
-      }
-    });
-
-    if(need != null && speciesQty > 0 && speciesQty < need){
-      shortSpecies.push(name + " — " + Math.ceil(need - speciesQty) + " more needed");
-    }
-  });
-
-  const lines = [];
-  lines.push("TITAN ALASKA — SPECIES SUBSTITUTION / PROCUREMENT DECISIONS");
-  lines.push("Exported " + new Date().toLocaleString());
-  lines.push("=".repeat(60));
-
-  lines.push("");
-  lines.push("PLANT COST BY SUPPLIER");
-  const used = SOURCES.filter(s => bySource[s]);
-  if(used.length === 0){
-    lines.push("  (nothing entered yet)");
-  } else {
-    used.forEach(s => lines.push("  " + s.padEnd(20) + money(bySource[s])));
-  }
-  lines.push("");
-  lines.push("PLANT COST TOTAL: " + money(plantGrand));
-  if(pendingCount){
-    lines.push("(+ " + pendingCount + " line" + (pendingCount === 1 ? "" : "s") + " with a quantity entered but no price yet)");
-  }
-
-  lines.push("");
-  lines.push("FREIGHT & SHIPPING");
-  if(freightRows.length === 0){
-    lines.push("  (none added)");
-  } else {
-    freightRows.forEach(r => {
-      const jd = JOB_DEFS.find(j => j.key === r.job);
-      const jobLabel = r.job === "all" ? "All jobs (split evenly)" : (jd ? jd.label : r.job);
-      lines.push("  " + money(num(r.amt) || 0) + "  " + jobLabel + (r.desc ? "  — " + r.desc : ""));
-    });
-  }
-  const freightGrand = freightRows.reduce((s,r) => s + (num(r.amt) || 0), 0);
-  lines.push("FREIGHT TOTAL: " + money(freightGrand));
-
-  lines.push("");
-  lines.push("MASTER GRAND TOTAL (plants + freight): " + money(plantGrand + freightGrand));
-
-  lines.push("");
-  lines.push("PER-JOB ROLLUP");
-  document.querySelectorAll(".jobroll-row").forEach(row => {
-    lines.push("  " + row.textContent.replace(/\s+/g, " ").trim());
-  });
-
-  if(shortSpecies.length){
     lines.push("");
-    lines.push("STILL SHORT (something ordered, but not enough yet):");
-    shortSpecies.forEach(s => lines.push("  " + s));
+  });
+  return lines.join("\n");
+}
+
+function wireReportUI(){
+  var reportBtn = document.getElementById("reportBtn");
+  var panel = document.getElementById("reportPanel");
+  var textarea = document.getElementById("reportText");
+  var copyBtn = document.getElementById("copyReportBtn");
+  var closeBtn = document.getElementById("closeReportBtn");
+  var statusEl = document.getElementById("copyStatus");
+
+  function selectAll(){
+    textarea.focus();
+    textarea.setSelectionRange(0, textarea.value.length);
   }
 
-  lines.push("");
-  lines.push("PROCUREMENT LOG");
-  if(document.querySelector("#procLogBody .proclog-empty")){
-    lines.push("  (nothing ordered yet)");
-  } else {
-    document.querySelectorAll("#procLogBody tr").forEach(tr => {
-      const cells = tr.querySelectorAll("td");
-      const species = cells[0].textContent.trim();
-      const supplier = cells[1].textContent.trim();
-      const qty = cells[2].textContent.trim();
-      const arrival = cells[3].querySelector("input").value || "no date set";
-      const status = cells[4].querySelector("select").value;
-      const notes = cells[5].querySelector("input").value;
-      lines.push("  " + species + " — " + supplier + " x" + qty + " — arrives " + arrival + " — " + status + (notes ? " — " + notes : ""));
+  reportBtn.addEventListener("click", function(){
+    var text = generateReport();
+    textarea.value = text;
+    panel.style.display = "block";
+    panel.scrollIntoView({behavior: "smooth", block: "start"});
+    selectAll();
+    if(navigator.share){
+      navigator.share({text: text, title: "Titan Alaska -- Plant Sort Status"})
+        .then(function(){
+          statusEl.textContent = "Shared";
+          setTimeout(function(){ statusEl.textContent = ""; }, 3000);
+        })
+        .catch(function(){
+          statusEl.textContent = "Text is selected below — long-press and Copy";
+        });
+      return;
+    }
+    statusEl.textContent = "Text is selected below — long-press and Copy";
+  });
+
+  closeBtn.addEventListener("click", function(){
+    panel.style.display = "none";
+  });
+
+  copyBtn.addEventListener("click", function(){
+    selectAll();
+    function fallback(){
+      var ok = false;
+      try{ ok = document.execCommand("copy"); }catch(e){ ok = false; }
+      statusEl.textContent = ok ? "Copied" : "Long-press the text above and Copy";
+      setTimeout(function(){ statusEl.textContent = ""; }, 3000);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(textarea.value).then(function(){
+        statusEl.textContent = "Copied";
+        setTimeout(function(){ statusEl.textContent = ""; }, 3000);
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  });
+}
+
+function init(){
+  document.getElementById("dateLine").textContent = new Date().toLocaleDateString(undefined, {
+    weekday: "long", month: "long", day: "numeric"
+  });
+
+  // 1. Paint straight away from the local mirror, or the 9/8 baseline.
+  var local = readLocal();
+  applyPayload(local);
+  fillMissingFromSeed();
+  renderAll();
+  wireReportUI();
+  setSaveNote(local ? "Counts loaded from this device." : "Starting from the September 8 baseline.");
+
+  // 2. Then reach for the shared store and take it if it is newer.
+  (function(){
+    var usePromise;
+    try{ usePromise = claude.use("db"); }
+    catch(e){ usePromise = Promise.resolve(null); }
+
+    Promise.resolve(usePromise).then(function(db){
+      if(!db){
+        setOffline(true);
+        setSaveNote("Not synced — counts are held on this device only.");
+        return;
+      }
+      dbDoc = db.doc(DOC_PATH);
+
+      return dbDoc.get().then(function(snap){
+        var remote = (snap && snap.data) ? snap.data : snap;
+        var localAt = (local && local.updatedAt) ? Date.parse(local.updatedAt) : 0;
+        var remoteAt = (remote && remote.updatedAt) ? Date.parse(remote.updatedAt) : 0;
+
+        if(remote && remote.counts && remoteAt >= localAt){
+          applyPayload(remote);
+          fillMissingFromSeed();
+          lastSavedAt = remoteAt;
+          renderAll();
+          setSaveNote("Synced — showing the latest counts.");
+          setOffline(false);
+        } else {
+          var p = payload();
+          return dbDoc.set(p).then(function(){
+            lastSavedAt = Date.parse(p.updatedAt);
+            setSaveNote("Synced — this device had the newer counts.");
+            setOffline(false);
+          });
+        }
+      }).then(function(){
+        try{
+          dbDoc.onSnapshot(function(snap){
+            var remote = (snap && snap.data) ? snap.data : snap;
+            if(!remote || !remote.updatedAt || !remote.counts) return;
+            var at = Date.parse(remote.updatedAt);
+            if(at <= lastSavedAt) return;
+            lastSavedAt = at;
+            applyPayload(remote);
+            fillMissingFromSeed();
+            renderAll();
+          });
+        }catch(e){ /* live updates are a bonus */ }
+      });
+    }).catch(function(){
+      setOffline(true);
+      setSaveNote("Saved on this device — will sync when signal returns.");
     });
-  }
-
-  lines.push("");
-  lines.push("=".repeat(60));
-  lines.push("ITEM-BY-ITEM DETAIL");
-  lines.push(...detailLines);
-  if(detailLines.length === 0){
-    lines.push("");
-    lines.push("(Nothing entered at export time.)");
-  }
-
-  const blob = new Blob([lines.join("\n")], {type:"text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  const stamp = new Date().toISOString().slice(0,10);
-  a.href = url;
-  a.download = "Titan-Wolf-Procurement-" + stamp + ".txt";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  })();
 }
 
-const restoredAt = loadState();
-renderFreight();
-recalc();
-if(restoredAt && !storageWarning){
-  setSaveStatus("Picked up where you left off — restored from " + new Date(restoredAt).toLocaleString() + ".", false);
-} else if(storageWarning){
-  setSaveStatus(storageWarning, true);
-}
-
-window.addEventListener("pagehide", saveState);
-document.addEventListener("visibilitychange", function(){
-  if(document.visibilityState === "hidden") saveState();
-});
+init();
 </script>
+</body>
+</html>
