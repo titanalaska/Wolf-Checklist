@@ -540,6 +540,31 @@
   .fit-num{color:var(--ink-soft);font-variant-numeric:tabular-nums;}
   .fit-ok{color:var(--green-text);font-weight:700;}
   .fit-off{color:var(--amber);font-weight:700;}
+
+  .loc-wrap{margin-top:10px;}
+  .loc-btn{background:var(--green);color:var(--on-green);border-color:var(--green);}
+  .loc-panel{
+    margin:10px 16px 0;border:1px solid var(--green);border-radius:10px;
+    background:var(--green-bg);overflow:hidden;
+  }
+  .loc-head{
+    padding:9px 14px;font-size:0.78rem;font-weight:700;color:var(--green-text);
+    border-bottom:1px solid var(--line);
+  }
+  .loc-row{
+    display:flex;align-items:baseline;gap:10px;padding:9px 14px;
+    border-bottom:1px solid var(--line);font-size:0.86rem;
+  }
+  .loc-row.first{background:var(--green);}
+  .loc-row.first .loc-bed,.loc-row.first .loc-where,.loc-row.first .loc-d{
+    color:var(--on-green);
+  }
+  .loc-bed{font-weight:700;min-width:64px;}
+  .loc-where{flex:1;color:var(--ink-soft);font-size:0.8rem;}
+  .loc-d{font-weight:700;font-variant-numeric:tabular-nums;}
+  .loc-msg{
+    padding:10px 14px;font-size:0.8rem;line-height:1.45;color:var(--ink-soft);
+  }
 </style>
 </head>
 <body>
@@ -741,7 +766,7 @@ var SEED = {
 // the site. Injected from L102-beds.json; do not hand-edit.
 // 19 of the 22 species total to the sheet's own plant schedule exactly; the
 // three that do not are flagged rather than quietly adjusted.
-var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7}},{"bed":"B02","where":"North-east corner","units":2,"items":{"PT":2}},{"bed":"B03","where":"North-west corner","units":50,"items":{"AD":26,"JH":6,"SPA":5,"SBT":4,"MSB":3,"CS":3,"SV":3}},{"bed":"B04","where":"North-east corner","units":8,"items":{"CS":4,"SBG":3,"MSB":1}},{"bed":"B05","where":"North-east corner","units":5,"items":{"BP":5}},{"bed":"B06","where":"North-east corner","units":181,"items":{"APV":160,"SPA":9,"JH":7,"SV":3,"MSB":2}},{"bed":"B07","where":"North side","units":168,"items":{"APV":145,"SPA":11,"JH":6,"MSB":3,"SV":3}},{"bed":"B08","where":"North-west corner","units":4,"items":{"BP":4}},{"bed":"B09","where":"By the building","units":59,"items":{"CAK":21,"DFA":12,"SBT":7,"PTE":6,"SBG":6,"CS":4,"JS":3}},{"bed":"B10","where":"By the building","units":25,"items":{"DFA":10,"SPA":5,"CAK":5,"PTE":3,"SV":2}},{"bed":"B11","where":"By the building","units":22,"items":{"CAK":19,"PTE":3}},{"bed":"B12","where":"By the building","units":1,"items":{"CS":1}},{"bed":"B13","where":"East side","units":65,"items":{"H":33,"CAK":10,"A":10,"RSA":7,"CS":3,"PTE":2}},{"bed":"B14","where":"West side","units":3,"items":{"PT":3}},{"bed":"B15","where":"East side","units":3,"items":{"PT":3}},{"bed":"B16","where":"By the building","units":15,"items":{"CAK":8,"DFA":7}},{"bed":"B17","where":"By the building","units":18,"items":{"SBG":18}},{"bed":"B18","where":"By the building","units":1,"items":{"SV":1}},{"bed":"B19","where":"By the building","units":16,"items":{"CAK":7,"JS":3,"SBG":3,"CS":2,"PTE":1}},{"bed":"B20","where":"East side","units":63,"items":{"DFA":38,"CAK":25}},{"bed":"B21","where":"West side","units":3,"items":{"BP":3}},{"bed":"B22","where":"By the building","units":7,"items":{"DFA":4,"CAK":3}},{"bed":"B23","where":"By the building","units":18,"items":{"DFA":9,"CS":8,"AP":1}},{"bed":"B24","where":"East side","units":3,"items":{"BP":3}},{"bed":"B25","where":"By the building","units":23,"items":{"CAK":12,"SBG":8,"SBT":3}},{"bed":"B26","where":"East side","units":31,"items":{"AD":14,"CAK":9,"DFA":8}},{"bed":"B27","where":"By the building","units":34,"items":{"DFA":9,"JS":8,"SBG":5,"CAK":4,"AGN":3,"SBT":3,"SPA":2}},{"bed":"B28","where":"By the building","units":39,"items":{"CAK":20,"CS":7,"SBT":6,"PTE":4,"SBG":2}},{"bed":"B29","where":"By the building","units":1,"items":{"SV":1}},{"bed":"B30","where":"South side","units":18,"items":{"RSA":11,"SPA":6,"PTE":1}},{"bed":"B31","where":"South-east corner","units":11,"items":{"SV":5,"AP":3,"SPA":3}},{"bed":"B32","where":"South side","units":1,"items":{"SV":1}},{"bed":"B33","where":"South-west corner","units":12,"items":{"SV":6,"SPA":4,"AP":2}},{"bed":"B34","where":"South side","units":39,"items":{"CS":9,"CAK":8,"SBT":5,"PTE":4,"JS":4,"RSA":4,"SPA":3,"SV":2}},{"bed":"B35","where":"South side","units":29,"items":{"CAK":13,"SBT":6,"JS":5,"SPA":3,"PTE":2}},{"bed":"B36","where":"South-east corner","units":198,"items":{"G":67,"IS":57,"AD":50,"DFA":10,"JH":7,"SBG":3,"SV":3,"AP":1}},{"bed":"B37","where":"South-east corner","units":145,"items":{"IS":50,"AD":46,"JH":15,"SPA":8,"SV":8,"DFA":7,"SBT":5,"RSA":4,"AP":2}},{"bed":"B38","where":"South side","units":265,"items":{"IS":128,"AD":50,"H":34,"JH":16,"SBT":10,"SBG":8,"SPA":8,"DFA":8,"AP":3}},{"bed":"B39","where":"South side","units":1,"items":{"SV":1}},{"bed":"B40","where":"South-west corner","units":148,"items":{"IS":72,"AD":45,"JH":13,"RSA":7,"DFA":5,"AP":3,"SV":3}},{"bed":"B41","where":"South side","units":39,"items":{"AD":21,"SBG":5,"DFA":5,"JS":3,"SPA":3,"SBT":2}},{"bed":"B42","where":"South side","units":2,"items":{"PTE":2}},{"bed":"B43","where":"South side","units":20,"items":{"JS":8,"SBT":7,"SPA":3,"SV":2}},{"bed":"B44","where":"South side","units":47,"items":{"IS":31,"H":16}}];
+var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7},"lat":61.5763628,"lon":-149.3941235},{"bed":"B02","where":"North-east corner","units":2,"items":{"PT":2},"lat":61.5763507,"lon":-149.3928477},{"bed":"B03","where":"North-west corner","units":50,"items":{"AD":26,"JH":6,"SPA":5,"SBT":4,"MSB":3,"CS":3,"SV":3},"lat":61.5762718,"lon":-149.3944472},{"bed":"B04","where":"North-east corner","units":8,"items":{"CS":4,"SBG":3,"MSB":1},"lat":61.576259,"lon":-149.3928378},{"bed":"B05","where":"North-east corner","units":5,"items":{"BP":5},"lat":61.5762116,"lon":-149.3928431},{"bed":"B06","where":"North-east corner","units":181,"items":{"APV":160,"SPA":9,"JH":7,"SV":3,"MSB":2},"lat":61.5761805,"lon":-149.3931776},{"bed":"B07","where":"North side","units":168,"items":{"APV":145,"SPA":11,"JH":6,"MSB":3,"SV":3},"lat":61.5761691,"lon":-149.3941442},{"bed":"B08","where":"North-west corner","units":4,"items":{"BP":4},"lat":61.5761823,"lon":-149.3945231},{"bed":"B09","where":"By the building","units":59,"items":{"CAK":21,"DFA":12,"SBT":7,"PTE":6,"SBG":6,"CS":4,"JS":3},"lat":61.5759853,"lon":-149.3937614},{"bed":"B10","where":"By the building","units":25,"items":{"DFA":10,"SPA":5,"CAK":5,"PTE":3,"SV":2},"lat":61.5760238,"lon":-149.3935151},{"bed":"B11","where":"By the building","units":22,"items":{"CAK":19,"PTE":3},"lat":61.5760267,"lon":-149.3936501},{"bed":"B12","where":"By the building","units":1,"items":{"CS":1},"lat":61.5760285,"lon":-149.3936409},{"bed":"B13","where":"East side","units":65,"items":{"H":33,"CAK":10,"A":10,"RSA":7,"CS":3,"PTE":2},"lat":61.5759577,"lon":-149.39314},{"bed":"B14","where":"West side","units":3,"items":{"PT":3},"lat":61.5759974,"lon":-149.3945224},{"bed":"B15","where":"East side","units":3,"items":{"PT":3},"lat":61.5759284,"lon":-149.3928516},{"bed":"B16","where":"By the building","units":15,"items":{"CAK":8,"DFA":7},"lat":61.5759152,"lon":-149.3935151},{"bed":"B17","where":"By the building","units":18,"items":{"SBG":18},"lat":61.5759023,"lon":-149.394079},{"bed":"B18","where":"By the building","units":1,"items":{"SV":1},"lat":61.5758913,"lon":-149.3940698},{"bed":"B19","where":"By the building","units":16,"items":{"CAK":7,"JS":3,"SBG":3,"CS":2,"PTE":1},"lat":61.5758649,"lon":-149.3937614},{"bed":"B20","where":"East side","units":63,"items":{"DFA":38,"CAK":25},"lat":61.5758744,"lon":-149.3933157},{"bed":"B21","where":"West side","units":3,"items":{"BP":3},"lat":61.57584,"lon":-149.3945231},{"bed":"B22","where":"By the building","units":7,"items":{"DFA":4,"CAK":3},"lat":61.5758022,"lon":-149.394079},{"bed":"B23","where":"By the building","units":18,"items":{"DFA":9,"CS":8,"AP":1},"lat":61.5757614,"lon":-149.394181},{"bed":"B24","where":"East side","units":3,"items":{"BP":3},"lat":61.5757695,"lon":-149.3928546},{"bed":"B25","where":"By the building","units":23,"items":{"CAK":12,"SBG":8,"SBT":3},"lat":61.5757211,"lon":-149.3937568},{"bed":"B26","where":"East side","units":31,"items":{"AD":14,"CAK":9,"DFA":8},"lat":61.5757016,"lon":-149.3933111},{"bed":"B27","where":"By the building","units":34,"items":{"DFA":9,"JS":8,"SBG":5,"CAK":4,"AGN":3,"SBT":3,"SPA":2},"lat":61.5756539,"lon":-149.3940843},{"bed":"B28","where":"By the building","units":39,"items":{"CAK":20,"CS":7,"SBT":6,"PTE":4,"SBG":2},"lat":61.5756275,"lon":-149.3937568},{"bed":"B29","where":"By the building","units":1,"items":{"SV":1},"lat":61.5756389,"lon":-149.3940721},{"bed":"B30","where":"South side","units":18,"items":{"RSA":11,"SPA":6,"PTE":1},"lat":61.5756154,"lon":-149.3935535},{"bed":"B31","where":"South-east corner","units":11,"items":{"SV":5,"AP":3,"SPA":3},"lat":61.5755827,"lon":-149.39285},{"bed":"B32","where":"South side","units":1,"items":{"SV":1},"lat":61.5755927,"lon":-149.393545},{"bed":"B33","where":"South-west corner","units":12,"items":{"SV":6,"SPA":4,"AP":2},"lat":61.5755556,"lon":-149.3945331},{"bed":"B34","where":"South side","units":39,"items":{"CS":9,"CAK":8,"SBT":5,"PTE":4,"JS":4,"RSA":4,"SPA":3,"SV":2},"lat":61.5755072,"lon":-149.3935543},{"bed":"B35","where":"South side","units":29,"items":{"CAK":13,"SBT":6,"JS":5,"SPA":3,"PTE":2},"lat":61.5754686,"lon":-149.3937391},{"bed":"B36","where":"South-east corner","units":198,"items":{"G":67,"IS":57,"AD":50,"DFA":10,"JH":7,"SBG":3,"SV":3,"AP":1},"lat":61.5754356,"lon":-149.3931699},{"bed":"B37","where":"South-east corner","units":145,"items":{"IS":50,"AD":46,"JH":15,"SPA":8,"SV":8,"DFA":7,"SBT":5,"RSA":4,"AP":2},"lat":61.5754209,"lon":-149.3928163},{"bed":"B38","where":"South side","units":265,"items":{"IS":128,"AD":50,"H":34,"JH":16,"SBT":10,"SBG":8,"SPA":8,"DFA":8,"AP":3},"lat":61.5754129,"lon":-149.3941526},{"bed":"B39","where":"South side","units":1,"items":{"SV":1},"lat":61.5754547,"lon":-149.3937483},{"bed":"B40","where":"South-west corner","units":148,"items":{"IS":72,"AD":45,"JH":13,"RSA":7,"DFA":5,"AP":3,"SV":3},"lat":61.5754004,"lon":-149.3945339},{"bed":"B41","where":"South side","units":39,"items":{"AD":21,"SBG":5,"DFA":5,"JS":3,"SPA":3,"SBT":2},"lat":61.5753123,"lon":-149.3939232},{"bed":"B42","where":"South side","units":2,"items":{"PTE":2},"lat":61.5753417,"lon":-149.3933563},{"bed":"B43","where":"South side","units":20,"items":{"JS":8,"SBT":7,"SPA":3,"SV":2},"lat":61.5753153,"lon":-149.3934522},{"bed":"B44","where":"South side","units":47,"items":{"IS":31,"H":16},"lat":61.5752672,"lon":-149.3939002}];
 
 // On-centre spacing, straight off the schedule. Trees and shrubs are placed
 // individually on the plan, so only the massed material carries a spacing.
@@ -1135,6 +1160,73 @@ function renderFit(bed, massCodes){
     "</div>";
 }
 
+
+// Bed coordinates come from aligning the plan's property line to the borough's
+// parcel polygon -- see tools/georeference.py. Two caveats are surfaced in the
+// UI rather than hidden: a bed's position is taken from its CALLOUT, which sits
+// beside the bed on the end of a leader line, and phone GPS is good to maybe
+// 10-15 ft. So this narrows it to a short list; the picture on the card settles
+// which one you are actually standing in.
+var myPos = null;
+
+function distFt(lat1, lon1, lat2, lon2){
+  var mLat = 111132.0, mLon = 111320.0 * Math.cos(lat1 * Math.PI / 180);
+  var dx = (lon2 - lon1) * mLon, dy = (lat2 - lat1) * mLat;
+  return Math.sqrt(dx * dx + dy * dy) * 3.280839895;
+}
+
+function nearestBeds(n){
+  if(!myPos) return [];
+  return BEDS.filter(function(b){ return b.lat; })
+    .map(function(b){ return {b: b, d: distFt(myPos.lat, myPos.lon, b.lat, b.lon)}; })
+    .sort(function(x, y){ return x.d - y.d; })
+    .slice(0, n);
+}
+
+function locateMe(btn, panel){
+  if(!navigator.geolocation){
+    panel.innerHTML = '<div class="loc-msg">This phone will not give a position.</div>';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Finding you...";
+  navigator.geolocation.getCurrentPosition(function(pos){
+    myPos = {lat: pos.coords.latitude, lon: pos.coords.longitude,
+             acc: pos.coords.accuracy * 3.280839895};
+    btn.disabled = false;
+    renderBeds();
+    var top = nearestBeds(1)[0];
+    if(top){
+      var card = document.getElementById("bed-" + top.b.bed);
+      if(card){ card.scrollIntoView({block: "start"}); window.scrollBy(0, -60); }
+    }
+  }, function(err){
+    btn.disabled = false;
+    btn.textContent = "Where am I?";
+    panel.innerHTML = '<div class="loc-msg">' +
+      (err.code === 1 ? "Location is blocked. Allow it for this site in the browser."
+                      : "Could not get a position out here.") + "</div>";
+  }, {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000});
+}
+
+function locationPanel(){
+  if(!myPos) return "";
+  var near = nearestBeds(3);
+  var rows = near.map(function(n, i){
+    return '<div class="loc-row' + (i === 0 ? " first" : "") + '">' +
+      '<span class="loc-bed">Bed ' + n.b.bed.replace("B", "") + "</span>" +
+      '<span class="loc-where">' + n.b.where + "</span>" +
+      '<span class="loc-d">' + Math.round(n.d) + " ft</span></div>";
+  }).join("");
+  var warn = "";
+  if(near.length > 1 && (near[1].d - near[0].d) < myPos.acc){
+    warn = '<div class="loc-msg">Those top two are closer together than your GPS ' +
+           "is accurate. Check the picture on the card before you trust it.</div>";
+  }
+  return '<div class="loc-panel"><div class="loc-head">Nearest beds &mdash; GPS good to about ' +
+    Math.round(myPos.acc) + " ft</div>" + rows + warn + "</div>";
+}
+
 function renderBeds(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
@@ -1208,6 +1300,18 @@ function renderBeds(){
   offline.addEventListener("click", function(){ saveMapsOffline(offline); });
   container.appendChild(offline);
 
+  var locWrap = document.createElement("div");
+  locWrap.className = "loc-wrap";
+  var locBtn = document.createElement("button");
+  locBtn.className = "offline-btn loc-btn";
+  locBtn.textContent = "Where am I?";
+  var locOut = document.createElement("div");
+  locOut.innerHTML = locationPanel();
+  locBtn.addEventListener("click", function(){ locateMe(locBtn, locOut); });
+  locWrap.appendChild(locBtn);
+  locWrap.appendChild(locOut);
+  container.appendChild(locWrap);
+
   BEDS.forEach(function(b){
     var split = bedSplit(b.items);
     var nStake = split.stake.reduce(function(n, c){ return n + b.items[c]; }, 0);
@@ -1216,6 +1320,7 @@ function renderBeds(){
 
     var card = document.createElement("section");
     card.className = "zone" + (isPlanted ? " done" : isStakedDone ? " partdone" : "");
+    card.id = "bed-" + b.bed;
 
     var head = document.createElement("div");
     head.className = "zone-head";
@@ -1225,7 +1330,9 @@ function renderBeds(){
         '<span class="zone-name">Bed ' + b.bed.replace("B", "") + "</span>" +
         '<span class="zone-place">' + b.where + "</span>" +
         '<span class="zone-count">' + nStake + " to stake &middot; " +
-          b.units + " units total</span>" +
+          b.units + " units total" +
+          (myPos ? " &middot; " + Math.round(distFt(myPos.lat, myPos.lon, b.lat, b.lon)) +
+            " ft away" : "") + "</span>" +
       "</span>";
     card.appendChild(head);
 
