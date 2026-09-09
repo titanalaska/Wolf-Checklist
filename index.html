@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#2f5233">
@@ -410,6 +410,41 @@
     background:var(--amber-bg);padding:12px 14px;font-size:0.83rem;line-height:1.45;
   }
   .zone-note b{color:var(--amber);}
+
+  .bed-no{
+    flex-shrink:0;width:40px;height:40px;border-radius:50%;
+    background:var(--green);color:var(--on-green);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:1.0rem;font-variant-numeric:tabular-nums;
+  }
+  .zone.done .bed-no{background:var(--on-green);color:var(--green);}
+  .bed-pic{border-top:1px solid var(--line);background:var(--bg);}
+  .bed-pic a{display:block;}
+  .bed-img{width:100%;height:auto;display:block;}
+  .zspace{
+    display:block;font-size:0.74rem;color:var(--ink-soft);margin-top:2px;
+  }
+  .map-wrap{
+    margin:14px 16px 0;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);overflow:hidden;
+  }
+  .map-title{
+    padding:11px 14px;font-weight:700;font-size:0.95rem;
+    background:var(--green-bg);color:var(--green-text);
+    border-bottom:1px solid var(--line);
+  }
+  .map-img{width:100%;height:auto;display:block;background:var(--bg);}
+  .map-hint{
+    padding:9px 14px;font-size:0.76rem;color:var(--ink-soft);
+    border-top:1px solid var(--line);
+  }
+  .offline-btn{
+    display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:11px;
+    border:1px solid var(--green);background:var(--card);color:var(--green-text);
+    border-radius:9px;font-family:inherit;font-weight:700;font-size:0.85rem;
+    cursor:pointer;touch-action:manipulation;
+  }
+  .offline-btn:disabled{opacity:0.65;}
 </style>
 </head>
 <body>
@@ -443,7 +478,7 @@
 
 <div class="view-toggle" id="viewToggle">
   <button class="vt active" id="vtSpecies">Whole job</button>
-  <button class="vt" id="vtZones">Pull by zone</button>
+  <button class="vt" id="vtZones">Pull by bed</button>
 </div>
 
 <div id="flagsSlot"></div>
@@ -606,20 +641,20 @@ var SEED = {
   "wsrcc:hedge-cotoneaster": 58
 };
 
-// Per-zone pull list, totalled from every callout on sheet L102. The zones are
-// the 3x3 grid of the printed field packet, so A2 here is the A2 page there.
-// 19 of the 22 species add up to the sheet's own plant schedule exactly; the
-// three that do not are flagged below rather than quietly adjusted.
-var ZONES = {
-  A1: {place: "Northwest corner", items: {MSB: 3, BP: 4, CS: 3, JH: 6, SBT: 4, SPA: 5, SV: 3, AD: 26}},
-  A2: {place: "North — parking row and storm water", items: {AP: 7, MSB: 3, JH: 6, SPA: 11, SV: 3, APV: 145}},
-  A3: {place: "Northeast corner", items: {PT: 2, MSB: 3, BP: 5, CS: 4, JH: 7, SBG: 3, SPA: 9, SV: 3, APV: 160}},
-  B1: {place: "West frontage", items: {PT: 3, BP: 3}},
-  B2: {place: "The building, plazas and bike rack", items: {AGN: 3, AP: 1, PTE: 18, CS: 22, JS: 14, SBG: 42, SBT: 13, SPA: 7, SV: 4, CAK: 79, DFA: 42}},
-  B3: {place: "East frontage", items: {PT: 3, PTE: 2, BP: 3, CS: 3, RSA: 7, CAK: 44, DFA: 46, A: 10, AD: 14, H: 33}},
-  C1: {place: "Southwest corner", items: {AP: 5, JH: 13, RSA: 7, SPA: 4, SV: 9, DFA: 5, AD: 45, IS: 72}},
-  C2: {place: "South — Duane Drive frontage", items: {AP: 3, PTE: 8, CS: 9, JH: 16, JS: 20, RSA: 15, SBG: 13, SBT: 36, SPA: 26, SV: 6, CAK: 41, DFA: 22, AD: 71, H: 50, IS: 159}},
-  C3: {place: "Southeast corner", items: {AP: 6, JH: 22, RSA: 4, SBG: 3, SBT: 5, SPA: 11, SV: 16, DFA: 17, AD: 96, G: 67, IS: 107}},
+// One entry per planting bed on sheet L102 -- a bed being a callout stack with
+// its own leader line. Numbered north to south, so walking the numbers walks
+// the site. Injected from L102-beds.json; do not hand-edit.
+// 19 of the 22 species total to the sheet's own plant schedule exactly; the
+// three that do not are flagged rather than quietly adjusted.
+var BEDS = [{"bed":"B01","where":"North side","units":7,"items":{"AP":7}},{"bed":"B02","where":"North-east corner","units":2,"items":{"PT":2}},{"bed":"B03","where":"North-west corner","units":50,"items":{"AD":26,"JH":6,"SPA":5,"SBT":4,"MSB":3,"CS":3,"SV":3}},{"bed":"B04","where":"North-east corner","units":8,"items":{"CS":4,"SBG":3,"MSB":1}},{"bed":"B05","where":"North-east corner","units":5,"items":{"BP":5}},{"bed":"B06","where":"North-east corner","units":181,"items":{"APV":160,"SPA":9,"JH":7,"SV":3,"MSB":2}},{"bed":"B07","where":"North side","units":168,"items":{"APV":145,"SPA":11,"JH":6,"MSB":3,"SV":3}},{"bed":"B08","where":"North-west corner","units":4,"items":{"BP":4}},{"bed":"B09","where":"By the building","units":59,"items":{"CAK":21,"DFA":12,"SBT":7,"PTE":6,"SBG":6,"CS":4,"JS":3}},{"bed":"B10","where":"By the building","units":25,"items":{"DFA":10,"SPA":5,"CAK":5,"PTE":3,"SV":2}},{"bed":"B11","where":"By the building","units":22,"items":{"CAK":19,"PTE":3}},{"bed":"B12","where":"By the building","units":1,"items":{"CS":1}},{"bed":"B13","where":"East side","units":65,"items":{"H":33,"CAK":10,"A":10,"RSA":7,"CS":3,"PTE":2}},{"bed":"B14","where":"West side","units":3,"items":{"PT":3}},{"bed":"B15","where":"East side","units":3,"items":{"PT":3}},{"bed":"B16","where":"By the building","units":15,"items":{"CAK":8,"DFA":7}},{"bed":"B17","where":"By the building","units":18,"items":{"SBG":18}},{"bed":"B18","where":"By the building","units":1,"items":{"SV":1}},{"bed":"B19","where":"By the building","units":16,"items":{"CAK":7,"JS":3,"SBG":3,"CS":2,"PTE":1}},{"bed":"B20","where":"East side","units":63,"items":{"DFA":38,"CAK":25}},{"bed":"B21","where":"West side","units":3,"items":{"BP":3}},{"bed":"B22","where":"By the building","units":7,"items":{"DFA":4,"CAK":3}},{"bed":"B23","where":"By the building","units":18,"items":{"DFA":9,"CS":8,"AP":1}},{"bed":"B24","where":"East side","units":3,"items":{"BP":3}},{"bed":"B25","where":"By the building","units":23,"items":{"CAK":12,"SBG":8,"SBT":3}},{"bed":"B26","where":"East side","units":31,"items":{"AD":14,"CAK":9,"DFA":8}},{"bed":"B27","where":"By the building","units":34,"items":{"DFA":9,"JS":8,"SBG":5,"CAK":4,"AGN":3,"SBT":3,"SPA":2}},{"bed":"B28","where":"By the building","units":39,"items":{"CAK":20,"CS":7,"SBT":6,"PTE":4,"SBG":2}},{"bed":"B29","where":"By the building","units":1,"items":{"SV":1}},{"bed":"B30","where":"South side","units":18,"items":{"RSA":11,"SPA":6,"PTE":1}},{"bed":"B31","where":"South-east corner","units":11,"items":{"SV":5,"AP":3,"SPA":3}},{"bed":"B32","where":"South side","units":1,"items":{"SV":1}},{"bed":"B33","where":"South-west corner","units":12,"items":{"SV":6,"SPA":4,"AP":2}},{"bed":"B34","where":"South side","units":39,"items":{"CS":9,"CAK":8,"SBT":5,"PTE":4,"JS":4,"RSA":4,"SPA":3,"SV":2}},{"bed":"B35","where":"South side","units":29,"items":{"CAK":13,"SBT":6,"JS":5,"SPA":3,"PTE":2}},{"bed":"B36","where":"South-east corner","units":198,"items":{"G":67,"IS":57,"AD":50,"DFA":10,"JH":7,"SBG":3,"SV":3,"AP":1}},{"bed":"B37","where":"South-east corner","units":145,"items":{"IS":50,"AD":46,"JH":15,"SPA":8,"SV":8,"DFA":7,"SBT":5,"RSA":4,"AP":2}},{"bed":"B38","where":"South side","units":265,"items":{"IS":128,"AD":50,"H":34,"JH":16,"SBT":10,"SBG":8,"SPA":8,"DFA":8,"AP":3}},{"bed":"B39","where":"South side","units":1,"items":{"SV":1}},{"bed":"B40","where":"South-west corner","units":148,"items":{"IS":72,"AD":45,"JH":13,"RSA":7,"DFA":5,"AP":3,"SV":3}},{"bed":"B41","where":"South side","units":39,"items":{"AD":21,"SBG":5,"DFA":5,"JS":3,"SPA":3,"SBT":2}},{"bed":"B42","where":"South side","units":2,"items":{"PTE":2}},{"bed":"B43","where":"South side","units":20,"items":{"JS":8,"SBT":7,"SPA":3,"SV":2}},{"bed":"B44","where":"South side","units":47,"items":{"IS":31,"H":16}}];
+
+// On-centre spacing, straight off the schedule. Trees and shrubs are placed
+// individually on the plan, so only the massed material carries a spacing.
+var SPACING = {
+  CAK: '18" OC triangular', DFA: '18" OC triangular',
+  A: '24" OC triangular · 5 eyes min', AD: '18" OC · 5 eyes min',
+  APV: '12" OC', G: '12" OC',
+  H: '18" OC · 2 eyes min', IS: '12" OC triangular · 2-3 fans min',
 };
 
 var SPECIES = {
@@ -873,102 +908,125 @@ function renderGroups(){
   });
 }
 
-// A thumbnail of the same 3x3 grid as the printed packet, with this zone filled.
-// North is up on sheet L102 (checked against its compass), the building sits in
-// the middle cell, and Duane Drive runs along the south edge -- which is enough
-// to place yourself without unrolling the big sheet.
-function zoneLocator(z){
-  var row = "ABC".indexOf(z.charAt(0));
-  var col = parseInt(z.charAt(1), 10) - 1;
-  var cells = "";
-  for(var r = 0; r < 3; r++){
-    for(var c = 0; c < 3; c++){
-      var on = (r === row && c === col);
-      cells += '<rect x="' + (3 + c * 22) + '" y="' + (17 + r * 22) + '" width="20" height="20"'
-        + ' fill="' + (on ? "var(--green)" : "var(--card)") + '"'
-        + ' stroke="var(--line)" stroke-width="1"/>';
-    }
-  }
-  // Building footprint hint, centred on B2.
-  var bldg = '<rect x="30" y="44" width="12" height="12" fill="none"'
-    + ' stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="2 2"/>';
-  return '<svg class="zone-loc" viewBox="0 0 72 96" width="58" height="77" role="img"'
-    + ' aria-label="Zone ' + z + ' position, north at top">'
-    + '<text x="36" y="8" text-anchor="middle" font-size="9" font-weight="700"'
-    + ' fill="var(--ink-soft)">N</text>'
-    + '<path d="M36 9 l3.5 6 h-7 z" fill="var(--ink-soft)"/>'
-    + cells + bldg
-    + '<text x="36" y="92" text-anchor="middle" font-size="7.5"'
-    + ' fill="var(--ink-soft)">Duane Dr</text>'
-    + "</svg>";
+// Bed crops and the site map are ordinary files next to the page. The published
+// Artifact copy cannot load them (its sandbox blocks external images and it has
+// no folder of its own), so every <img> hides itself on error and the lists
+// still work. The installed copy on the phone is the one that shows pictures.
+var BED_IMG = "./beds/";
+
+function imgOrNothing(src, alt, cls){
+  return '<img class="' + cls + '" src="' + src + '" alt="' + alt +
+         '" loading="lazy" decoding="async" onerror="this.remove()">';
 }
 
-function renderZones(){
+function bedRow(code, qty){
+  var sp = SPACING[code] ? '<span class="zspace">' + SPACING[code] + "</span>" : "";
+  var flag = DISCREPANCY[code] ? '<span class="zflag">check plan</span>' : "";
+  return '<div class="zrow">' +
+    '<span class="zqty">' + qty + "</span>" +
+    '<span class="zname">' + SPECIES[code] +
+      ' <span class="zcode">' + code + "</span>" + sp + "</span>" +
+    flag + "</div>";
+}
+
+function renderBeds(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
 
   var intro = document.createElement("p");
   intro.className = "zone-intro";
-  intro.innerHTML = "Everything sheet L102 calls for, totalled per zone of the printed "
-    + "field packet &mdash; <b>A2 here is the A2 page there</b>. North is up: "
-    + "<b>A</b> row is the north side (storm water, parking row), <b>C</b> row fronts "
-    + "Duane Drive, column <b>1</b> is west and <b>3</b> is east. The building is B2. "
-    + "Load the buggy from one card, drive to that corner, tap Mark loaded.";
+  intro.innerHTML = "Every planting bed on sheet L102, numbered <b>north to south</b> " +
+    "&mdash; so the numbers walk the site. Find your bed on the map, then work down " +
+    "its card. Pinch to zoom any picture.";
   container.appendChild(intro);
 
-  Object.keys(ZONES).forEach(function(z){
-    var zone = ZONES[z];
-    var codes = Object.keys(zone.items).sort(function(a, b){
-      return zone.items[b] - zone.items[a];
-    });
-    var units = codes.reduce(function(n, c){ return n + zone.items[c]; }, 0);
-    var isDone = !!(loaded[z]);
+  var mapWrap = document.createElement("div");
+  mapWrap.className = "map-wrap";
+  mapWrap.innerHTML =
+    '<div class="map-title">Site map &mdash; all ' + BEDS.length + " beds</div>" +
+    '<a href="' + BED_IMG + '_map.jpg" target="_blank" rel="noopener">' +
+      imgOrNothing(BED_IMG + "_map.jpg", "Site map with every bed numbered", "map-img") +
+    "</a>" +
+    '<div class="map-hint">Tap the map to open it full size, then pinch to zoom.</div>';
+  container.appendChild(mapWrap);
 
+  var offline = document.createElement("button");
+  offline.className = "offline-btn";
+  offline.id = "offlineBtn";
+  offline.textContent = "Save all bed maps for offline (6 MB)";
+  offline.addEventListener("click", function(){ saveMapsOffline(offline); });
+  container.appendChild(offline);
+
+  BEDS.forEach(function(b){
+    var codes = Object.keys(b.items);
+    var isDone = !!loaded[b.bed];
     var card = document.createElement("section");
     card.className = "zone" + (isDone ? " done" : "");
 
     var head = document.createElement("div");
     head.className = "zone-head";
-    head.innerHTML = zoneLocator(z) +
+    head.innerHTML =
+      '<span class="bed-no">' + b.bed.replace("B", "") + "</span>" +
       '<span class="zone-id">' +
-        '<span class="zone-name">Zone ' + z + "</span>" +
-        '<span class="zone-place">' + zone.place + "</span>" +
-        '<span class="zone-count">' + codes.length + " species &middot; " + units + " units</span>" +
+        '<span class="zone-name">Bed ' + b.bed.replace("B", "") + "</span>" +
+        '<span class="zone-place">' + b.where + "</span>" +
+        '<span class="zone-count">' + codes.length + " species &middot; " +
+          b.units + " units</span>" +
       "</span>";
-
     var btn = document.createElement("button");
     btn.className = "loaded-btn";
     btn.textContent = isDone ? "Loaded" : "Mark loaded";
     btn.addEventListener("click", function(){
-      loaded[z] = !loaded[z];
+      loaded[b.bed] = !loaded[b.bed];
       scheduleSave();
-      renderZones();
+      renderBeds();
     });
     head.appendChild(btn);
     card.appendChild(head);
 
-    codes.forEach(function(c){
-      var row = document.createElement("div");
-      row.className = "zrow";
-      var flag = DISCREPANCY[c]
-        ? '<span class="zflag">check plan</span>' : "";
-      row.innerHTML = '<span class="zqty">' + zone.items[c] + "</span>" +
-        '<span class="zname">' + SPECIES[c] + ' <span class="zcode">' + c + "</span></span>" +
-        flag;
-      card.appendChild(row);
-    });
+    var rows = codes.map(function(c){ return bedRow(c, b.items[c]); }).join("");
+    var pic = document.createElement("div");
+    pic.className = "bed-pic";
+    pic.innerHTML = '<a href="' + BED_IMG + b.bed + '.jpg" target="_blank" rel="noopener">' +
+      imgOrNothing(BED_IMG + b.bed + ".jpg", "Bed " + b.bed + " on the plan", "bed-img") +
+      "</a>";
+    card.appendChild(pic);
+    card.insertAdjacentHTML("beforeend", rows);
 
     container.appendChild(card);
   });
 
   var note = document.createElement("div");
   note.className = "zone-note";
-  note.innerHTML = "<b>Three species do not add up.</b> The callouts on the sheet total "
-    + "73 Miss Kim Lilac against a schedule of 45, 252 False Spirea against 226, and 58 "
-    + "Birchleaf Spirea against 63. Every other species matches exactly. The zone numbers "
-    + "above are what the sheet actually draws &mdash; settle the three with Peter Briggs "
-    + "at Corvus before ordering to them.";
+  note.innerHTML = "<b>Three species do not add up.</b> Across the whole job the " +
+    "callouts total 73 Miss Kim Lilac against a schedule of 45, 252 False Spirea " +
+    "against 226, and 58 Birchleaf Spirea against 63. Every other species matches " +
+    "exactly. The bed numbers above are what the sheet actually draws &mdash; settle " +
+    "the three with Peter Briggs at Corvus, 907.222.2859, before ordering to them.";
   container.appendChild(note);
+}
+
+// Warms the service worker's cache so the pictures are there with no signal.
+function saveMapsOffline(btn){
+  var urls = [BED_IMG + "_map.jpg"].concat(BEDS.map(function(b){
+    return BED_IMG + b.bed + ".jpg";
+  }));
+  var done = 0, failed = 0;
+  btn.disabled = true;
+  function tick(){
+    btn.textContent = "Saving " + (done + failed) + " of " + urls.length + "...";
+  }
+  tick();
+  Promise.all(urls.map(function(u){
+    return fetch(u, {cache: "reload"}).then(function(r){
+      if(r.ok) done++; else failed++;
+    }).catch(function(){ failed++; }).then(tick);
+  })).then(function(){
+    btn.disabled = false;
+    btn.textContent = failed
+      ? "Saved " + done + " of " + urls.length + " — retry when you have signal"
+      : "Saved for offline — all " + done + " maps";
+  });
 }
 
 function renderAll(){
@@ -981,7 +1039,7 @@ function renderAll(){
 
   if(showZones && view === "zones"){
     document.getElementById("flagsSlot").innerHTML = "";
-    renderZones();
+    renderBeds();
   } else {
     renderFlags();
     renderGroups();
@@ -1029,20 +1087,16 @@ function generateReport(){
     lines.push("");
   });
 
-  lines.push("HOME2SUITES -- PULL LIST BY ZONE (from sheet L102)");
-  lines.push("Zones are the 3x3 grid of the printed field packet. North is up:");
-  lines.push("A row = north side, C row = Duane Drive frontage, 1 = west, 3 = east.");
-  lines.push("The building is B2.");
-  Object.keys(ZONES).forEach(function(z){
-    var zone = ZONES[z];
-    var codes = Object.keys(zone.items).sort(function(a, b){
-      return zone.items[b] - zone.items[a];
-    });
-    var units = codes.reduce(function(n, c){ return n + zone.items[c]; }, 0);
-    lines.push("Zone " + z + " -- " + zone.place + " (" + units + " units)" +
-               (loaded[z] ? " [LOADED]" : ""));
-    codes.forEach(function(c){
-      lines.push("  " + zone.items[c] + " x " + SPECIES[c] + " (" + c + ")" +
+  lines.push("HOME2SUITES -- PULL LIST BY BED (from sheet L102)");
+  lines.push("Beds numbered north to south. " + BEDS.length + " beds, " +
+             BEDS.reduce(function(n, b){ return n + b.units; }, 0) + " units.");
+  lines.push("");
+  BEDS.forEach(function(b){
+    lines.push("Bed " + b.bed.replace("B", "") + " -- " + b.where +
+               " (" + b.units + " units)" + (loaded[b.bed] ? " [LOADED]" : ""));
+    Object.keys(b.items).forEach(function(c){
+      lines.push("  " + b.items[c] + " x " + SPECIES[c] + " (" + c + ")" +
+                 (SPACING[c] ? "  " + SPACING[c] : "") +
                  (DISCREPANCY[c] ? "  ** " + DISCREPANCY[c] + " **" : ""));
     });
   });

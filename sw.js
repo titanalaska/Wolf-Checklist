@@ -18,8 +18,14 @@
  * Bump CACHE_VERSION on deploy; old caches are dropped on activate.
  */
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE = `wolf-shell-${CACHE_VERSION}`;
+
+// Bed crops and the site map: ~6 MB across 45 files. Too much to force on every
+// visitor up front, so they are cached as they are viewed, and the app's
+// "Save all bed maps for offline" button warms the whole set in one go.
+const BED_CACHE = `wolf-beds-${CACHE_VERSION}`;
+const MAX_BEDS = 60;
 
 const SHELL = [
   './',
@@ -42,15 +48,38 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  const keep = [SHELL_CACHE, BED_CACHE];
   event.waitUntil(
     caches.keys()
       .then(names => Promise.all(
-        names.filter(n => n.startsWith('wolf-') && n !== SHELL_CACHE)
+        names.filter(n => n.startsWith('wolf-') && !keep.includes(n))
              .map(n => caches.delete(n))
       ))
       .then(() => self.clients.claim())
   );
 });
+
+// Oldest-first eviction. Cache API keys come back in insertion order.
+async function trimCache(name, max) {
+  const cache = await caches.open(name);
+  const keys = await cache.keys();
+  if (keys.length <= max) return;
+  await Promise.all(keys.slice(0, keys.length - max).map(k => cache.delete(k)));
+}
+
+// Bed pictures are cut from one fixed drawing, so they never change under a
+// given filename -- revalidating them would just burn cell data in the yard.
+async function cacheFirst(request) {
+  const cache = await caches.open(BED_CACHE);
+  const hit = await cache.match(request);
+  if (hit) return hit;
+  const res = await fetch(request);
+  if (res && res.status === 200 && res.type !== 'opaque') {
+    await cache.put(request, res.clone());
+    trimCache(BED_CACHE, MAX_BEDS);
+  }
+  return res;
+}
 
 async function networkFirst(request) {
   const cache = await caches.open(SHELL_CACHE);
@@ -76,6 +105,11 @@ self.addEventListener('fetch', (event) => {
   try { url = new URL(req.url); } catch (e) { return; }
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
   if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.indexOf('/beds/') !== -1) {
+    event.respondWith(cacheFirst(req).catch(() => Response.error()));
+    return;
+  }
 
   event.respondWith(networkFirst(req));
 });
