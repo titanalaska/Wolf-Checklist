@@ -605,6 +605,15 @@
     max-width:100%;height:auto;display:block;
     border-radius:6px;background:#fff;
   }
+  .src-box{
+    margin:14px 16px 4px;border:1px solid var(--green);border-radius:10px;
+    background:var(--green-bg);padding:12px 14px;
+  }
+  .src-head{
+    font-size:0.92rem;font-weight:700;color:var(--green-text);margin-bottom:7px;
+  }
+  .src-note{font-size:0.85rem;line-height:1.45;margin-bottom:4px;}
+
   .lb-close{
     position:fixed;top:10px;right:10px;z-index:101;
     padding:11px 16px;border-radius:9px;
@@ -999,10 +1008,39 @@ function renderTabs(){
   });
 }
 
+
+// WSRCC only. Its plants live at the nursery in Anchorage, not at the Home2
+// Suites storage area, and that is right -- it is an Anchorage job. A place to
+// record where material is actually coming from, so nobody goes hunting.
+function renderSourceNote(slot){
+  if(currentJob !== "wsrcc") return;
+  var box = document.createElement("div");
+  box.className = "src-box";
+  box.innerHTML = '<div class="src-head">Where this material is coming from</div>' +
+    '<div class="src-note">Plants are at the <b>nursery in Anchorage</b>, not at the ' +
+    "Home2 Suites storage area. That is correct &mdash; WSRCC is an Anchorage job. " +
+    "Nothing to chase.</div>";
+  var ta = document.createElement("textarea");
+  ta.className = "notes";
+  ta.id = "source-wsrcc";
+  ta.placeholder = "Pickup point, who to call, what has moved...";
+  ta.value = notes["source-wsrcc"] || "";
+  var t;
+  ta.addEventListener("input", function(){
+    notes["source-wsrcc"] = ta.value;
+    clearTimeout(t);
+    t = setTimeout(scheduleSave, 500);
+  });
+  box.appendChild(ta);
+  slot.appendChild(box);
+}
+
 function renderFlags(){
   var slot = document.getElementById("flagsSlot");
   var job = JOBS[currentJob];
-  if(!job.flags || job.flags.length === 0){ slot.innerHTML = ""; return; }
+  slot.innerHTML = "";
+  renderSourceNote(slot);
+  if(!job.flags || job.flags.length === 0){ return; }
 
   var box = document.createElement("div");
   box.className = "flags";
@@ -1016,7 +1054,6 @@ function renderFlags(){
   ta.placeholder = "Notes — update here as Chris gets back to you...";
   ta.value = notes[notesId] || "";
   box.appendChild(ta);
-  slot.innerHTML = "";
   slot.appendChild(box);
 
   ta.addEventListener("input", function(){
@@ -1444,7 +1481,7 @@ function renderBeds(){
   var offline = document.createElement("button");
   offline.className = "offline-btn";
   offline.id = "offlineBtn";
-  offline.textContent = "Save all bed maps for offline (6 MB)";
+  offline.textContent = "Save all bed maps for offline (17 MB)";
   offline.addEventListener("click", function(){ saveMapsOffline(offline); });
   container.appendChild(offline);
 
