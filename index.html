@@ -634,6 +634,9 @@
   .lb-img{
     max-width:100%;height:auto;display:block;
     border-radius:4px;background:#fff;
+    /* The scroll box is a flex container, and a flex item shrinks to fit by
+       default -- which silently undid every zoom step. */
+    flex-shrink:0;
   }
   .src-box{
     margin:14px 16px 4px;border:1px solid var(--green);border-radius:10px;
