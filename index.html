@@ -592,6 +592,27 @@
   .zb-note{font-size:0.79rem;line-height:1.45;margin-top:7px;opacity:0.85;}
   /* The frontage is built last and carries the most work -- flag it amber. */
   .zonebar-z4{background:var(--amber);}
+
+  /* Picture overlay. Opening a new tab in a standalone PWA hands you to the
+     browser and back never comes home, so pictures open in here instead. */
+  .lightbox{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(8,10,7,0.96);
+    display:flex;align-items:center;justify-content:center;
+    overflow:auto;padding:12px;
+  }
+  .lb-img{
+    max-width:100%;height:auto;display:block;
+    border-radius:6px;background:#fff;
+  }
+  .lb-close{
+    position:fixed;top:10px;right:10px;z-index:101;
+    padding:11px 16px;border-radius:9px;
+    border:1px solid rgba(255,255,255,0.5);
+    background:rgba(20,24,18,0.92);color:#fff;
+    font-family:inherit;font-weight:700;font-size:0.88rem;
+    cursor:pointer;touch-action:manipulation;
+  }
 </style>
 </head>
 <body>
@@ -626,6 +647,11 @@
 <div class="view-toggle" id="viewToggle">
   <button class="vt active" id="vtSpecies">Whole job</button>
   <button class="vt" id="vtZones">Pull by bed</button>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lb-close" id="lbClose">&#10005; Close</button>
+  <img class="lb-img" id="lbImg" alt="">
 </div>
 
 <div id="flagsSlot"></div>
@@ -961,6 +987,8 @@ function renderTabs(){
     btn.innerHTML = '<span class="tab-name">' + JOBS[jobKey].short +
       '</span><span class="tab-progress">' + p.complete + "/" + p.total + " complete</span>";
     btn.addEventListener("click", function(){
+      if(jobKey === currentJob) return;
+      pushStep();
       currentJob = jobKey;
       // The zone pull list only exists for Home2Suites; leaving that tab drops
       // back to the species view so the toggle never lies about what is shown.
@@ -1276,6 +1304,69 @@ function locationPanel(){
     Math.round(myPos.acc) + " ft</div>" + rows + warn + "</div>";
 }
 
+
+// ---- back button --------------------------------------------------------
+// Standalone PWAs start with a single history entry, so a back gesture exits
+// the app. Each in-app step pushes one, and popstate walks them back.
+var lightboxSrc = null;
+var restoring = false;
+
+function viewState(){
+  return {job: currentJob, view: view, lb: lightboxSrc, scroll: window.scrollY};
+}
+
+function pushStep(){
+  if(restoring) return;
+  try{ history.pushState(viewState(), ""); }catch(e){}
+}
+
+function showLightbox(src){
+  lightboxSrc = src;
+  var box = document.getElementById("lightbox");
+  var img = document.getElementById("lbImg");
+  if(src){
+    img.src = src;
+    box.hidden = false;
+    document.body.style.overflow = "hidden";
+  } else {
+    box.hidden = true;
+    img.removeAttribute("src");
+    document.body.style.overflow = "";
+  }
+}
+
+function openPicture(src){
+  showLightbox(src);
+  pushStep();
+}
+
+function closePicture(){
+  if(lightboxSrc){ history.back(); }
+}
+
+window.addEventListener("popstate", function(ev){
+  var s = ev.state || {job: "h2s", view: "species", lb: null};
+  restoring = true;
+  currentJob = s.job || "h2s";
+  view = s.view || "species";
+  showLightbox(s.lb || null);
+  renderAll();
+  if(typeof s.scroll === "number"){
+    window.scrollTo(0, s.scroll);
+  }
+  restoring = false;
+});
+
+// Pictures open in the overlay, not a new tab.
+function wirePictures(root){
+  root.querySelectorAll("a[data-lb]").forEach(function(a){
+    a.addEventListener("click", function(ev){
+      ev.preventDefault();
+      openPicture(a.getAttribute("href"));
+    });
+  });
+}
+
 function renderBeds(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
@@ -1336,10 +1427,10 @@ function renderBeds(){
   mapWrap.className = "map-wrap";
   mapWrap.innerHTML =
     '<div class="map-title">Site map &mdash; all ' + BEDS.length + " beds</div>" +
-    '<a href="' + BED_IMG + 'site-map.jpg" target="_blank" rel="noopener">' +
+    '<a href="' + BED_IMG + 'site-map.jpg" data-lb="1">' +
       imgOrNothing(BED_IMG + "site-map.jpg", "Site map with every bed numbered", "map-img") +
     "</a>" +
-    '<div class="map-hint">Tap the map to open it full size, then pinch to zoom.</div>';
+    '<div class="map-hint">Tap the map to open it full size, then pinch to zoom. Back closes it.</div>';
   container.appendChild(mapWrap);
 
   var offline = document.createElement("button");
@@ -1423,7 +1514,7 @@ function renderBeds(){
 
     var pic = document.createElement("div");
     pic.className = "bed-pic";
-    pic.innerHTML = '<a href="' + BED_IMG + b.bed + '.jpg" target="_blank" rel="noopener">' +
+    pic.innerHTML = '<a href="' + BED_IMG + b.bed + '.jpg" data-lb="1">' +
       imgOrNothing(BED_IMG + b.bed + ".jpg", "Bed " + b.bed + " on the plan", "bed-img") +
       "</a>";
     card.appendChild(pic);
@@ -1444,6 +1535,8 @@ function renderBeds(){
 
     container.appendChild(card);
   });
+
+  wirePictures(container);
 
   container.querySelectorAll(".fit-inputs input").forEach(function(inp){
     inp.addEventListener("input", function(){
@@ -1653,11 +1746,19 @@ function init(){
   applyPayload(local);
   fillMissingFromSeed();
   document.getElementById("vtSpecies").addEventListener("click", function(){
-    view = "species"; renderAll();
+    if(view === "species") return;
+    pushStep(); view = "species"; renderAll(); window.scrollTo(0, 0);
   });
   document.getElementById("vtZones").addEventListener("click", function(){
-    view = "zones"; renderAll();
+    if(view === "zones") return;
+    pushStep(); view = "zones"; renderAll(); window.scrollTo(0, 0);
   });
+  document.getElementById("lbClose").addEventListener("click", closePicture);
+  document.getElementById("lightbox").addEventListener("click", function(ev){
+    if(ev.target && ev.target.id === "lightbox") closePicture();
+  });
+  // Seed the first entry so the first back gesture has somewhere to land.
+  try{ history.replaceState(viewState(), ""); }catch(e){}
 
   renderAll();
   wireReportUI();
