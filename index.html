@@ -597,13 +597,43 @@
      browser and back never comes home, so pictures open in here instead. */
   .lightbox{
     position:fixed;inset:0;z-index:100;
-    background:rgba(8,10,7,0.96);
-    display:flex;align-items:center;justify-content:center;
-    overflow:auto;padding:12px;
+    background:rgba(8,10,7,0.97);
+    display:flex;flex-direction:column;
+  }
+  .lb-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:9px 10px;background:rgba(20,24,18,0.96);
+    border-bottom:1px solid rgba(255,255,255,0.16);flex-shrink:0;
+  }
+  .lb-title{
+    color:#fff;font-weight:700;font-size:0.84rem;flex:1;min-width:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .lb-zooms{display:flex;gap:5px;flex-shrink:0;}
+  .lb-z{
+    padding:8px 11px;border-radius:8px;
+    border:1px solid rgba(255,255,255,0.35);
+    background:transparent;color:#fff;
+    font-family:inherit;font-weight:700;font-size:0.8rem;
+    cursor:pointer;touch-action:manipulation;
+  }
+  .lb-z.on{background:#fff;color:#14170f;border-color:#fff;}
+  .lb-scroll{
+    flex:1;overflow:auto;display:flex;
+    align-items:center;justify-content:center;padding:8px;
+    -webkit-overflow-scrolling:touch;
+  }
+  /* Once magnified the picture is larger than the box, so it sits top-left and
+     gets dragged rather than centred and clipped. */
+  .lb-scroll.zoomed{align-items:flex-start;justify-content:flex-start;}
+  .lb-hint{
+    padding:9px 12px;background:rgba(20,24,18,0.96);
+    color:rgba(255,255,255,0.75);font-size:0.76rem;line-height:1.4;
+    border-top:1px solid rgba(255,255,255,0.14);flex-shrink:0;
   }
   .lb-img{
     max-width:100%;height:auto;display:block;
-    border-radius:6px;background:#fff;
+    border-radius:4px;background:#fff;
   }
   .src-box{
     margin:14px 16px 4px;border:1px solid var(--green);border-radius:10px;
@@ -615,11 +645,10 @@
   .src-note{font-size:0.85rem;line-height:1.45;margin-bottom:4px;}
 
   .lb-close{
-    position:fixed;top:10px;right:10px;z-index:101;
-    padding:11px 16px;border-radius:9px;
-    border:1px solid rgba(255,255,255,0.5);
-    background:rgba(20,24,18,0.92);color:#fff;
-    font-family:inherit;font-weight:700;font-size:0.88rem;
+    padding:8px 12px;border-radius:8px;flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.35);
+    background:transparent;color:#fff;
+    font-family:inherit;font-weight:700;font-size:0.9rem;
     cursor:pointer;touch-action:manipulation;
   }
 </style>
@@ -659,8 +688,18 @@
 </div>
 
 <div class="lightbox" id="lightbox" hidden>
-  <button class="lb-close" id="lbClose">&#10005; Close</button>
-  <img class="lb-img" id="lbImg" alt="">
+  <div class="lb-bar">
+    <span class="lb-title" id="lbTitle"></span>
+    <span class="lb-zooms">
+      <button class="lb-z" data-z="fit">Fit</button>
+      <button class="lb-z" data-z="1">1&times;</button>
+      <button class="lb-z" data-z="2">2&times;</button>
+      <button class="lb-z" data-z="3">3&times;</button>
+    </span>
+    <button class="lb-close" id="lbClose">&#10005;</button>
+  </div>
+  <div class="lb-scroll" id="lbScroll"><img class="lb-img" id="lbImg" alt=""></div>
+  <div class="lb-hint" id="lbHint"></div>
 </div>
 
 <div id="flagsSlot"></div>
@@ -1349,7 +1388,9 @@ var lightboxSrc = null;
 var restoring = false;
 
 function viewState(){
-  return {job: currentJob, view: view, lb: lightboxSrc, scroll: window.scrollY};
+  return {job: currentJob, view: view, lb: lightboxSrc,
+          lbTitle: (document.getElementById("lbTitle") || {}).textContent || "",
+          scroll: window.scrollY};
 }
 
 // Stamp where we are (including scroll) into the current entry, make the
@@ -1364,14 +1405,50 @@ function goto(mutate, keepScroll){
   try{ history.pushState(viewState(), ""); }catch(e){}
 }
 
-function showLightbox(src){
+var lbZoom = "fit";
+
+// 1x means one image pixel per screen pixel: on this sheet that is 1.6 inches
+// of ground per pixel, and it is the most real detail there is. 2x and 3x
+// magnify honestly; nothing is invented.
+function applyZoom(){
+  var img = document.getElementById("lbImg");
+  var scroll = document.getElementById("lbScroll");
+  var hint = document.getElementById("lbHint");
+  if(!img.naturalWidth) return;
+  if(lbZoom === "fit"){
+    img.style.width = "";
+    img.style.maxWidth = "100%";
+    scroll.classList.remove("zoomed");
+    hint.textContent = "Whole bed. Tap 2\u00d7 or 3\u00d7 to get in close, then drag to pan.";
+  } else {
+    var f = parseFloat(lbZoom);
+    img.style.maxWidth = "none";
+    img.style.width = Math.round(img.naturalWidth * f) + "px";
+    scroll.classList.add("zoomed");
+    hint.textContent = f === 1
+      ? "Actual size of the drawing. 1 pixel is about 1.6 in on the ground."
+      : f + "\u00d7 the drawing's own pixels \u2014 magnified, not sharpened.";
+    // Centre on the middle of the picture when stepping in.
+    scroll.scrollLeft = (scroll.scrollWidth - scroll.clientWidth) / 2;
+    scroll.scrollTop = (scroll.scrollHeight - scroll.clientHeight) / 2;
+  }
+  document.querySelectorAll(".lb-z").forEach(function(b){
+    b.classList.toggle("on", b.dataset.z === lbZoom);
+  });
+}
+
+function showLightbox(src, title){
   lightboxSrc = src;
   var box = document.getElementById("lightbox");
   var img = document.getElementById("lbImg");
   if(src){
+    lbZoom = "fit";
+    img.onload = applyZoom;
     img.src = src;
+    document.getElementById("lbTitle").textContent = title || "";
     box.hidden = false;
     document.body.style.overflow = "hidden";
+    if(img.complete) applyZoom();
   } else {
     box.hidden = true;
     img.removeAttribute("src");
@@ -1379,9 +1456,9 @@ function showLightbox(src){
   }
 }
 
-function openPicture(src){
+function openPicture(src, title){
   try{ history.replaceState(viewState(), ""); }catch(e){}
-  showLightbox(src);
+  showLightbox(src, title);
   try{ history.pushState(viewState(), ""); }catch(e){}
 }
 
@@ -1394,7 +1471,7 @@ window.addEventListener("popstate", function(ev){
   restoring = true;
   currentJob = s.job || "h2s";
   view = s.view || "species";
-  showLightbox(s.lb || null);
+  showLightbox(s.lb || null, s.lbTitle || "");
   renderAll();
   if(typeof s.scroll === "number"){
     window.scrollTo(0, s.scroll);
@@ -1407,7 +1484,7 @@ function wirePictures(root){
   root.querySelectorAll("a[data-lb]").forEach(function(a){
     a.addEventListener("click", function(ev){
       ev.preventDefault();
-      openPicture(a.getAttribute("href"));
+      openPicture(a.getAttribute("href"), a.getAttribute("data-title") || "");
     });
   });
 }
@@ -1472,7 +1549,7 @@ function renderBeds(){
   mapWrap.className = "map-wrap";
   mapWrap.innerHTML =
     '<div class="map-title">Site map &mdash; all ' + BEDS.length + " beds</div>" +
-    '<a href="' + BED_IMG + 'site-map.jpg" data-lb="1">' +
+    '<a href="' + BED_IMG + 'site-map.jpg" data-lb="1" data-title="Site map">' +
       imgOrNothing(BED_IMG + "site-map.jpg", "Site map with every bed numbered", "map-img") +
     "</a>" +
     '<div class="map-hint">Tap the map to open it full size, then pinch to zoom. Back closes it.</div>';
@@ -1559,7 +1636,8 @@ function renderBeds(){
 
     var pic = document.createElement("div");
     pic.className = "bed-pic";
-    pic.innerHTML = '<a href="' + BED_IMG + b.bed + '.jpg" data-lb="1">' +
+    pic.innerHTML = '<a href="' + BED_IMG + b.bed + '.jpg" data-lb="1"' +
+      ' data-title="Bed ' + b.bed.replace("B", "") + ' \u2014 ' + b.where + '">' +
       imgOrNothing(BED_IMG + b.bed + ".jpg", "Bed " + b.bed + " on the plan", "bed-img") +
       "</a>";
     card.appendChild(pic);
@@ -1797,6 +1875,13 @@ function init(){
   document.getElementById("vtZones").addEventListener("click", function(){
     if(view === "zones") return;
     goto(function(){ view = "zones"; });
+  });
+  document.querySelectorAll(".lb-z").forEach(function(b){
+    b.addEventListener("click", function(){ lbZoom = b.dataset.z; applyZoom(); });
+  });
+  document.getElementById("lbImg").addEventListener("dblclick", function(){
+    lbZoom = (lbZoom === "fit") ? "2" : "fit";
+    applyZoom();
   });
   document.getElementById("lbClose").addEventListener("click", closePicture);
   document.getElementById("lightbox").addEventListener("click", function(ev){
