@@ -988,12 +988,12 @@ function renderTabs(){
       '</span><span class="tab-progress">' + p.complete + "/" + p.total + " complete</span>";
     btn.addEventListener("click", function(){
       if(jobKey === currentJob) return;
-      pushStep();
-      currentJob = jobKey;
-      // The zone pull list only exists for Home2Suites; leaving that tab drops
-      // back to the species view so the toggle never lies about what is shown.
-      if(jobKey !== "h2s") view = "species";
-      renderAll();
+      goto(function(){
+        currentJob = jobKey;
+        // The zone pull list only exists for Home2Suites; leaving that tab
+        // drops back to the species view so the toggle never lies.
+        if(jobKey !== "h2s") view = "species";
+      });
     });
     tabsEl.appendChild(btn);
   });
@@ -1315,8 +1315,15 @@ function viewState(){
   return {job: currentJob, view: view, lb: lightboxSrc, scroll: window.scrollY};
 }
 
-function pushStep(){
-  if(restoring) return;
+// Stamp where we are (including scroll) into the current entry, make the
+// change, then push the entry we arrived at. Doing it the other way round
+// pushes the state being left, and one back lands two steps away.
+function goto(mutate, keepScroll){
+  if(restoring){ mutate(); renderAll(); return; }
+  try{ history.replaceState(viewState(), ""); }catch(e){}
+  mutate();
+  renderAll();
+  if(!keepScroll) window.scrollTo(0, 0);
   try{ history.pushState(viewState(), ""); }catch(e){}
 }
 
@@ -1336,8 +1343,9 @@ function showLightbox(src){
 }
 
 function openPicture(src){
+  try{ history.replaceState(viewState(), ""); }catch(e){}
   showLightbox(src);
-  pushStep();
+  try{ history.pushState(viewState(), ""); }catch(e){}
 }
 
 function closePicture(){
@@ -1747,11 +1755,11 @@ function init(){
   fillMissingFromSeed();
   document.getElementById("vtSpecies").addEventListener("click", function(){
     if(view === "species") return;
-    pushStep(); view = "species"; renderAll(); window.scrollTo(0, 0);
+    goto(function(){ view = "species"; });
   });
   document.getElementById("vtZones").addEventListener("click", function(){
     if(view === "zones") return;
-    pushStep(); view = "zones"; renderAll(); window.scrollTo(0, 0);
+    goto(function(){ view = "zones"; });
   });
   document.getElementById("lbClose").addEventListener("click", closePicture);
   document.getElementById("lightbox").addEventListener("click", function(ev){
