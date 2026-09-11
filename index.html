@@ -221,6 +221,17 @@
   }
   .item.partial{border-left-color:var(--amber);}
   .item.complete{border-left-color:var(--green);background:var(--green-bg);}
+  /* A bed that is planted but still owed material. Deliberately NOT green:
+     it must never look finished at a glance. */
+  .zone.short{border-left-color:#c8922a;}
+  .bed-short{
+    margin:10px 0 0;padding:10px 12px;border-radius:8px;
+    background:rgba(200,146,42,0.14);border:1px solid rgba(200,146,42,0.45);
+    font-size:.92rem;line-height:1.45;
+  }
+  .bed-short b{color:#8a5d00;}
+  @media (prefers-color-scheme:dark){ .bed-short b{color:#f0c168;} }
+  :root[data-theme="dark"] .bed-short b{color:#f0c168;}
   .item.over{border-left-color:var(--over);background:var(--over-bg);}
 
   .item-info{flex:1;min-width:0;}
@@ -1503,6 +1514,63 @@ function wirePictures(root){
   });
 }
 
+// ---- the third bed state: finished, but short -----------------------------
+// A bed can be fully in the ground and still not be DONE. 13 of the 44 beds
+// carry Gold Crinkled Hair Grass, and not one of those 132 has been bought, so
+// those beds will sit "planted except the grass" for weeks. A boolean cannot
+// say that: flag them planted and the app claims the job is finished while 132
+// plants are still unbought; leave them unflagged and the beds that ARE done
+// disappear.
+//
+// So the shortfall is DERIVED from the counts, never tracked by hand. It cannot
+// go stale, and it is the same number Chris and Todd see on the report.
+var SPECIES_ALIAS = {
+  // The bed callouts and the sort list name this one differently. It is the
+  // biggest species on the job (338), so it is pinned rather than fuzzy-matched.
+  IS: "Alaska Flag Iris"
+};
+var CODE_ROW = null;
+function codeRow(code){
+  if(!CODE_ROW){
+    CODE_ROW = {};
+    var rows = [], g = JOBS.h2s.groups;
+    Object.keys(g).forEach(function(gk){
+      g[gk].items.forEach(function(r){ rows.push(r); });
+    });
+    Object.keys(SPECIES).forEach(function(c){
+      var want = slug(SPECIES_ALIAS[c] || SPECIES[c]), hit = null, i;
+      for(i = 0; i < rows.length; i++){
+        if(slug(rows[i][0]) === want){ hit = rows[i]; break; }
+      }
+      if(!hit){
+        for(i = 0; i < rows.length; i++){
+          var rs = slug(rows[i][0]);
+          if(rs.indexOf(want) === 0 || want.indexOf(rs) === 0){ hit = rows[i]; break; }
+        }
+      }
+      if(hit) CODE_ROW[c] = hit;
+    });
+  }
+  return CODE_ROW[code] || null;
+}
+
+// Species in this bed with NOTHING received yet -- they cannot be in the ground.
+function bedOutstanding(b){
+  var out = [];
+  Object.keys(b.items).forEach(function(c){
+    var row = codeRow(c);
+    if(!row) return;
+    if((state["h2s:" + slug(row[0])] || 0) === 0){
+      out.push({code: c, name: decode(row[0]), qty: b.items[c]});
+    }
+  });
+  return out.sort(function(x, y){ return y.qty - x.qty; });
+}
+
+function shortText(list){
+  return list.map(function(o){ return o.qty + " " + o.name; }).join(", ");
+}
+
 function renderBeds(){
   var container = document.getElementById("groups");
   container.innerHTML = "";
@@ -1614,8 +1682,13 @@ function renderBeds(){
     var isStakedDone = !!staked[b.bed];
     var isPlanted = !!planted[b.bed];
 
+    var shortList = bedOutstanding(b);
+    var isShort = shortList.length > 0;
+
     var card = document.createElement("section");
-    card.className = "zone" + (isPlanted ? " done" : isStakedDone ? " partdone" : "");
+    card.className = "zone" +
+      (isPlanted && isShort ? " done short" :
+       isPlanted ? " done" : isStakedDone ? " partdone" : "");
     card.id = "bed-" + b.bed;
 
     var head = document.createElement("div");
@@ -1647,6 +1720,17 @@ function renderBeds(){
       acts.appendChild(btn);
     });
     card.appendChild(acts);
+
+    if(isShort){
+      var sh = document.createElement("div");
+      sh.className = "bed-short" + (isPlanted ? " done" : "");
+      sh.innerHTML = isPlanted
+        ? "<b>Planted, short " + shortList.reduce(function(n, o){ return n + o.qty; }, 0) +
+          "</b><br>Still owed here: " + shortText(shortList) +
+          ". Everything else in this bed is in the ground."
+        : "<b>Cannot finish this bed yet</b><br>None on hand: " + shortText(shortList) + ".";
+      card.appendChild(sh);
+    }
 
     var pic = document.createElement("div");
     pic.className = "bed-pic";
@@ -1753,6 +1837,29 @@ function generateReport(){
     var job = JOBS[jobKey];
     var p = jobProgress(jobKey);
     lines.push(decode(job.label).toUpperCase() + " (" + p.complete + "/" + p.total + " complete)");
+    if(jobKey === "h2s"){
+      var doneShort = [], owed = {};
+      BEDS.forEach(function(b){
+        var o = bedOutstanding(b);
+        if(!o.length) return;
+        if(planted[b.bed]) doneShort.push(b.bed.replace("B", ""));
+        o.forEach(function(x){ owed[x.name] = (owed[x.name] || 0) + x.qty; });
+      });
+      if(doneShort.length){
+        lines.push("");
+        lines.push("PLANTED BUT SHORT -- beds finished on the ground that are");
+        lines.push("still owed material, so they are NOT closed out:");
+        lines.push("  beds " + doneShort.join(", "));
+      }
+      var owedKeys = Object.keys(owed);
+      if(owedKeys.length){
+        lines.push("");
+        lines.push("NOT YET ON SITE -- nothing received against these:");
+        owedKeys.sort(function(a, c){ return owed[c] - owed[a]; }).forEach(function(k){
+          lines.push("  " + owed[k] + " x " + k);
+        });
+      }
+    }
     Object.keys(job.groups).forEach(function(gk){
       job.groups[gk].items.forEach(function(row){
         var name = row[0], target = row[1], isAlt = row[2];
@@ -1798,7 +1905,13 @@ function generateReport(){
     lines.push("Bed " + b.bed.replace("B", "") + " -- " + b.where +
                " (" + b.units + " units)" +
                (staked[b.bed] ? " [STAKED]" : "") +
-               (planted[b.bed] ? " [PLANTED]" : ""));
+               (planted[b.bed]
+                  ? (bedOutstanding(b).length ? " [PLANTED - SHORT]" : " [PLANTED]")
+                  : ""));
+    var bShort = bedOutstanding(b);
+    if(bShort.length){
+      lines.push("  ** still owed here: " + shortText(bShort) + " **");
+    }
     Object.keys(b.items).forEach(function(c){
       lines.push("  " + b.items[c] + " x " + SPECIES[c] + " (" + c + ")" +
                  (SPACING[c] ? "  " + ocOf(c) + "\" OC triangular, rows " +
