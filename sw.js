@@ -16,15 +16,26 @@
  *   5. Net result on a weak connection: an empty new cache, no old cache, and
  *      a page that cannot be served at all once the signal goes. Black screen.
  *
- * Three rules now prevent that:
+ * Fixing that was not enough -- it was still black afterwards. The second half
+ * was worse: every request path ran through the Cache API, and `caches.open`
+ * can throw when storage is full, blocked, or evicted. Inside respondWith a
+ * rejected promise is a hard network error, not a fall back to the network. One
+ * throw and every request dies, with signal or without.
  *
- *   - A shell install is ATOMIC on the files that matter. If the page itself
- *     cannot be cached, the install FAILS, the new worker never activates, and
- *     the old worker and its cache stay in charge. A stale app beats no app.
+ * Four rules now:
+ *
+ *   - NEVER be worse than no service worker. Every path ends in a plain fetch,
+ *     and failing that a readable page.
+ *   - The shell is written all-or-nothing, so a partial shell is never stored,
+ *     but the INSTALL still succeeds either way. Failing the install to protect
+ *     a good cache also traps a broken phone: if storage is what is broken, the
+ *     safe worker could never take over.
  *   - Old caches are deleted only AFTER the new shell is verified to hold the
  *     page. No verification, no cleanup.
- *   - If the current shell cache ever misses, every other wolf-shell-* cache is
- *     tried before giving up. Belt and braces.
+ *   - On a miss, every other wolf-shell-* cache is tried before giving up.
+ *
+ * ?nosw=1 bypasses the worker entirely, so there is always one link that
+ * settles whether the worker is at fault.
  *
  * Bump CACHE_VERSION on deploy.
  */
