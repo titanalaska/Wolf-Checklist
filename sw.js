@@ -29,7 +29,7 @@
  * Bump CACHE_VERSION on deploy.
  */
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const SHELL_CACHE = `wolf-shell-${CACHE_VERSION}`;
 
 // Bed crops and the site map: ~17 MB across 45 files, cached as they are viewed
@@ -53,22 +53,39 @@ const EXTRA = [
   './apple-touch-icon.png',
 ];
 
+/* Install ALWAYS succeeds, on purpose.
+ *
+ * The first fix made the install atomic and let it fail if the shell could not
+ * be cached, so the old worker would keep control. That protects a healthy
+ * phone and traps a broken one: if storage is the thing that is broken, the new
+ * worker can never take over and the device stays bricked forever.
+ *
+ * Getting the SAFE worker installed matters more than getting it fully stocked.
+ * The protection against a half-cached shell lives in activate(), which refuses
+ * to delete anything until the new cache is proven to hold the page.
+ */
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    const cache = await caches.open(SHELL_CACHE);
-    // addAll rejects as a unit. That is the point: a half-cached shell is how
-    // the app ended up unopenable, so a failure here must abort the install.
-    await cache.addAll(CRITICAL);
-    await Promise.all(EXTRA.map(url => cache.add(url).catch(() => null)));
+    try {
+      const cache = await caches.open(SHELL_CACHE);
+      // addAll is all-or-nothing, so a partial shell is never written.
+      await cache.addAll(CRITICAL).catch(() => null);
+      await Promise.all(EXTRA.map(url => cache.add(url).catch(() => null)));
+    } catch (e) {
+      // Storage unavailable entirely. Install regardless: a worker that always
+      // falls through to the network beats the one currently in place.
+    }
     await self.skipWaiting();
   })());
 });
 
 async function shellIsUsable() {
-  const cache = await caches.open(SHELL_CACHE);
-  for (const url of CRITICAL) {
-    if (await cache.match(url)) return true;
-  }
+  try {
+    const cache = await caches.open(SHELL_CACHE);
+    for (const url of CRITICAL) {
+      if (await cache.match(url)) return true;
+    }
+  } catch (e) { /* storage unreadable -- treat as not usable */ }
   return false;
 }
 
@@ -92,12 +109,15 @@ self.addEventListener('activate', (event) => {
 // newest name last, so an older copy still opens the app when the current one
 // is empty for any reason.
 async function anyShellMatch(request) {
-  const names = (await caches.keys()).filter(n => n.startsWith('wolf-shell-'));
-  for (const n of names.reverse()) {
-    const c = await caches.open(n);
-    const hit = await c.match(request) || await c.match('./index.html') || await c.match('./');
-    if (hit) return hit;
-  }
+  try {
+    const names = (await caches.keys()).filter(n => n.startsWith('wolf-shell-'));
+    for (const n of names.reverse()) {
+      const c = await caches.open(n);
+      const hit = await c.match(request) ||
+                  await c.match('./index.html') || await c.match('./');
+      if (hit) return hit;
+    }
+  } catch (e) { /* fall through to the network */ }
   return null;
 }
 
@@ -138,6 +158,41 @@ async function networkFirst(request) {
   }
 }
 
+/* The rule this worker broke, and now enforces:
+ *
+ *   A SERVICE WORKER MUST NEVER MAKE THINGS WORSE THAN NOT HAVING ONE.
+ *
+ * Everything above touches the Cache API, and `caches.open` can throw outright
+ * -- storage full, storage blocked, the origin's data evicted under pressure.
+ * Inside respondWith, a rejected promise is not a fallback to the network: it is
+ * a hard network error. One throw and EVERY request fails, online or off. That
+ * is a black screen on a phone with a full disk, and no amount of signal fixes
+ * it.
+ *
+ * So every path ends in a plain fetch, and failing that a readable page. Worst
+ * case this worker behaves exactly as if it were not installed.
+ */
+function offlineNote() {
+  return new Response(
+    '<!doctype html><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<body style="margin:0;padding:28px;background:#f6f7f1;color:#20261f;' +
+    'font-family:-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5">' +
+    '<h1 style="font-size:1.2rem">Wolf Architect Jobs</h1>' +
+    '<p>This page is not cached on this phone yet, and there is no signal to ' +
+    'fetch it.</p><p>Open it once with signal, then tap <b>Save all bed maps ' +
+    'for offline</b>. After that it works in the yard.</p>' +
+    '<p style="font-size:.85rem;color:#4c5449">If it keeps landing here even ' +
+    'with signal, open Chrome settings for this site and clear its data, then ' +
+    'reload.</p></body>',
+    {status: 200, headers: {'Content-Type': 'text/html; charset=utf-8'}});
+}
+
+function safeNetwork(req) {
+  return fetch(req).catch(() =>
+    req.mode === 'navigate' ? offlineNote() : Response.error());
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
@@ -147,10 +202,17 @@ self.addEventListener('fetch', (event) => {
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
   if (url.origin !== self.location.origin) return;
 
-  if (url.pathname.indexOf('/beds/') !== -1) {
-    event.respondWith(cacheFirst(req).catch(() => Response.error()));
+  // Escape hatch: ?nosw=1 goes straight to the network, so there is always a
+  // link that proves whether the worker is the problem.
+  if (url.search.indexOf('nosw=1') !== -1) {
+    event.respondWith(safeNetwork(req));
     return;
   }
 
-  event.respondWith(networkFirst(req));
+  if (url.pathname.indexOf('/beds/') !== -1) {
+    event.respondWith(cacheFirst(req).catch(() => safeNetwork(req)));
+    return;
+  }
+
+  event.respondWith(networkFirst(req).catch(() => safeNetwork(req)));
 });
