@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Wolf Jobs">
-﻿<title>Wolf Architect Jobs</title>
+<title>Wolf Architect Jobs</title>
 <style>
   :root{
     --bg:#f6f7f1;
@@ -80,6 +80,11 @@
     --on-green:#10140c;
   }
   *{box-sizing:border-box;}
+  /* The Artifact host injects this for free; a plain page does NOT. Without it
+     .lightbox{display:flex} -- a class selector -- beats the `hidden` attribute's
+     UA display:none, so the zoom overlay sat over the app permanently and ate
+     every tap. Reported from the field 9/10. */
+  [hidden]{display:none!important;}
   body{
     margin:0;
     background:var(--bg);
@@ -1123,7 +1128,7 @@ function renderItem(jobKey, name, target, isAlt){
   counter.className = "counter";
 
   var minus = document.createElement("button");
-  minus.textContent = "âˆ’";
+  minus.textContent = "\u2212";  // escaped: a literal U+2212 got mangled to mojibake twice
   minus.setAttribute("aria-label", "decrease " + decode(name));
 
   var input = document.createElement("input");
@@ -1466,7 +1471,13 @@ function openPicture(src, title){
 }
 
 function closePicture(){
-  if(lightboxSrc){ history.back(); }
+  if(!lightboxSrc) return;
+  history.back();
+  // Closing rides on popstate, and every history call here is in a silent
+  // try/catch. If a pushState ever failed there is no entry to pop, back()
+  // does nothing, and the overlay stays up over the app eating taps -- the
+  // 9/10 field report. Close it outright if the pop has not landed.
+  setTimeout(function(){ if(lightboxSrc) showLightbox(null, ""); }, 350);
 }
 
 window.addEventListener("popstate", function(ev){
