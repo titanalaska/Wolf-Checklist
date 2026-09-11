@@ -32,9 +32,14 @@
 const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `wolf-shell-${CACHE_VERSION}`;
 
-// Bed crops and the site map: ~17 MB across 45 files. Cached as they are viewed,
+// Bed crops and the site map: ~17 MB across 45 files, cached as they are viewed
 // and warmed in bulk by the app's "Save all bed maps for offline" button.
-const BED_CACHE = `wolf-beds-${CACHE_VERSION}`;
+//
+// Deliberately NOT versioned. The pictures never change under a given filename,
+// and tying them to CACHE_VERSION meant every deploy silently threw away 17 MB
+// that then had to come back down over cell data. This cache survives deploys;
+// if a picture is ever genuinely replaced, change its filename.
+const BED_CACHE = 'wolf-beds';
 const MAX_BEDS = 60;
 
 // Without these the app cannot open at all. Cached all-or-nothing.
