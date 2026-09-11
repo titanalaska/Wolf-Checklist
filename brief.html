@@ -1,0 +1,110 @@
+<title>Wolf Jobs &mdash; Brief for Claude</title>
+<style>
+:root{--ink:#20261f;--mut:#5c6357;--line:#dcded5;--bg:#f6f7f1;--card:#fff;--amber:#8a5d00;--amberbg:#fbf1dc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+ font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px}
+h1{font-size:1.25rem;margin:0 0 4px}
+.sub{color:var(--mut);font-size:.9rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);margin:0 0 8px}
+.amber{background:var(--amberbg);border-color:#e3c98d}
+ul{margin:0;padding-left:20px}li{margin:3px 0}
+button{background:#2f5233;color:#fff;border:0;border-radius:9px;padding:12px 16px;
+ font-size:.95rem;width:100%;margin:0 0 14px}
+pre{white-space:pre-wrap;font-size:.82rem;background:#eef1ea;border:1px solid var(--line);
+ border-radius:9px;padding:12px;overflow-x:auto}
+a{color:#2f5233}
+.links a{display:block;padding:7px 0;border-bottom:1px solid var(--line)}
+</style>
+<div class="wrap">
+<h1>Wolf Jobs &mdash; Brief for Claude</h1>
+<div class="sub">Open this on the phone, tap Copy, paste it to Claude. It explains the job so you don't have to.</div>
+
+<button onclick="copyBrief()">Copy the brief for Claude</button>
+
+<div class="card links">
+  <h2>The links</h2>
+  <a href="./">The working checklist (Matt only &mdash; saves to this device)</a>
+  <a href="./status.html">Status page &mdash; safe to send Chris &amp; Todd</a>
+</div>
+
+<div class="card amber">
+  <h2>Do not send the checklist to Chris or Todd</h2>
+  It saves to Matt's browser only. They would open a blank sheet with every count
+  at zero, which reads as nothing having been done. Send <b>status.html</b> instead.
+</div>
+
+<div class="card">
+<h2>The brief itself</h2>
+<pre id="brief">HOME2 SUITES / WOLF JOBS - context for Claude on the phone.
+Matt Walsh, Titan Alaska, field ops. Laptop is not with him.
+
+WHAT THE TOOLS ARE
+- titanalaska.github.io/Wolf-Checklist/        the working checklist. Saves to
+  THIS device only (localStorage). Nothing syncs to anyone else.
+- titanalaska.github.io/Wolf-Checklist/status.html   read-only page for Chris and
+  Todd. A baked snapshot, regenerated on the laptop. Never send them the
+  checklist URL - they would see all zeros and think nothing was done.
+
+BED STATES
+Beds are Staked, Planted, or "planted but short". Short is DERIVED from the
+counts, not ticked by hand: if a species in that bed has nothing received
+against it, the bed shows amber and says what it is still owed. 13 of the 44
+beds carry Gold Crinkled Hair Grass and none of the 132 has been bought, so
+those beds will sit short for weeks. That is expected, not a bug.
+
+OPEN ITEMS AS OF 10 SEP 2026
+- Gold Crinkled Hair Grass: 0 of 132. Substitution decision still open. Kalco
+  quoted the real spec item (#2, $19.50); Mid-Valley offered 61 in #2 or 132
+  bronze tufted in #1 - that second one is a species AND pot-size downgrade,
+  two grounds for rejection. NOT on the Bron truck, so 9/11 does not bind it.
+- Trees: Bron and Sons cutoff is FRI 9/11, last load of the season, ships 9/17,
+  lands Anchorage 9/21. Still open at H2S: Columnar Swedish Aspen 28, Helena
+  Maple 22, Paper Birch 15, Siberian Crabapple 9, Quaking Aspen 8, Amur Maple 3.
+- Bed 15 reads planted but holds 3 Quaking Aspen with 0 received. B14 and B15
+  are twins (both pure 3-unit Quaking Aspen, B15 east, B14 west) so it may be a
+  bed mix-up. Either way H2S tree counts are behind what is on the ground.
+  DO NOT invent that number - ask Matt.
+- Matt has ~40 birch, right size but not golf-course quality. Paper Birch demand
+  across all four jobs is 56, so some is getting bought regardless.
+- WSRCC: Ivory Halo Dogwood is 60 short (156 needed, 96 on hand). Chris and Todd
+  verbally approved filling the gap with surplus Red-Twig. ~80 spare at the pit
+  after covering H2S (41) and WSRCC's own 116, so it covers with ~20 over.
+  272 total dogwood either way, same as the drawing. Written confirmation is
+  drafted and waiting to send - framed as "here is surplus stock, you pick",
+  not as a substitution request.
+- The pit holds DOGWOOD ONLY right now. Other species come later.
+
+HOUSE RULES
+- Titan Outlook is READ-ONLY. Claude can read mail, cannot send or draft.
+- Never invent a count or a judgment number. Ship it blank and ask.
+- Matt reads fast and talks slower than he thinks - keep answers short.</pre>
+</div>
+
+<div class="card">
+  <h2>Why this page exists</h2>
+  Claude on the laptop keeps notes in a folder on that machine. Claude on the
+  phone is a different session and cannot read them. A web page is the one thing
+  both can reach &mdash; so this is the handoff.
+</div>
+</div>
+<script>
+function copyBrief(){
+  var t = document.getElementById('brief').textContent;
+  function done(ok){
+    var b = document.querySelector('button');
+    b.textContent = ok ? 'Copied — now paste it to Claude' : 'Press and hold the text below to copy';
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ done(false); });
+  } else {
+    try{
+      var a = document.createElement('textarea');
+      a.value = t; document.body.appendChild(a); a.select();
+      document.execCommand('copy'); document.body.removeChild(a); done(true);
+    }catch(e){ done(false); }
+  }
+}
+</script>
