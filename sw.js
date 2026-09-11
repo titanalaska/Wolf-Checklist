@@ -1,35 +1,46 @@
 /* Wolf checklist service worker.
  *
  * Why this exists: the counting happens in the yard, and the yard has no signal.
- * Without a worker the page simply fails to load out there — the counts are safe
- * in localStorage, but you can't reach the page that reads them, which is the
- * same thing as losing them for the day.
+ * Without a worker the page simply fails to load out there.
  *
- * There is no backend here. Everything the app needs is the shell: one HTML file,
- * the manifest and the icons. So there is exactly one rule.
+ * === What went wrong on 2026-09-10, and what changed ===
  *
- *   app shell   network-first  — a push to Pages shows up on the next open when
- *                                there's signal, and the last good copy opens
- *                                when there isn't.
+ * The previous version bricked the installed app in the field. The chain was:
  *
- * Counts are never the worker's business: they live in localStorage, which is
- * unaffected by anything cached here.
+ *   1. CACHE_VERSION was bumped v1 -> v2.
+ *   2. install() cached each shell file with `.catch(() => null)`, so EVERY
+ *      fetch could fail and the install still reported success.
+ *   3. skipWaiting() then activated it immediately.
+ *   4. activate() deleted every cache not in the keep list -- destroying the
+ *      known-good v1 shell.
+ *   5. Net result on a weak connection: an empty new cache, no old cache, and
+ *      a page that cannot be served at all once the signal goes. Black screen.
  *
- * Bump CACHE_VERSION on deploy; old caches are dropped on activate.
+ * Three rules now prevent that:
+ *
+ *   - A shell install is ATOMIC on the files that matter. If the page itself
+ *     cannot be cached, the install FAILS, the new worker never activates, and
+ *     the old worker and its cache stay in charge. A stale app beats no app.
+ *   - Old caches are deleted only AFTER the new shell is verified to hold the
+ *     page. No verification, no cleanup.
+ *   - If the current shell cache ever misses, every other wolf-shell-* cache is
+ *     tried before giving up. Belt and braces.
+ *
+ * Bump CACHE_VERSION on deploy.
  */
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `wolf-shell-${CACHE_VERSION}`;
 
-// Bed crops and the site map: ~6 MB across 45 files. Too much to force on every
-// visitor up front, so they are cached as they are viewed, and the app's
-// "Save all bed maps for offline" button warms the whole set in one go.
+// Bed crops and the site map: ~17 MB across 45 files. Cached as they are viewed,
+// and warmed in bulk by the app's "Save all bed maps for offline" button.
 const BED_CACHE = `wolf-beds-${CACHE_VERSION}`;
 const MAX_BEDS = 60;
 
-const SHELL = [
-  './',
-  './index.html',
+// Without these the app cannot open at all. Cached all-or-nothing.
+const CRITICAL = ['./', './index.html'];
+// Nice to have. Allowed to fail individually without failing the install.
+const EXTRA = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -38,28 +49,53 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(SHELL_CACHE)
-      // addAll is all-or-nothing; one 404 would leave the app with no offline
-      // copy at all, so each entry is allowed to fail on its own.
-      .then(cache => Promise.all(SHELL.map(url => cache.add(url).catch(() => null))))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(SHELL_CACHE);
+    // addAll rejects as a unit. That is the point: a half-cached shell is how
+    // the app ended up unopenable, so a failure here must abort the install.
+    await cache.addAll(CRITICAL);
+    await Promise.all(EXTRA.map(url => cache.add(url).catch(() => null)));
+    await self.skipWaiting();
+  })());
 });
+
+async function shellIsUsable() {
+  const cache = await caches.open(SHELL_CACHE);
+  for (const url of CRITICAL) {
+    if (await cache.match(url)) return true;
+  }
+  return false;
+}
 
 self.addEventListener('activate', (event) => {
-  const keep = [SHELL_CACHE, BED_CACHE];
-  event.waitUntil(
-    caches.keys()
-      .then(names => Promise.all(
+  event.waitUntil((async () => {
+    // Only tidy up once there is a proven replacement. If the new shell is not
+    // usable, leave every old cache exactly where it is.
+    if (await shellIsUsable()) {
+      const keep = [SHELL_CACHE, BED_CACHE];
+      const names = await caches.keys();
+      await Promise.all(
         names.filter(n => n.startsWith('wolf-') && !keep.includes(n))
              .map(n => caches.delete(n))
-      ))
-      .then(() => self.clients.claim())
-  );
+      );
+    }
+    await self.clients.claim();
+  })());
 });
 
-// Oldest-first eviction. Cache API keys come back in insertion order.
+// Last resort: look through every shell cache this origin has ever written,
+// newest name last, so an older copy still opens the app when the current one
+// is empty for any reason.
+async function anyShellMatch(request) {
+  const names = (await caches.keys()).filter(n => n.startsWith('wolf-shell-'));
+  for (const n of names.reverse()) {
+    const c = await caches.open(n);
+    const hit = await c.match(request) || await c.match('./index.html') || await c.match('./');
+    if (hit) return hit;
+  }
+  return null;
+}
+
 async function trimCache(name, max) {
   const cache = await caches.open(name);
   const keys = await cache.keys();
@@ -67,8 +103,8 @@ async function trimCache(name, max) {
   await Promise.all(keys.slice(0, keys.length - max).map(k => cache.delete(k)));
 }
 
-// Bed pictures are cut from one fixed drawing, so they never change under a
-// given filename -- revalidating them would just burn cell data in the yard.
+// Bed pictures are cut from one fixed drawing and never change under a given
+// filename, so revalidating them would only burn cell data in the yard.
 async function cacheFirst(request) {
   const cache = await caches.open(BED_CACHE);
   const hit = await cache.match(request);
@@ -88,11 +124,11 @@ async function networkFirst(request) {
     if (res && res.status === 200) cache.put(request, res.clone());
     return res;
   } catch (e) {
-    // A navigation that misses falls back to the shell rather than the browser's
-    // offline page — opening to yesterday's counts beats opening to nothing.
     const hit = await cache.match(request) ||
                 (request.mode === 'navigate' ? await cache.match('./index.html') : null);
     if (hit) return hit;
+    const fallback = await anyShellMatch(request);
+    if (fallback) return fallback;
     throw e;
   }
 }
