@@ -519,6 +519,13 @@
     font-family:inherit;font-weight:700;font-size:.86rem;cursor:pointer;
     touch-action:manipulation;
   }
+  .moved-note{
+    margin:12px 16px;padding:12px 14px;border-radius:10px;
+    background:var(--amber-bg);border:2px solid var(--amber);
+    font-size:.95rem;line-height:1.5;
+  }
+  .moved-note b{display:block;color:var(--amber);margin-bottom:3px;}
+  .moved-note a{color:var(--amber);font-weight:700;}
   .jump-msg{font-size:.8rem;color:var(--danger);font-weight:700;}
   /* Title left, language right, on one line at the very top of the sticky
      header so it is in reach the moment the app opens, in either view. */
@@ -978,6 +985,14 @@
   <p class="savenote" id="saveNote">Loading your counts&hellip;</p>
   <div class="tabs" id="tabs"></div>
 </header>
+
+<div class="moved-note">
+  <b>This app has moved.</b>
+  It is now called Groundwork, at
+  <a href="https://titanalaska.github.io/Groundwork/">titanalaska.github.io/Groundwork/</a>.
+  Open that link, add it to your home screen, and check your counts look right
+  before you delete this one. Your saved counts are already there.
+</div>
 
 <div id="saveWarning" class="save-warning">
   Working offline. Counts are held on this device and will sync when you are back on signal.

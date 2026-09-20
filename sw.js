@@ -40,7 +40,7 @@
  * Bump CACHE_VERSION on deploy.
  */
 
-const CACHE_VERSION = 'v34';
+const CACHE_VERSION = 'v35';
 const SHELL_CACHE = `wolf-shell-${CACHE_VERSION}`;
 
 // Bed crops and site maps: ~17 MB over 45 files for Home2Suites and ~10 MB over
