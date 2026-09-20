@@ -509,9 +509,20 @@ Not a code task. It is the part that actually decides whether anyone is stranded
 
 **Files:** none.
 
-- [ ] **Step 1: List who has it installed**
+- [ ] ~~**Step 1: List who has it installed**~~ — ANSWERED 2026-09-20: it cannot be.
 
-Write down every person with the checklist on their home screen. If that list cannot be written with confidence, **that** is the first problem to solve — you cannot confirm a migration you cannot enumerate.
+Matt: *"it could be any crew they send out."* The set of people using this app
+is not fixed, so the install list cannot be enumerated, so the migration can
+never be confirmed complete.
+
+**This settles Step 5 below: `/Wolf-Checklist/` stays up permanently.** The
+banner is not a temporary notice, it is permanent furniture. Do not remove it
+and do not retire the old path.
+
+It also creates a standing risk worth stating: **a crew member who has never
+seen either app can still install the OLD one** from a stale bookmark or a
+forwarded link, and would have no way of knowing. The banner is the only thing
+protecting them, which is another reason it never comes down.
 
 - [ ] **Step 2: Answer the spec's open question**
 
@@ -525,9 +536,15 @@ For each: open the Groundwork URL, add to home screen, open it, confirm the job 
 
 `https://titanalaska.github.io/Groundwork/status.html` to Chris and Todd. The old one keeps working; it is a plain page with no service worker.
 
-- [ ] **Step 5: Retire only when the list is fully ticked**
+- [x] **Step 5: Do not retire it** — decided 2026-09-20
 
-Not on a timer, not assumed. Until every name is confirmed, `/Wolf-Checklist/` stays live with its banner. When it is genuinely empty, replace its `index.html` with a plain page pointing at Groundwork — **still no redirect**, because a 301 on `sw.js` would break any install that somehow remains.
+The old path stays live with its banner, indefinitely. Step 1 established that
+the install list cannot be enumerated, so there is no state in which retirement
+is safe. This is a decision, not an unfinished task.
+
+If it is ever revisited: **still no redirect**, because a 301 on `sw.js` would
+break any install that somehow remains — which is the whole reason this
+migration was designed the way it was.
 
 ---
 
